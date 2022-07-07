@@ -1,10 +1,10 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { LaunchComponent } from './launch/launch.component';
-import { MainComponent } from './main/main.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {AppRoutingModule} from './app-routing.module';
+import {AppComponent} from './app.component';
+import {LaunchComponent} from './launch/launch.component';
+import {MainComponent} from './main/main.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
@@ -19,8 +19,10 @@ import {MatRadioModule} from "@angular/material/radio";
 import {MatCardModule} from "@angular/material/card";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatListModule} from "@angular/material/list";
-import { PatientDemographicsComponent } from './components/patient-demographics/patient-demographics.component';
-import { LandingComponent } from './components/landing/landing.component';
+import {PatientDemographicsComponent} from './components/patient-demographics/patient-demographics.component';
+import {LandingComponent} from './components/landing/landing.component';
+import {ActiveRefferalsComponent} from './components/active-refferals/active-refferals.component';
+import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
   declarations: [
@@ -28,7 +30,8 @@ import { LandingComponent } from './components/landing/landing.component';
     LaunchComponent,
     MainComponent,
     PatientDemographicsComponent,
-    LandingComponent
+    LandingComponent,
+    ActiveRefferalsComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +51,7 @@ import { LandingComponent } from './components/landing/landing.component';
     MatButtonToggleModule,
     MatTooltipModule,
     MatListModule,
+    MatSidenavModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,10 +1,21 @@
-<mat-toolbar color="primary">
-  <span style="cursor: pointer">BSeR</span>
-  <span style="margin-left: 1em">
-    <button mat-flat-button color="primary">View Referrals</button>
-    <button mat-flat-button color="primary">Refer Patient</button>
-  </span>
-</mat-toolbar>
-<app-patient-demographics></app-patient-demographics>
+<div class="flex-wrapper">
 
-<router-outlet></router-outlet>
+  <div class="header-wrapper">
+
+    <mat-toolbar color="primary">
+      <span style="cursor: pointer">BSeR</span>
+      <span style="margin-left: 1em">
+        <button mat-flat-button color="primary">View Referrals</button>
+        <button mat-flat-button color="primary">Refer Patient</button>
+      </span>
+    </mat-toolbar>
+
+    <app-patient-demographics></app-patient-demographics>
+
+  </div>
+
+  <div class="router-outlet-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>
