@@ -19,12 +19,16 @@ import {MatRadioModule} from "@angular/material/radio";
 import {MatCardModule} from "@angular/material/card";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatListModule} from "@angular/material/list";
+import { PatientDemographicsComponent } from './components/patient-demographics/patient-demographics.component';
+import { LandingComponent } from './components/landing/landing.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LaunchComponent,
-    MainComponent
+    MainComponent,
+    PatientDemographicsComponent,
+    LandingComponent
   ],
   imports: [
     BrowserModule,
