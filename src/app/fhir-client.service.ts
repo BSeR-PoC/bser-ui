@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { oauth2 as SmartClient } from 'fhirclient';
 import { environment } from "../environments/environment";
-import {from, Observable} from 'rxjs';
+import {from, Observable, switchMap} from 'rxjs';
 
 
 @Injectable({
@@ -65,12 +65,16 @@ export class FhirClientService {
       })
   }
 
-  getPatient(client): Observable<any> {
-    return from (client.patient.read())
-  }
-
   getClient(): Observable<any> {
     return from (SmartClient.ready())
+  }
+
+  getPatient(): Observable<any>{
+    return this.getClient().pipe(
+      switchMap(client => {
+        return from (client.patient.read())
+      })
+    )
   }
 
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FhirClientService} from "../fhir-client.service";
-import {from, switchMap} from 'rxjs';
+import {from, switchMap, map} from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -14,12 +14,9 @@ export class MainComponent implements OnInit {
   ngOnInit(): void {
     this.fhirClient.readyClient();
 
-    this.fhirClient.getClient().pipe(
-      switchMap(
-        client => this.fhirClient.getPatient(client))
-    ).subscribe({
-      next:(result) => this.data = result
-    });
+    this.fhirClient.getPatient().subscribe({
+      next: (result) => this.data = result
+    })
   }
 
 }

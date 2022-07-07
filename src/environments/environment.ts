@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  fhirClientId: '78b382a3-66dd-43b5-9dc9-9e07f9622824', // OMOPonFHIR Smart Client ID.
+  fhirClientId: 'b7a96f8d-2ef1-44b4-b067-3946b2808883', // OMOPonFHIR Smart Client ID.
   fhirScope: 'launch profile openid online_access patient/Patient.read patient/Condition.read patient/Observation.read patient/MedicationStatement.read', // App Smart FHIR Scope.
   fhirIss: 'https://apps.hdap.gatech.edu/omopv53onfhir4/fhir', // App Smart FHIR ISS. (Server)
   fhirRedirectUri: 'https://localhost:4200/', // App Smart Redirect URL.
