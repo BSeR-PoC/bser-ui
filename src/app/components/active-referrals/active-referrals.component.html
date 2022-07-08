@@ -3,7 +3,7 @@
   <div class="controls">
     <div style="font-size: large">Referrals</div>
     <div class="spacer"></div>
-    <button mat-raised-button color="primary">Create Referral</button>
+    <button mat-raised-button color="primary" [routerLink]="'/create-referral'">Create Referral</button>
   </div>
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">

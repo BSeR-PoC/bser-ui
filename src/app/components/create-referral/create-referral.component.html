@@ -1,0 +1,18 @@
+<div class="container top-spacer">
+  <mat-stepper linear #stepper>
+    <mat-step  label="Select Recipient">
+      Select Recipient Content
+    </mat-step>
+    <mat-step label="General Information and Service Type">
+      General Information and Service Type Content
+    </mat-step>
+    <mat-step  label="Supporting Information">
+      Supporting Information Content
+      <p>You are now done.</p>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</div>
