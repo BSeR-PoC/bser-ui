@@ -15,9 +15,10 @@ export class ActiveReferralsComponent implements OnInit {
 
   ngOnInit(): void {
     this.mockDataRetrievalService.getActiveReferrals()
-      .subscribe(
-        (data: any) => this.dataSource = data
-      )
+      .subscribe({
+        next: (data: any) => this.dataSource = data,
+        error: console.error
+      });
   }
 
 }
