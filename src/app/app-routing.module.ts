@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {LaunchComponent} from "./launch/launch.component";
-import {ActiveRefferalsComponent} from "./components/active-refferals/active-refferals.component";
+import {ActiveReferralsComponent} from "./components/active-referrals/active-referrals.component";
 
 const routes: Routes = [
-  { path: '', component: ActiveRefferalsComponent},
+  { path: '', component: ActiveReferralsComponent},
   { path: 'launch', component: LaunchComponent}
 ];
 

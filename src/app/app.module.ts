@@ -20,7 +20,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatListModule} from "@angular/material/list";
 import {PatientDemographicsComponent} from './components/patient-demographics/patient-demographics.component';
-import {ActiveRefferalsComponent} from './components/active-refferals/active-refferals.component';
+import {ActiveReferralsComponent} from './components/active-referrals/active-referrals.component';
 import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
@@ -29,7 +29,7 @@ import {MatSidenavModule} from "@angular/material/sidenav";
     LaunchComponent,
     MainComponent,
     PatientDemographicsComponent,
-    ActiveRefferalsComponent
+    ActiveReferralsComponent
   ],
   imports: [
     BrowserModule,

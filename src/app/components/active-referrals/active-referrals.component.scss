@@ -1,0 +1,14 @@
+table {
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  align-items: flex-end;
+}
+
+.spacer {
+  flex-grow: 1;
+}

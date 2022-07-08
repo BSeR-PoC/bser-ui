@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ActiveRefferalsComponent } from './active-refferals.component';
+import { ActiveReferralsComponent } from './active-refferals.component';
 
 describe('ActiveRefferalsComponent', () => {
-  let component: ActiveRefferalsComponent;
-  let fixture: ComponentFixture<ActiveRefferalsComponent>;
+  let component: ActiveReferralsComponent;
+  let fixture: ComponentFixture<ActiveReferralsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ActiveRefferalsComponent ]
+      declarations: [ ActiveReferralsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ActiveRefferalsComponent);
+    fixture = TestBed.createComponent(ActiveReferralsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
