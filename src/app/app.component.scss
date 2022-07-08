@@ -1,25 +1,25 @@
-.flex-wrapper {
-  width: 100%;
+html,
+body,
+.page {
+  margin: 0;
   height: 100%;
+}
+
+.page {
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
-  align-items: stretch;
 }
 
-.header-wrapper {
-  flex: 0;
+.header {
+  flex: 0 0 auto;
 }
 
-.content-wrapper {
-  flex: 1;
+.footer {
+  flex: 0 0 auto;
 }
 
-app-bundle-browser {
-  flex: 1 1 auto !important;
-}
-
-.router-outlet-wrapper {
-  flex: 1 1 0;
+.content {
+  flex: 1 1 auto;
+  position: relative;
   overflow-y: auto;
 }

@@ -1,21 +1,18 @@
-<div class="flex-wrapper">
+<div class="page">
 
-  <div class="header-wrapper">
+  <div class="header">
 
-    <mat-toolbar color="primary">
-      <span style="cursor: pointer">BSeR</span>
-      <span style="margin-left: 1em">
-        <button mat-flat-button color="primary">View Referrals</button>
-        <button mat-flat-button color="primary">Refer Patient</button>
-      </span>
+    <mat-toolbar style="background-color: #002171; color: white">
+      <span style="cursor: pointer">BSeR Referral Manager</span>
     </mat-toolbar>
 
     <app-patient-demographics></app-patient-demographics>
 
   </div>
 
-  <div class="router-outlet-wrapper">
+  <div class="content">
     <router-outlet></router-outlet>
   </div>
+  <footer>I am a footer</footer>
 
 </div>
