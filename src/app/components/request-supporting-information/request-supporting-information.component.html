@@ -1,0 +1,30 @@
+<form [formGroup]="supportingInformationForm" (ngSubmit)="onSubmit()">
+
+  <div class="row">
+    <h1>Service Type</h1>
+  </div>
+
+  <div class="row">
+    <mat-label>Favorite food</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let food of foods" [value]="food.value">
+        {{food.viewValue}}
+      </mat-option>
+    </mat-select>
+  </div>
+
+  <div class="row" style="margin-top: 1em">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Allergies/Intolerances</mat-label>
+      <textarea matInput type='text' formControlName="allergies" rows="10"></textarea>
+    </mat-form-field>
+  </div>
+
+  <div class="row" style="margin-top: 1em">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Medical History</mat-label>
+      <textarea matInput type='text' formControlName="medicalHistory" rows="10"></textarea>
+    </mat-form-field>
+  </div>
+
+</form>

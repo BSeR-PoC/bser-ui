@@ -28,6 +28,8 @@ import { ServiceProviderComponent } from './components/service-provider/service-
 import { ServiceProviderListComponent } from './components/service-provider-list/service-provider-list.component';
 import { PatientGeneralInformationComponent } from './components/patient-general-information/patient-general-information.component';
 import {ReactiveFormsModule} from "@angular/forms";
+import { RequestSupportingInformationComponent } from './components/request-supporting-information/request-supporting-information.component';
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import {ReactiveFormsModule} from "@angular/forms";
     ServiceProviderComponent,
     ServiceProviderListComponent,
     PatientGeneralInformationComponent,
+    RequestSupportingInformationComponent,
   ],
   imports: [
     BrowserModule,
@@ -62,6 +65,7 @@ import {ReactiveFormsModule} from "@angular/forms";
     MatSidenavModule,
     MatStepperModule,
     ReactiveFormsModule,
+    MatSelectModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
