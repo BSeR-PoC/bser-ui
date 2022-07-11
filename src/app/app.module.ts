@@ -26,6 +26,8 @@ import { CreateReferralComponent } from './components/create-referral/create-ref
 import {MatStepperModule} from "@angular/material/stepper";
 import { ServiceProviderComponent } from './components/service-provider/service-provider.component';
 import { ServiceProviderListComponent } from './components/service-provider-list/service-provider-list.component';
+import { PatientGeneralInformationComponent } from './components/patient-general-information/patient-general-information.component';
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -37,6 +39,7 @@ import { ServiceProviderListComponent } from './components/service-provider-list
     CreateReferralComponent,
     ServiceProviderComponent,
     ServiceProviderListComponent,
+    PatientGeneralInformationComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,6 +61,7 @@ import { ServiceProviderListComponent } from './components/service-provider-list
     MatListModule,
     MatSidenavModule,
     MatStepperModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

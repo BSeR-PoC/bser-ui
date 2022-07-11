@@ -1,0 +1,45 @@
+<!-- TODO In addition to the form functionality we need to extract all the css into classes-->
+
+<form [formGroup]="patientGeneralInformationForm" (ngSubmit)="onSubmit()">
+
+  <div class="row">
+    <mat-form-field class="col" appearance="outline" class="col" style="margin-right: 1em">
+      <mat-label>Height</mat-label>
+      <input matInput type='text' formControlName="height">
+      <mat-hint>I think we need to have the units we want here (metric or standard)</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="col" style="margin-left: 1em; margin-right: 1em">
+      <mat-label>Weight</mat-label>
+      <input matInput type='text' formControlName="weight">
+      <mat-hint>I think we need to have the units we want here (metric or standard)</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col"  style="margin-right: 1em">
+      <mat-label>BMI</mat-label>
+      <input matInput type='text' formControlName="bmi">
+      <mat-hint>I think we need to have the units we want here (metric or standard)</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="col" style="margin-left: 1em; margin-right: 1em">
+      <mat-label>BP</mat-label>
+      <input matInput type='text' formControlName="bp">
+      <mat-hint>I think we need to have the units we want here.</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <div class="row" style="margin-top: 1em">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Allergies/Intolerances</mat-label>
+      <textarea matInput type='text' formControlName="allergies" rows="10"></textarea>
+    </mat-form-field>
+  </div>
+
+  <div class="row" style="margin-top: 1em">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Medical History</mat-label>
+      <textarea matInput type='text' formControlName="medicalHistory" rows="10"></textarea>
+    </mat-form-field>
+  </div>
+
+</form>
