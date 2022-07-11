@@ -1,18 +1,38 @@
 <div class="container top-spacer">
-  <mat-stepper linear #stepper>
-    <mat-step  label="Select Recipient">
-      Select Recipient Content
-    </mat-step>
-    <mat-step label="General Information and Service Type">
-      General Information and Service Type Content
-    </mat-step>
-    <mat-step  label="Supporting Information">
-      Supporting Information Content
-      <p>You are now done.</p>
-      <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button (click)="stepper.reset()">Reset</button>
-      </div>
-    </mat-step>
-  </mat-stepper>
+
+  <mat-card>
+
+    <mat-card-content>
+      <mat-stepper linear #stepper>
+
+        <!-- Select a Provider (for example YMCA) -->
+        <mat-step label="Select Recipient">
+          <div class="scrollable-container">
+            <app-service-provider-list></app-service-provider-list>
+          </div>
+        </mat-step>
+
+        <mat-step label="General Information and Service Type">
+          General Information and Service Type Content
+        </mat-step>
+        <mat-step label="Supporting Information">
+          Supporting Information Content
+          <p>You are now done.</p>
+          <div>
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button (click)="stepper.reset()">Reset</button>
+          </div>
+        </mat-step>
+
+      </mat-stepper>
+    </mat-card-content>
+
+    <mat-card-actions align="end" style="margin-right: 2em; margin-bottom: 1em">
+      <button mat-raised-button>Cancel</button>
+      <button mat-raised-button>Save and Exit</button>
+      <button mat-raised-button>Save and Continue</button>
+    </mat-card-actions>
+
+  </mat-card>
+
 </div>

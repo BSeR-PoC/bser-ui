@@ -24,6 +24,8 @@ import {ActiveReferralsComponent} from './components/active-referrals/active-ref
 import {MatSidenavModule} from "@angular/material/sidenav";
 import { CreateReferralComponent } from './components/create-referral/create-referral.component';
 import {MatStepperModule} from "@angular/material/stepper";
+import { ServiceProviderComponent } from './components/service-provider/service-provider.component';
+import { ServiceProviderListComponent } from './components/service-provider-list/service-provider-list.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import {MatStepperModule} from "@angular/material/stepper";
     MainComponent,
     PatientDemographicsComponent,
     ActiveReferralsComponent,
-    CreateReferralComponent
+    CreateReferralComponent,
+    ServiceProviderComponent,
+    ServiceProviderListComponent,
   ],
   imports: [
     BrowserModule,
