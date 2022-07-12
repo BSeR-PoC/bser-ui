@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {AppConstants} from "../../providers/app-constants";
 
 @Component({
   selector: 'app-patient-general-information',
@@ -10,7 +11,7 @@ export class PatientGeneralInformationComponent implements OnInit {
 
   patientGeneralInformationForm: FormGroup;
 
-  constructor() { }
+  constructor(public appConstants: AppConstants) { }
 
   ngOnInit(): void {
     this.patientGeneralInformationForm = new FormGroup({

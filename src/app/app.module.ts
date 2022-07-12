@@ -30,6 +30,7 @@ import { PatientGeneralInformationComponent } from './components/patient-general
 import {ReactiveFormsModule} from "@angular/forms";
 import { RequestSupportingInformationComponent } from './components/request-supporting-information/request-supporting-information.component';
 import {MatSelectModule} from "@angular/material/select";
+import {AppConstants} from "./providers/app-constants";
 
 @NgModule({
   declarations: [
@@ -67,7 +68,7 @@ import {MatSelectModule} from "@angular/material/select";
     ReactiveFormsModule,
     MatSelectModule,
   ],
-  providers: [],
+  providers: [ AppConstants ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
