@@ -5,12 +5,19 @@
   <mat-card-subtitle>Service Provider Info</mat-card-subtitle>
   <mat-card-content>
     <div *ngIf="serviceProvider?.selected"> {{serviceProvider?.details}}<br/>
-      We can add more content here as we need.
+      We can add more content here as we need.<br/><br/>
+      Address: 123 Main Street
     </div>
     <div *ngIf="!serviceProvider?.selected"> Minimal content.</div>
   </mat-card-content>
   <mat-card-actions>
-    <button *ngIf="!serviceProvider?.selected" mat-raised-button color="primary" (click)="onToggleSelectValue(serviceProvider)">Select</button>
-    <button *ngIf="serviceProvider?.selected" mat-raised-button (click)="onToggleSelectValue(serviceProvider)">Deselect</button>
+    <button *ngIf="!serviceProvider?.selected" mat-raised-button color="primary" (click)="onToggleSelectValue(serviceProvider)">
+      <mat-icon>check</mat-icon>
+      Select
+    </button>
+    <button *ngIf="serviceProvider?.selected" mat-raised-button color="primary" (click)="onToggleSelectValue(serviceProvider)">
+      <mat-icon>close</mat-icon>
+      Deselect
+    </button>
   </mat-card-actions>
 </mat-card>
