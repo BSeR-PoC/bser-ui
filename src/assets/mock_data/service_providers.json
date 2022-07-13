@@ -1,0 +1,26 @@
+[
+  {
+    "serviceProviderId": 1,
+    "name" : "YMCA_1",
+    "description": "YMCA details description",
+    "selected": false
+  },
+  {
+    "serviceProviderId": 2,
+    "name" : "YMCA_2",
+    "description": "YMCA_2 details description",
+    "selected": false
+  },
+  {
+    "serviceProviderId": 3,
+    "name" : "LA_Fitness_1",
+    "description": "LA Fitness details description",
+    "selected": false
+  },
+  {
+    "serviceProviderId": 4,
+    "name" : "LA_Fitness_2",
+    "description": "LA Fitness 2 details description",
+    "selected": false
+  }
+]

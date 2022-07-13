@@ -12,4 +12,8 @@ export class MockDataRetrievalService {
   getActiveReferrals(): Observable<any[]> {
     return this.http.get<any[]>('./assets/mock_data/active_referrals.json');
   }
+
+  getServiceProviders(): Observable<any[]> {
+    return this.http.get<any[]>('./assets/mock_data/service_providers.json');
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-service-provider',
@@ -7,9 +7,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ServiceProviderComponent implements OnInit {
 
+  @Input() serviceProvider: any;
+  @Output() updateSelectedValueEvent = new EventEmitter<any>();
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  onToggleSelectValue(serviceProvider: any) {
+    serviceProvider.selected = !serviceProvider.selected;
+    this.updateSelectedValueEvent.emit(serviceProvider);
   }
 
 }

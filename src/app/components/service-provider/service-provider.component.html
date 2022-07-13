@@ -1,10 +1,16 @@
-<mat-card class="mat-elevation-z3">
-  <mat-card-title>Service Provider</mat-card-title>
+<mat-card [class.mat-elevation-z1]="!serviceProvider?.selected" [class.mat-elevation-z8]="serviceProvider?.selected">
+  <mat-card-title [ngStyle]="{'color':serviceProvider.selected ? '#0d47a1' : '' }">
+    {{serviceProvider?.name}}
+  </mat-card-title>
   <mat-card-subtitle>Service Provider Info</mat-card-subtitle>
   <mat-card-content>
-    Service provider details.
+    <div *ngIf="serviceProvider?.selected"> {{serviceProvider?.details}}<br/>
+      We can add more content here as we need.
+    </div>
+    <div *ngIf="!serviceProvider?.selected"> Minimal content.</div>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button color="primary">Select</button>
+    <button *ngIf="!serviceProvider?.selected" mat-raised-button color="primary" (click)="onToggleSelectValue(serviceProvider)">Select</button>
+    <button *ngIf="serviceProvider?.selected" mat-raised-button (click)="onToggleSelectValue(serviceProvider)">Deselect</button>
   </mat-card-actions>
 </mat-card>
