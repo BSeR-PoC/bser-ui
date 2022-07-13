@@ -18,7 +18,7 @@
   </mat-card>
 
   <mat-card style="margin-top: 2em">
-    <mat-card-title>Patient supporting Info</mat-card-title>
+    <mat-card-title>Additional Patient Demographics</mat-card-title>
     <mat-card-content>
     <div class="row" style="margin-top: 1em">
       <div class="col">
@@ -36,18 +36,6 @@
       <div class="col">
         <mat-form-field appearance="outline">
           <mat-label>Employment Status</mat-label>
-          <mat-select>
-            <mat-option *ngFor="let employmentStatus of fhirTerminologyConstants.EMPLOYMENT_STATUS"
-                        [value]="fhirTerminologyConstants.EMPLOYMENT_STATUS">
-              {{employmentStatus.display}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <div class="col">
-        <mat-form-field appearance="outline">
-          <mat-label>Tobacco Smoking Status</mat-label>
           <mat-select>
             <mat-option *ngFor="let employmentStatus of fhirTerminologyConstants.EMPLOYMENT_STATUS"
                         [value]="fhirTerminologyConstants.EMPLOYMENT_STATUS">
