@@ -14,16 +14,15 @@
 
         <!-- Select supporting information -->
         <mat-step label="General Information and Service Type">
-          <app-request-supporting-information></app-request-supporting-information>
-          <p>You are now done.</p>
+          <app-general-information-and-service-type></app-general-information-and-service-type>
         </mat-step>
 
         <!-- Add Patient general information -->
-
-          <mat-step label="Supporting Information">
+        <mat-step label="Supporting Information">
           <div class="scrollable-container">
-            <app-patient-general-information></app-patient-general-information>
+            <app-request-supporting-information></app-request-supporting-information>
           </div>
+          <p>You are now done.</p>
           <div>
             <button mat-button matStepperPrevious>Back</button>
             <button mat-button (click)="stepper.reset()">Reset</button>

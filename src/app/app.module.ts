@@ -26,11 +26,12 @@ import { CreateReferralComponent } from './components/create-referral/create-ref
 import {MatStepperModule} from "@angular/material/stepper";
 import { ServiceProviderComponent } from './components/service-provider/service-provider.component';
 import { ServiceProviderListComponent } from './components/service-provider-list/service-provider-list.component';
-import { PatientGeneralInformationComponent } from './components/patient-general-information/patient-general-information.component';
+import { GeneralInformationAndServiceTypeComponent } from './components/general-information-and-service-type/general-information-and-service-type.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import { RequestSupportingInformationComponent } from './components/request-supporting-information/request-supporting-information.component';
 import {MatSelectModule} from "@angular/material/select";
 import {AppConstants} from "./providers/app-constants";
+import {FhirTerminologyConstants} from "./providers/fhir-terminology-constants";
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import {AppConstants} from "./providers/app-constants";
     CreateReferralComponent,
     ServiceProviderComponent,
     ServiceProviderListComponent,
-    PatientGeneralInformationComponent,
+    GeneralInformationAndServiceTypeComponent,
     RequestSupportingInformationComponent,
   ],
   imports: [
@@ -68,7 +69,7 @@ import {AppConstants} from "./providers/app-constants";
     ReactiveFormsModule,
     MatSelectModule,
   ],
-  providers: [ AppConstants ],
+  providers: [ AppConstants, FhirTerminologyConstants ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

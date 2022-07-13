@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {AppConstants} from "../../providers/app-constants";
 
 @Component({
   selector: 'app-request-supporting-information',
@@ -8,18 +9,14 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 })
 export class RequestSupportingInformationComponent implements OnInit {
 
-  foods: [
-    {value: 'steak-0', viewValue: 'Steak'},
-    {value: 'pizza-1', viewValue: 'Pizza'},
-    {value: 'tacos-2', viewValue: 'Tacos'},
-  ];
+  requestSupportingInformationForm: FormGroup;
 
-  supportingInformationForm: FormGroup;
-
-  constructor() { }
+  constructor(
+    public appConstants: AppConstants,
+  ) { }
 
   ngOnInit(): void {
-    this.supportingInformationForm = new FormGroup({
+    this.requestSupportingInformationForm = new FormGroup({
       'height':new FormControl(null, [Validators.required]),
       'weight':new FormControl(null, [Validators.required]),
       'bmi':new FormControl(null, [Validators.required]),
@@ -27,9 +24,9 @@ export class RequestSupportingInformationComponent implements OnInit {
       'allergies':new FormControl(null, [Validators.required]),
       'medicalHistory':new FormControl(null, [Validators.required]),
     });
-  }
-
-  onSubmit() {
 
   }
+
+  onSubmit() {}
+
 }
