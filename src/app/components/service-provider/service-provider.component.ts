@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ServiceProviderService} from "../../service/service-provider.service";
 
 @Component({
   selector: 'app-service-provider',
@@ -8,16 +9,19 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 export class ServiceProviderComponent implements OnInit {
 
   @Input() serviceProvider: any;
-  @Output() updateSelectedValueEvent = new EventEmitter<any>();
 
-  constructor() { }
+  constructor(private serviceProviderService: ServiceProviderService) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   onToggleSelectValue(serviceProvider: any) {
     serviceProvider.selected = !serviceProvider.selected;
-    this.updateSelectedValueEvent.emit(serviceProvider);
+    if(serviceProvider.selected){
+      this.serviceProviderService.setSelectedServiceProvider(serviceProvider);
+    }
+    else {
+      this.serviceProviderService.setSelectedServiceProvider(null);
+    }
   }
 
 }

@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
+import {ServiceProviderService} from "../../service/service-provider.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-service-provider-list',
@@ -9,27 +10,48 @@ import {MockDataRetrievalService} from "../../service/mock-data-retrieval.servic
 export class ServiceProviderListComponent implements OnInit {
 
   serviceProviders: any[] = null;
+  selectedServiceProvider$: Subscription;
+  selectedServiceProvider: any = null;
 
   constructor(
-    private mockDataRetrievalService: MockDataRetrievalService
+    private serviceProviderService: ServiceProviderService
   ) { }
 
-  ngOnInit(): void {
-    this.mockDataRetrievalService.getServiceProviders()
+  getServiceProviders(): void {
+    this.serviceProviderService.getServiceProviders()
       .subscribe({
         next: (data: any) => this.serviceProviders = data,
         error: console.error
       });
   }
 
-  // Only one item can be selected at a given time.
-  // The function set selected to false for all items except for the item passed as a function argument.
-  updateProviderSelectedValue(serviceProvider: any) {
-    this.serviceProviders.forEach(
-      provider => {
-        provider.serviceProviderId === serviceProvider.serviceProviderId ?
-          provider.selected = serviceProvider.selected : provider.selected = false
+  //This may need to just be extracted as a service
+  setServiceProviderList(): void {
+    this.selectedServiceProvider$ = this.serviceProviderService.getSelectedServiceProvider().subscribe({
+        next: selectedServiceProvider => {
+          if (selectedServiceProvider) {
+            this.serviceProviders.forEach(
+              serviceProvider => {
+                if (selectedServiceProvider.serverProviderId === selectedServiceProvider.serverProviderId) {
+                  serviceProvider = selectedServiceProvider;
+                }
+              }
+            );
+          } else {
+            this.serviceProviders?.forEach(serviceProvider => serviceProvider.selected = false)
+          }
+        }
       }
-    )
+    );
   }
+
+  ngOnInit(): void {
+    this.getServiceProviders();
+    this.setServiceProviderList();
+  }
+
+  ngOnDestroy() : void{
+    this.selectedServiceProvider$.unsubscribe();
+  }
+
 }

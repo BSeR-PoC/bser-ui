@@ -33,9 +33,9 @@
     </mat-card-content>
 
     <mat-card-actions align="end" style="margin-right: 2em; margin-bottom: 1em">
-      <button mat-raised-button>Cancel</button>
-      <button mat-raised-button>Save and Exit</button>
-      <button mat-raised-button>Save and Continue</button>
+      <button mat-raised-button (click)="onCancel()">Cancel</button>
+      <button mat-stroked-button color=primary [disabled]="!(selectedServiceProvider$ | async)">Save and Exit</button>
+      <button mat-raised-button color=primary [disabled]="!(selectedServiceProvider$ | async)">Save and Continue</button>
     </mat-card-actions>
 
   </mat-card>
