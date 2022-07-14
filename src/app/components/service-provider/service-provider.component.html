@@ -10,7 +10,7 @@
     </div>
     <div *ngIf="!serviceProvider?.selected"> Minimal content.</div>
   </mat-card-content>
-  <mat-card-actions>
+  <mat-card-actions  align="end">
     <button *ngIf="!serviceProvider?.selected" mat-raised-button color="primary"
             (click)="onToggleSelectValue(serviceProvider)">
       <mat-icon>check</mat-icon>
