@@ -1,66 +1,139 @@
 <!-- TODO In addition to the form functionality we need to extract all the css into classes-->
 
-<form [formGroup]="generalInformationAndServiceTypeForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="generalInfoServiceTypeForm" (ngSubmit)="onSubmit()" xmlns="http://www.w3.org/1999/html">
 
   <mat-card>
     <mat-card-title>Service Type Info</mat-card-title>
     <mat-card-content>
-      <mat-form-field appearance="outline">
-        <mat-label>Service Type</mat-label>
-        <mat-select>
-          <mat-option *ngFor="let educationLevel of fhirTerminologyConstants.EDUCATION_LEVEL"
-                      [value]="fhirTerminologyConstants.EDUCATION_LEVEL">
-            {{educationLevel.display}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="row" style="margin-top: 2em">
+        <mat-form-field appearance="outline" style="width: 40%">
+          <mat-label for="serviceType">
+            Service Type
+          </mat-label>
+          <mat-select id="serviceType" formControlName="serviceType">
+            <mat-option *ngFor="let educationLevel of fhirConstants.EDUCATION_LEVEL"
+                        [value]="educationLevel">
+              {{educationLevel.display}}
+            </mat-option>
+          </mat-select>
+          <mat-error>
+            Please select service type
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <b>Note:</b> &nbsp; Changing values here will not update the Patient's information in the local system, but will
+        change what
+        is sent to the Recipient Service Provider.
+      </div>
     </mat-card-content>
   </mat-card>
 
   <mat-card style="margin-top: 2em">
-
     <mat-card-title>Additional Patient Demographics</mat-card-title>
     <mat-card-content>
-    <div class="row" style="margin-top: 1em">
-      <div class="col">
-        <mat-form-field appearance="outline">
-          <mat-label>Education Level</mat-label>
-          <mat-select>
-            <mat-option *ngFor="let educationLevel of fhirTerminologyConstants.EDUCATION_LEVEL"
-                        [value]="fhirTerminologyConstants.EDUCATION_LEVEL">
-              {{educationLevel.display}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+
+      <!-- Select Race controls  -->
+      <div class="row" style="margin-top: 1em">
+
+        <div class="col">
+          <div style="width: 10em; font-size: medium;">
+            <mat-label  [ngStyle]="{ 'color': !isRaceSelected() && generalInfoServiceTypeForm.touched ? 'red' : '' }">
+              Race
+              <span *ngIf="!isRaceSelected() && generalInfoServiceTypeForm.touched">*</span>
+            </mat-label>
+          </div>
+          <div>
+
+            <mat-selection-list>
+              <mat-list-item
+                *ngFor="let category of generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes']['controls'];
+              let i=index;">
+                <mat-checkbox [formControl]="category" (change)="onRaceCategoryCheckboxChange($event)">
+                  <span style="font-size:14px">{{fhirConstants.RACE_CATEGORIES.slice(0, 5)[i].display}}</span>
+                </mat-checkbox>
+              </mat-list-item>
+            </mat-selection-list>
+
+            <mat-radio-group formControlName="raceCategoriesListRadioBtns" class="radio-group">
+              <mat-list-item *ngFor="let raceCategory of fhirConstants.RACE_CATEGORIES.slice(-2)">
+                <mat-radio-button [value]=raceCategory style="margin-top: 1em; margin-left: 1em"
+                                  (change)="onRaceCategoryRadioBtnChange($event)">
+                  {{raceCategory.display}}
+                </mat-radio-button>
+              </mat-list-item>
+            </mat-radio-group>
+
+            <mat-error *ngIf="!isRaceSelected()
+                && generalInfoServiceTypeForm.touched" style="font-size: 75%;">
+              Please select race
+            </mat-error>
+          </div>
+        </div>
+        <div class="col">
+          <div style="width: 10em; font-size: medium;">
+            <mat-label [ngStyle]="{ 'color': isControlValid('ethnicity', 'required')? 'red' : '' }">
+              Ethnicity
+              <span *ngIf="isControlValid('ethnicity', 'required')">*</span>
+            </mat-label>
+          </div>
+          <div>
+            <mat-radio-group formControlName="ethnicity" class="radio-group">
+              <mat-list-item *ngFor="let ethnicGroup of fhirConstants.ETHNICITY">
+                <mat-radio-button [value]=ethnicGroup style="margin-top: 1em; margin-left: 1em">
+                  {{ethnicGroup}}
+                </mat-radio-button>
+              </mat-list-item>
+            </mat-radio-group>
+          </div>
+          <mat-error *ngIf="isControlValid('ethnicity', 'required')" style="font-size: 75%;">
+            Please select ethnicity
+          </mat-error>
+
+        </div>
+
       </div>
 
-      <div class="col">
-        <mat-form-field appearance="outline">
-          <mat-label>Employment Status</mat-label>
-          <mat-select>
-            <mat-option *ngFor="let employmentStatus of fhirTerminologyConstants.EMPLOYMENT_STATUS"
-                        [value]="fhirTerminologyConstants.EMPLOYMENT_STATUS">
-              {{employmentStatus.display}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+      <div class="row" style="margin-top: 3em">
+        <div class=col>
+          <mat-form-field appearance="outline" style="width: 85%">
+            <mat-label>Education Level</mat-label>
+            <mat-select formControlName="educationLevel">
+              <mat-option *ngFor="let educationLevel of fhirConstants.EDUCATION_LEVEL"
+                          [value]="educationLevel">
+                {{educationLevel.display}}
+              </mat-option>
+            </mat-select>
+            <mat-error>
+              Please select education level
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col">
+          <mat-form-field appearance="outline" style="width: 85%">
+            <mat-label>Employment Status</mat-label>
+            <mat-select formControlName="employmentStatus">
+              <mat-option *ngFor="let employmentStatus of fhirConstants.EMPLOYMENT_STATUS"
+                          [value]="employmentStatus">
+                {{employmentStatus.display}}
+              </mat-option>
+            </mat-select>
+            <mat-error>
+              Please select employment status
+            </mat-error>
+          </mat-form-field>
+        </div>
       </div>
 
-<!--      <div class="col">-->
-<!--        <mat-form-field appearance="outline">-->
-<!--          <mat-label>Race and Ethnicity</mat-label>-->
-<!--          <mat-select>-->
-<!--            <mat-option *ngFor="let employmentStatus of fhirTerminologyConstants.EMPLOYMENT_STATUS"-->
-<!--                        [value]="fhirTerminologyConstants.EMPLOYMENT_STATUS">-->
-<!--              {{employmentStatus.display}}-->
-<!--            </mat-option>-->
-<!--          </mat-select>-->
-<!--        </mat-form-field>-->
-<!--      </div>-->
-    </div>
     </mat-card-content>
-
   </mat-card>
+
+  <div class="row" style="margin-top: 1em">
+    is Race selected {{isRaceSelected()}}
+    <button type="submit">Submit</button>
+    <button (click)="getFormStatus()">Get form Status</button>
+  </div>
 
 
 </form>

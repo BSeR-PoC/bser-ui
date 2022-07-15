@@ -32,6 +32,7 @@ import { RequestSupportingInformationComponent } from './components/request-supp
 import {MatSelectModule} from "@angular/material/select";
 import {AppConstants} from "./providers/app-constants";
 import {FhirTerminologyConstants} from "./providers/fhir-terminology-constants";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import {FhirTerminologyConstants} from "./providers/fhir-terminology-constants";
     MatStepperModule,
     ReactiveFormsModule,
     MatSelectModule,
+    MatCheckboxModule,
   ],
   providers: [ AppConstants, FhirTerminologyConstants ],
   bootstrap: [AppComponent]

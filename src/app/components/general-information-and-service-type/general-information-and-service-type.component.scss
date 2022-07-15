@@ -5,3 +5,17 @@
 .col {
   flex: 1;        /* distributes space on the line equally among items */
 }
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+
+.mat-form-field-label-wrapper {
+  transform: translateY(-20px) !important;
+}
+.mat-form-field-label {
+  transform: translateY(-20px) !important;
+}
