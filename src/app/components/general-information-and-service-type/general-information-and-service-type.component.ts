@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 
@@ -27,7 +27,6 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
       employmentStatus: new FormControl(null, [Validators.required]),
       ethnicity: new FormControl(null, [Validators.required])
     });
-
   }
 
   onSubmit() {
@@ -109,7 +108,17 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
     && this.generalInfoServiceTypeForm.get(controlName).touched;
   }
 
-  getFormStatus() {
-    console.log(this.generalInfoServiceTypeForm);
+  onCancel() {
+    this.generalInfoServiceTypeForm.reset();
+  }
+
+  onSaveAndContinue() {
+    console.log('onSaveAndContinue');
+    this.onSubmit();
+  }
+
+  onSaveAndExit() {
+    console.log('onSaveAndExit');
+    this.onSubmit();
   }
 }

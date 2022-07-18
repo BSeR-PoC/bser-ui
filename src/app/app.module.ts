@@ -33,6 +33,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {AppConstants} from "./providers/app-constants";
 import {FhirTerminologyConstants} from "./providers/fhir-terminology-constants";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import { SaveCancelFormControlsComponent } from './components/save-cancel-form-controls/save-cancel-form-controls.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     ServiceProviderListComponent,
     GeneralInformationAndServiceTypeComponent,
     RequestSupportingInformationComponent,
+    SaveCancelFormControlsComponent,
   ],
   imports: [
     BrowserModule,
