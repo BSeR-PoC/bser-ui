@@ -32,19 +32,17 @@
   <mat-card style="margin-top: 2em">
     <mat-card-title>Additional Patient Demographics</mat-card-title>
     <mat-card-content>
-
-      <!-- Select Race controls  -->
       <div class="row" style="margin-top: 1em">
 
+        <!-- Select Race controls  -->
         <div class="col">
           <div style="width: 10em; font-size: medium;">
-            <mat-label  [ngStyle]="{ 'color': !isRaceSelected() && generalInfoServiceTypeForm.touched ? 'red' : '' }">
-              Race
-              <span *ngIf="!isRaceSelected() && generalInfoServiceTypeForm.touched">*</span>
+            <mat-label [ngStyle]="{ 'color': !isRaceSelected() && generalInfoServiceTypeForm.touched ? 'red' : '' }">
+              Race&nbsp;*
             </mat-label>
           </div>
           <div>
-
+            <!-- checkboxes -->
             <mat-selection-list>
               <mat-list-item
                 *ngFor="let category of generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes']['controls'];
@@ -55,6 +53,7 @@
               </mat-list-item>
             </mat-selection-list>
 
+            <!-- radio buttons -->
             <mat-radio-group formControlName="raceCategoriesListRadioBtns" class="radio-group">
               <mat-list-item *ngFor="let raceCategory of fhirConstants.RACE_CATEGORIES.slice(-2)">
                 <mat-radio-button [value]=raceCategory style="margin-top: 1em; margin-left: 1em"
@@ -70,11 +69,12 @@
             </mat-error>
           </div>
         </div>
+
+        <!-- Select Ethnicity -->
         <div class="col">
           <div style="width: 10em; font-size: medium;">
             <mat-label [ngStyle]="{ 'color': isControlValid('ethnicity', 'required')? 'red' : '' }">
-              Ethnicity
-              <span *ngIf="isControlValid('ethnicity', 'required')">*</span>
+              Ethnicity&nbsp;*
             </mat-label>
           </div>
           <div>
@@ -89,7 +89,6 @@
           <mat-error *ngIf="isControlValid('ethnicity', 'required')" style="font-size: 75%;">
             Please select ethnicity
           </mat-error>
-
         </div>
 
       </div>
@@ -99,7 +98,8 @@
           <mat-form-field appearance="outline" style="width: 85%">
             <mat-label>Education Level</mat-label>
             <mat-select formControlName="educationLevel">
-              <mat-option *ngFor="let educationLevel of fhirConstants.EDUCATION_LEVEL"
+              <mat-option
+                *ngFor="let educationLevel of fhirConstants.EDUCATION_LEVEL"
                           [value]="educationLevel">
                 {{educationLevel.display}}
               </mat-option>
