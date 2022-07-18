@@ -6,7 +6,7 @@
       <mat-stepper linear #stepper>
 
         <!-- Select a Provider (for example YMCA) -->
-        <mat-step label="Select Recipient">
+        <mat-step label="Select Recipient" [completed]='isStepCompleted(1)' >
           <!--<div class="scrollable-container">-->
           <div>
             <app-service-provider-list
@@ -17,20 +17,20 @@
         </mat-step>
 
         <!-- Select supporting information -->
-        <mat-step label="General Information and Service Type">
-          <app-general-information-and-service-type></app-general-information-and-service-type>
+        <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)' >
+          <app-general-information-and-service-type
+            (savedSuccessEvent)="stepper.next()"
+          ></app-general-information-and-service-type>
         </mat-step>
 
         <!-- Add Patient general information -->
-        <mat-step label="Supporting Information">
+        <mat-step label="Supporting Information" [completed]='isStepCompleted(3)'>
           <div class="scrollable-container">
             <app-request-supporting-information></app-request-supporting-information>
           </div>
-<!--          <p>You are now done.</p>-->
-<!--          <div>-->
-<!--            <button mat-button matStepperPrevious>Back</button>-->
-<!--            <button mat-button (click)="stepper.reset()">Reset</button>-->
-<!--          </div>-->
+
+<!--          <button mat-button matStepperPrevious>Back</button>-->
+
         </mat-step>
 
       </mat-stepper>

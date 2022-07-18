@@ -72,4 +72,14 @@
     </mat-form-field>
   </div>
 
+  <div align="end" style="margin-top: 2em">
+    <app-save-cancel-form-controls
+      [isCancelEnabled]="true"
+      [isSubmitBtnRendered]="true"
+      [isSubmitBtnEnabled]="true"
+      (cancelEvent)= "onCancel()"
+      (submitEvent)="onSubmitData()"
+    ></app-save-cancel-form-controls>
+  </div>
+
 </form>

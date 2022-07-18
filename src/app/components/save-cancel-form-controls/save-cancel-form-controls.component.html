@@ -2,11 +2,16 @@
         [disabled]="!isCancelEnabled">
   Cancel
 </button>
-<button mat-stroked-button color=primary style="margin-right: 1em" (click)="onSaveAndExit()"
+<button *ngIf="!isSubmitBtnRendered" mat-stroked-button color=primary style="margin-right: 1em" (click)="onSaveAndExit()"
         [disabled]="!isSaveAndExitEnabled">
   Save and Exit
 </button>
-<button mat-raised-button color=primary (click)="onSaveAndContinue()"
+<button *ngIf="!isSubmitBtnRendered" mat-raised-button color=primary (click)="onSaveAndContinue()"
         [disabled]="!isSaveAndContinueEnabled">
   Save and Continue
+</button>
+
+<button *ngIf="isSubmitBtnRendered" mat-raised-button color=primary (click)="onSaveAndContinue()"
+        [disabled]="!isSubmitBtnEnabled">
+  Submit Data
 </button>

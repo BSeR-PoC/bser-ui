@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AppConstants} from "../../providers/app-constants";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-request-supporting-information',
@@ -13,6 +14,7 @@ export class RequestSupportingInformationComponent implements OnInit {
 
   constructor(
     public appConstants: AppConstants,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -28,5 +30,14 @@ export class RequestSupportingInformationComponent implements OnInit {
   }
 
   onSubmit() {}
+
+  onCancel() {
+
+  }
+
+  onSubmitData() {
+    this.onSubmit();
+    this.router.navigate(['/'])
+  }
 
 }

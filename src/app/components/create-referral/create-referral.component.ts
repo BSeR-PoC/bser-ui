@@ -7,11 +7,14 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 })
 export class CreateReferralComponent implements OnInit {
 
-
   constructor(
   ) { }
 
   ngOnInit(): void {
+  }
+
+  isStepCompleted(stepNumber: number): boolean {
+    return true;
   }
 
 }

@@ -11,10 +11,13 @@ export class SaveCancelFormControlsComponent {
   @Input() isCancelEnabled: boolean;
   @Input() isSaveAndExitEnabled: boolean;
   @Input() isSaveAndContinueEnabled: boolean;
+  @Input() isSubmitBtnRendered: boolean;
+  @Input() isSubmitBtnEnabled: boolean;
 
   @Output() cancelEvent = new EventEmitter();
   @Output() saveAndContinueEvent = new EventEmitter();
   @Output() saveAndExitEvent = new EventEmitter();
+  @Output() submitEvent = new EventEmitter();
 
   constructor() { }
 
@@ -28,6 +31,10 @@ export class SaveCancelFormControlsComponent {
 
   onSaveAndExit() {
     this.saveAndExitEvent.emit(null);
+  }
+
+  onSubmit() {
+    this.submitEvent.emit(null);
   }
 
 }

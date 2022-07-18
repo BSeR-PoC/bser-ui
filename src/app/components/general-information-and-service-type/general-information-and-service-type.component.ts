@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 
@@ -11,6 +11,8 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
 
    // Multiple checkbox reactive form solution inspired by:
    // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
+
+  @Output() savedSuccessEvent = new EventEmitter();
 
   generalInfoServiceTypeForm: FormGroup;
 
@@ -30,9 +32,11 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.generalInfoServiceTypeForm );
-    console.log(this.getSelectedRaceCategories());
     this.generalInfoServiceTypeForm.markAllAsTouched();
+    if(this.generalInfoServiceTypeForm.valid){
+      this.savedSuccessEvent.emit();
+    }
+
   }
 
   getSelectedRaceCategories() {
