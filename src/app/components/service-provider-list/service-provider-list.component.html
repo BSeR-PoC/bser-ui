@@ -6,3 +6,14 @@
     </app-service-provider>
   </div>
 </div>
+
+<div align="end" style="margin-top: 2em">
+  <app-save-cancel-form-controls
+    [isCancelEnabled]="true"
+    [isSaveAndContinueEnabled]="isSaveAndContinueEnabled()"
+    [isSaveAndExitEnabled]="isSaveAndExitEnabled()"
+    (cancelEvent)= "onCancel()"
+    (saveAndContinueEvent)="onSaveAndContinue()"
+    (saveAndExitEvent)="onSaveAndExit()"
+  ></app-save-cancel-form-controls>
+</div>

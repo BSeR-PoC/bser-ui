@@ -9,8 +9,10 @@
         <mat-step label="Select Recipient">
           <!--<div class="scrollable-container">-->
           <div>
-<!--            <app-service-provider-list></app-service-provider-list>-->
-            <app-general-information-and-service-type></app-general-information-and-service-type>
+            <app-service-provider-list
+              (savedSuccessEvent)="stepper.next()"
+            ></app-service-provider-list>
+<!--            <app-general-information-and-service-type></app-general-information-and-service-type>-->
           </div>
         </mat-step>
 
@@ -33,12 +35,6 @@
 
       </mat-stepper>
     </mat-card-content>
-
-    <mat-card-actions align="end" style="margin-right: 2em; margin-bottom: 1em">
-      <button mat-raised-button (click)="onCancel()">Cancel</button>
-      <button mat-stroked-button color=primary [disabled]="!(selectedServiceProvider$ | async)">Save and Exit</button>
-      <button mat-raised-button color=primary [disabled]="!(selectedServiceProvider$ | async)">Save and Continue</button>
-    </mat-card-actions>
 
   </mat-card>
 

@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import {Observable, Subscription} from "rxjs";
-import {ServiceProviderService} from "../../service/service-provider.service";
+import {Component, OnInit, ViewChild} from '@angular/core';
 
 @Component({
   selector: 'app-create-referral',
@@ -9,22 +7,11 @@ import {ServiceProviderService} from "../../service/service-provider.service";
 })
 export class CreateReferralComponent implements OnInit {
 
-  selectedServiceProvider$: Observable<any>;
-  // selectedServiceProvider: any = null;
 
   constructor(
-    private serviceProviderService: ServiceProviderService
   ) { }
 
   ngOnInit(): void {
-    this.selectedServiceProvider$ = this.serviceProviderService.getSelectedServiceProvider();
   }
 
-  ngOnDestroy() : void{
-   // this.selectedServiceProvider$.unsubscribe();
-  }
-
-  onCancel() {
-    this.serviceProviderService.setSelectedServiceProvider(null);
-  }
 }

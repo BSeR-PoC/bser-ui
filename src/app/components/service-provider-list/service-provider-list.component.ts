@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {ServiceProviderService} from "../../service/service-provider.service";
 import {Subscription} from "rxjs";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-service-provider-list',
@@ -13,8 +14,11 @@ export class ServiceProviderListComponent implements OnInit {
   selectedServiceProvider$: Subscription;
   selectedServiceProvider: any = null;
 
+  @Output() savedSuccessEvent = new EventEmitter();
+
   constructor(
-    private serviceProviderService: ServiceProviderService
+    private serviceProviderService: ServiceProviderService,
+    private router: Router
   ) { }
 
   getServiceProviders(): void {
@@ -30,14 +34,19 @@ export class ServiceProviderListComponent implements OnInit {
     this.selectedServiceProvider$ = this.serviceProviderService.getSelectedServiceProvider().subscribe({
         next: selectedServiceProvider => {
           if (selectedServiceProvider) {
-            this.serviceProviders.forEach(
+            this.serviceProviders = this.serviceProviders.map(
               serviceProvider => {
-                if (selectedServiceProvider.serverProviderId === selectedServiceProvider.serverProviderId) {
+                if (selectedServiceProvider.serviceProviderId === serviceProvider.serviceProviderId) {
                   serviceProvider = selectedServiceProvider;
                 }
+                else {
+                  serviceProvider.selected = false;
+                }
+                return serviceProvider;
               }
             );
-          } else {
+          }
+          else {
             this.serviceProviders?.forEach(serviceProvider => serviceProvider.selected = false)
           }
         }
@@ -54,4 +63,27 @@ export class ServiceProviderListComponent implements OnInit {
     this.selectedServiceProvider$.unsubscribe();
   }
 
+  onCancel() {
+    // TODO not sure what action we are going to take here?
+  }
+
+  onSaveAndContinue() {
+    this.savedSuccessEvent.emit();
+  }
+
+  onSaveAndExit() {
+    //TODO api call to save the state must be executed here
+    console.log("onSaveAndExit");
+    this.router.navigate(['/'])
+  }
+
+  isSaveAndContinueEnabled() {
+    // True if at least one service provider is selected
+    return this.serviceProviders?.find(provider=>provider.selected);
+  }
+
+  isSaveAndExitEnabled() {
+    // True if at least one service provider is selected
+    return this.serviceProviders?.find(provider=>provider.selected);
+  }
 }
