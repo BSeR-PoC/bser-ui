@@ -1,85 +1,87 @@
 <!-- TODO In addition to the form functionality we need to extract all the css into classes-->
+<div class="scrollable-container">
+  <form [formGroup]="requestSupportingInformationForm" (ngSubmit)="onSubmit()">
 
-<form [formGroup]="requestSupportingInformationForm" (ngSubmit)="onSubmit()">
+    <div class="row">
 
-  <div class="row">
-
-    <mat-form-field appearance="outline" class="col" style="margin-right: 1em">
-      <mat-label>Height</mat-label>
-      <input matInput type='text' formControlName="height">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" style="width: 7%; margin-right: 2em">
-      <mat-label>Unit</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let unit of appConstants.HEIGHT_UNITS" [value]="unit">
-          {{unit}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="col" style="margin-left: 2em; margin-right: 1em;">
-      <mat-label>Weight</mat-label>
-      <input matInput type='text' formControlName="weight">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" style="width: 7%; margin-right: 2em;">
-      <mat-label>Unit</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let unit of appConstants.WEIGHT_UNITS" [value]="unit">
-          {{unit}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" style="margin-left: 2em;">
-      <mat-label>BMI</mat-label>
-      <span matSuffix>kg/m²</span>
-      <input matInput type='text' formControlName="bmi">
-    </mat-form-field>
-
-  </div>
-
-  <div class="row">
-    <div class="col">
-      <mat-form-field appearance="outline" style="width: 14%">
-        <mat-label>BP (SYS)</mat-label>
-        <span matSuffix>mmHg</span>
-        <input matInput type='text' formControlName="bp">
+      <mat-form-field appearance="outline" class="col" style="margin-right: 1em">
+        <mat-label>Height</mat-label>
+        <input matInput type='text' formControlName="height">
       </mat-form-field>
 
-      <span style="margin-right: 1em; margin-left: 1em; font-weight: bold; font-size: x-large">/</span>
+      <mat-form-field appearance="outline" style="width: 7%; margin-right: 2em">
+        <mat-label>Unit</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let unit of appConstants.HEIGHT_UNITS" [value]="unit">
+            {{unit}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-      <mat-form-field appearance="outline" style="margin-right: 1em; width: 14%">
-        <mat-label>BP (DIA)</mat-label>
-        <span matSuffix>mmHg</span>
-        <input matInput type='text' formControlName="bp">
+      <mat-form-field appearance="outline" class="col" style="margin-left: 2em; margin-right: 1em;">
+        <mat-label>Weight</mat-label>
+        <input matInput type='text' formControlName="weight">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="width: 7%; margin-right: 2em;">
+        <mat-label>Unit</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let unit of appConstants.WEIGHT_UNITS" [value]="unit">
+            {{unit}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="margin-left: 2em;">
+        <mat-label>BMI</mat-label>
+        <span matSuffix>kg/m²</span>
+        <input matInput type='text' formControlName="bmi">
+      </mat-form-field>
+
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="outline" style="width: 14%">
+          <mat-label>BP (SYS)</mat-label>
+          <span matSuffix>mmHg</span>
+          <input matInput type='text' formControlName="bp">
+        </mat-form-field>
+
+        <span style="margin-right: 1em; margin-left: 1em; font-weight: bold; font-size: x-large">/</span>
+
+        <mat-form-field appearance="outline" style="margin-right: 1em; width: 14%">
+          <mat-label>BP (DIA)</mat-label>
+          <span matSuffix>mmHg</span>
+          <input matInput type='text' formControlName="bp">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 1em">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Allergies/Intolerances</mat-label>
+        <textarea matInput type='text' formControlName="allergies" rows="6"></textarea>
       </mat-form-field>
     </div>
-  </div>
 
-  <div class="row" style="margin-top: 1em">
-    <mat-form-field appearance="outline" class="col">
-      <mat-label>Allergies/Intolerances</mat-label>
-      <textarea matInput type='text' formControlName="allergies" rows="6"></textarea>
-    </mat-form-field>
-  </div>
+    <div class="row" style="margin-top: 1em">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Medical History</mat-label>
+        <textarea matInput type='text' formControlName="medicalHistory" rows="10"></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</div>
 
-  <div class="row" style="margin-top: 1em">
-    <mat-form-field appearance="outline" class="col">
-      <mat-label>Medical History</mat-label>
-      <textarea matInput type='text' formControlName="medicalHistory" rows="10"></textarea>
-    </mat-form-field>
-  </div>
+<div align="end" style="margin-top: 2em">
+  <app-save-cancel-form-controls
+    [isCancelEnabled]="true"
+    [isSubmitBtnRendered]="true"
+    [isSubmitBtnEnabled]="true"
+    (cancelEvent)="onCancel()"
+    (submitEvent)="onSubmitData()"
+  ></app-save-cancel-form-controls>
+</div>
 
-  <div align="end" style="margin-top: 2em">
-    <app-save-cancel-form-controls
-      [isCancelEnabled]="true"
-      [isSubmitBtnRendered]="true"
-      [isSubmitBtnEnabled]="true"
-      (cancelEvent)= "onCancel()"
-      (submitEvent)="onSubmitData()"
-    ></app-save-cancel-form-controls>
-  </div>
 
-</form>

@@ -22,5 +22,11 @@
     "name" : "LA_Fitness_2",
     "description": "LA Fitness 2 details description",
     "selected": false
+  },
+  {
+    "serviceProviderId": 5,
+    "name" : "LA_Fitness_3",
+    "description": "LA Fitness 3 details description",
+    "selected": false
   }
 ]

@@ -1,9 +1,11 @@
-<div *ngFor="let serviceProvider of serviceProviders">
-  <div style="margin-bottom: 1em">
-    <app-service-provider
-      [serviceProvider]=serviceProvider
-    >
-    </app-service-provider>
+<div class="scrollable-container">
+  <div *ngFor="let serviceProvider of serviceProviders">
+    <div style="margin-bottom: 1em">
+      <app-service-provider
+        [serviceProvider]=serviceProvider
+      >
+      </app-service-provider>
+    </div>
   </div>
 </div>
 

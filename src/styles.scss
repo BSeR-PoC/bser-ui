@@ -3,7 +3,6 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-
 .spacer {
   flex: 1 1 auto;
 }
@@ -15,6 +14,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-right: auto;
   margin-left: auto;
 }
+
 @media (min-width: 768px) {
   .container {
     width: 750px;
@@ -33,5 +33,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .top-spacer{
   padding-top: 15px;
+}
+
+.scrollable-container {
+  height: 50vh;
+  max-width: 100%;
+  overflow: scroll;
+  padding-left: 1em;
+  padding-right: 1em;
+  margin-top: 1em;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #eceff1
 }
 
