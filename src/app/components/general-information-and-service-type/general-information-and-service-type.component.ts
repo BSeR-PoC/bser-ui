@@ -1,6 +1,7 @@
 import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-general-information-and-service-type',
@@ -13,11 +14,14 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
    // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
 
   @Output() savedSuccessEvent = new EventEmitter();
+  SAVE_AND_EXIT = 'saveAndExit';
+  SAVE_AND_CONTINUE = 'saveAndContinue';
 
   generalInfoServiceTypeForm: FormGroup;
 
   constructor(
-    public fhirConstants: FhirTerminologyConstants
+    public fhirConstants: FhirTerminologyConstants,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -31,28 +35,16 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  submit(nextState: string) {
     this.generalInfoServiceTypeForm.markAllAsTouched();
     if(this.generalInfoServiceTypeForm.valid){
-      this.savedSuccessEvent.emit();
+      if(nextState === this.SAVE_AND_EXIT){
+        this.router.navigate(['/'])
+      }
+      else if (nextState === this.SAVE_AND_CONTINUE){
+        this.savedSuccessEvent.emit();
+      }
     }
-
-  }
-
-  getSelectedRaceCategories() {
-    const result =  this.generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes']["controls"]
-      .map(
-        (category, i) => {
-          if(category.value){
-            return this.fhirConstants.RACE_CATEGORIES.slice(0,5)[i]
-          }
-          else {
-            return null
-          }
-        }
-      )
-      .filter( item => item !== null)
-    return result;
   }
 
   private createRaceCategoryControls(raceCategories) {
@@ -117,12 +109,10 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   }
 
   onSaveAndContinue() {
-    console.log('onSaveAndContinue');
-    this.onSubmit();
+    this.submit(this.SAVE_AND_CONTINUE);
   }
 
   onSaveAndExit() {
-    console.log('onSaveAndExit');
-    this.onSubmit();
+    this.submit(this.SAVE_AND_EXIT);
   }
 }
