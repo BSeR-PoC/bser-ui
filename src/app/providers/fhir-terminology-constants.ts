@@ -130,11 +130,23 @@ export class FhirTerminologyConstants{
       "display": "Asked but no answer",
       "definition": "Information was sought but not found (e.g., patient was asked but didn't know)",
     },
-  ]
+  ];
 
   // We are using the two core 2 OMB ethnicity categories
   // http://hl7.org/fhir/us/core/STU5/StructureDefinition-us-core-ethnicity.html
-  ETHNICITY = ["Hispanic or Latino", "Not Hispanic or Latino"]
+  ETHNICITY = ["Hispanic or Latino", "Not Hispanic or Latino"];
+
+  //http://hl7.org/fhir/us/core/STU3.1/ValueSet-us-core-observation-smokingstatus.html
+  SMOKING_STATUS = [
+    {"code": "449868002",         "display":	"Current every day smoker"},
+    {"code": "428041000124106	",  "display":	"Current some day smoker"},
+    {"code": "8517006",           "display":	"Former smoker"},
+    {"code": "266919005",         "display":	"Never smoker"},
+    {"code": "77176002",          "display":	"Smoker, current status unknown"},
+    {"code": "266927001",         "display":	"Unknown if ever smoked"},
+    {"code": "428071000124103",   "display": "Current Heavy tobacco smoker"},
+    {"code": "428061000124105",   "display":	"Current Light tobacco smoker"},
+  ];
 
 
 }

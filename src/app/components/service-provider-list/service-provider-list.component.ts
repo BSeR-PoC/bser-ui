@@ -83,29 +83,13 @@ export class ServiceProviderListComponent implements OnInit {
             // redirect to home
           }
           else if(action == 'confirmed'){
-            // execute save
+            this.onSaveAndContinue();
           }
         }
       )
   }
 
   onSaveAndContinue() {
-    this.savedSuccessEvent.emit();
-  }
-
-  onSaveAndExit() {
-    //TODO api call to save the state must be executed here
-    console.log("onSaveAndExit");
-    this.router.navigate(['/'])
-  }
-
-  isSaveAndContinueEnabled() {
-    // True if at least one service provider is selected
-    return this.serviceProviders?.find(provider=>provider.selected);
-  }
-
-  isSaveAndExitEnabled() {
-    // True if at least one service provider is selected
-    return this.serviceProviders?.find(provider=>provider.selected);
+    this.savedSuccessEvent.emit({step: 1, data: this.selectedServiceProvider});
   }
 }
