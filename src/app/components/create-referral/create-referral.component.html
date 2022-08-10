@@ -7,12 +7,10 @@
 
         <!-- Select a Provider (for example YMCA) -->
         <mat-step label="Select Recipient" [completed]='isStepCompleted(1)' >
-          <!--<div class="scrollable-container">-->
           <div>
             <app-service-provider-list
               (savedSuccessEvent)="stepper.next()"
             ></app-service-provider-list>
-<!--            <app-general-information-and-service-type></app-general-information-and-service-type>-->
           </div>
         </mat-step>
 
@@ -28,9 +26,6 @@
           <div>
             <app-request-supporting-information></app-request-supporting-information>
           </div>
-
-<!--          <button mat-button matStepperPrevious>Back</button>-->
-
         </mat-step>
 
       </mat-stepper>

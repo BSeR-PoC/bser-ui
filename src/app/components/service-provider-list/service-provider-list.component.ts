@@ -2,6 +2,8 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {ServiceProviderService} from "../../service/service-provider.service";
 import {Subscription} from "rxjs";
 import {Router} from "@angular/router";
+import {MatDialog} from "@angular/material/dialog";
+import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 
 @Component({
   selector: 'app-service-provider-list',
@@ -18,7 +20,8 @@ export class ServiceProviderListComponent implements OnInit {
 
   constructor(
     private serviceProviderService: ServiceProviderService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) { }
 
   getServiceProviders(): void {
@@ -64,7 +67,26 @@ export class ServiceProviderListComponent implements OnInit {
   }
 
   onCancel() {
-    // TODO not sure what action we are going to take here?
+    openConformationDialog(
+      this.dialog,
+      {
+        title: "Save Changes",
+        content: "Save your current changes?",
+        confirmBtnTitle:"Save",
+        rejectBtnTitle:"Cancel",
+        width: "20em",
+        height: "12em"
+      })
+      .subscribe(
+        action=> {
+          if(action == 'rejected'){
+            // redirect to home
+          }
+          else if(action == 'confirmed'){
+            // execute save
+          }
+        }
+      )
   }
 
   onSaveAndContinue() {
