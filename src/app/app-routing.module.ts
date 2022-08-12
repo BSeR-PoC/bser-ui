@@ -6,7 +6,7 @@ import {CreateReferralComponent} from "./components/create-referral/create-refer
 import { ServiceRequestTesterComponent } from './service-request-tester/service-request-tester.component';
 
 const routes: Routes = [
-  { path: '', component: ActiveReferralsComponent},
+  { path: '', component: ServiceRequestTesterComponent},
   { path: 'create-referral', component: CreateReferralComponent},
   { path: 'launch', component: LaunchComponent},
   { path: 'servicerequesttest', component: ServiceRequestTesterComponent},

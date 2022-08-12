@@ -1,1 +1,24 @@
-<p>service-request-tester works!</p>
+
+<h2>Current Snapshot</h2>
+<pre>
+  {{ this.currentSnapshot | json }}
+</pre>
+
+<br>
+<p>
+<button mat-raised-button (click)="this.serviceRequestHandler.setRecipient(this.currentSnapshot, null)">
+  <mat-icon>add</mat-icon> Set Recipient Test
+</button>
+
+  <button mat-raised-button (click)="this.serviceRequestHandler.checkIfSnapshotStateChanged(this.currentSnapshot)">
+    <mat-icon>question_mark</mat-icon> Check Change
+  </button>
+<button mat-raised-button (click)="this.saveServiceRequest(this.currentSnapshot)">
+  <mat-icon>save</mat-icon> Save Service Request
+</button>
+</p>
+<br>
+<h2>Last Snapshot (Saved)</h2>
+<pre>
+  {{ this.lastSnapshot | json }}
+</pre>

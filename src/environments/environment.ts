@@ -9,6 +9,7 @@ export const environment = {
   fhirScope: 'launch profile openid online_access patient/Patient.read patient/Condition.read patient/Observation.read patient/MedicationStatement.read', // App Smart FHIR Scope.
   fhirIss: 'https://apps.hdap.gatech.edu/omopv53onfhir4/fhir', // App Smart FHIR ISS. (Server)
   fhirRedirectUri: 'https://localhost:4200/', // App Smart Redirect URL.
+  bserProviderServer: 'https://apps.hdap.gatech.edu/cqf-ruler-r4/fhir/' // Server base to manage BSeR workflow resources, Service Providers, etc.
 };
 
 /*
