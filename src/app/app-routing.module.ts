@@ -9,7 +9,7 @@ const routes: Routes = [
   { path: '', component: ActiveReferralsComponent},
   { path: 'create-referral', component: CreateReferralComponent},
   { path: 'launch', component: LaunchComponent},
-  { path: 'servicerequesttest', component: ServiceRequestTesterComponent}
+  { path: 'servicerequesttest', component: ServiceRequestTesterComponent},
   { // This path MUST ALWAYS be the last path!!!
     // Do not add any paths below this point or they will not work and will be redirected to landing.
     path: '**', redirectTo: ''
