@@ -42,6 +42,7 @@ import {
 } from './components/save-cancel-form-controls/save-cancel-form-controls.component';
 import { ConformationDialogComponent } from './components/conformation-dialog/conformation-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import { ServiceRequestTesterComponent } from './service-request-tester/service-request-tester.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import {MatDialogModule} from "@angular/material/dialog";
     RequestSupportingInformationComponent,
     SaveCancelFormControlsComponent,
     ConformationDialogComponent,
+    ServiceRequestTesterComponent,
   ],
   imports: [
     BrowserModule,
