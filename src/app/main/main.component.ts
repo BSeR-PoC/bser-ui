@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FhirClientService} from "../fhir-client.service";
-import {from, switchMap, map} from 'rxjs';
+import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
+
 
 @Component({
   selector: 'app-main',
@@ -8,15 +9,18 @@ import {from, switchMap, map} from 'rxjs';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
-  data: any;
+  patient: Patient;
   constructor(private fhirClient: FhirClientService) { }
 
   ngOnInit(): void {
-    this.fhirClient.readyClient();
+ //   this.fhirClient.readyClient();
 
     this.fhirClient.getPatient().subscribe({
-      next: (result) => this.data = result
+      next: (result) => {
+        this.patient = result;
+      }
     })
+
   }
 
 }

@@ -2,6 +2,10 @@ import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core'
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Router} from "@angular/router";
+import {FhirClientService} from "../../fhir-client.service";
+import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
+import * as fhir from "@fhir-typescript/r4-core/src/fhir";
+import {DomainResource} from "@fhir-typescript/r4-core/dist/fhir/DomainResource";
 
 @Component({
   selector: 'app-general-information-and-service-type',
@@ -10,38 +14,51 @@ import {Router} from "@angular/router";
 })
 export class GeneralInformationAndServiceTypeComponent implements OnInit {
 
-   // Multiple checkbox reactive form solution inspired by:
-   // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
+  // Multiple checkbox reactive form solution inspired by:
+  // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
 
   @Output() savedSuccessEvent = new EventEmitter();
   SAVE_AND_EXIT = 'saveAndExit';
   SAVE_AND_CONTINUE = 'saveAndContinue';
 
   generalInfoServiceTypeForm: FormGroup;
+  patient: Patient
+  race: string[];
+  ethnicity: string;
 
   constructor(
     public fhirConstants: FhirTerminologyConstants,
-    private router: Router
-  ) { }
+    private router: Router,
+    private fhirClient: FhirClientService,
+  ) {
+  }
 
   ngOnInit(): void {
     this.generalInfoServiceTypeForm = new FormGroup({
-      serviceType:  new FormControl(null, [Validators.required]),
-      raceCategoriesListCheckboxes: this.createRaceCategoryControls(this.fhirConstants.RACE_CATEGORIES.slice(0,5)),
+      serviceType: new FormControl(null, [Validators.required]),
+      raceCategoriesListCheckboxes: this.createRaceCategoryControls(this.fhirConstants.RACE_CATEGORIES.slice(0, 5)),
       raceCategoriesListRadioBtns: new FormControl(),
       educationLevel: new FormControl(null, [Validators.required]),
       employmentStatus: new FormControl(null, [Validators.required]),
       ethnicity: new FormControl(null, [Validators.required])
     });
+
+    this.fhirClient.getPatient().subscribe({
+      next: (result) => {
+        this.patient = Object.assign(new Patient(), result);
+        console.log(this.patient instanceof Patient)
+        this.ethnicity = this.getEthnicity(this.patient);
+        this.race = this.getRace(this.patient);
+      }
+    })
   }
 
   submit(nextState: string) {
     this.generalInfoServiceTypeForm.markAllAsTouched();
-    if(this.generalInfoServiceTypeForm.valid){
-      if(nextState === this.SAVE_AND_EXIT){
+    if (this.generalInfoServiceTypeForm.valid) {
+      if (nextState === this.SAVE_AND_EXIT) {
         this.router.navigate(['/'])
-      }
-      else if (nextState === this.SAVE_AND_CONTINUE){
+      } else if (nextState === this.SAVE_AND_CONTINUE) {
         this.savedSuccessEvent.emit();
       }
     }
@@ -64,7 +81,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
       .get("raceCategoriesListCheckboxes")
       .value
       .find(item => !!item);
-    if(raceSelected) {
+    if (raceSelected) {
       this.generalInfoServiceTypeForm.patchValue({
         raceCategoriesListRadioBtns: null,
       });
@@ -82,26 +99,25 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
       .forEach(control => control.patchValue(false));
   }
 
-  isRaceSelected(){
-    if(this.generalInfoServiceTypeForm
-      .get("raceCategoriesListCheckboxes")
-      .value
-      .find(item => !!item)
+  isRaceSelected() {
+    if (this.generalInfoServiceTypeForm
+        .get("raceCategoriesListCheckboxes")
+        .value
+        .find(item => !!item)
       ||
       this.generalInfoServiceTypeForm
         .get("raceCategoriesListRadioBtns")
         .value
-    ){
+    ) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
 
   isControlValid(controlName: string, errorCode: string): boolean {
-   return this.generalInfoServiceTypeForm.get(controlName).hasError(errorCode)
-    && this.generalInfoServiceTypeForm.get(controlName).touched;
+    return this.generalInfoServiceTypeForm.get(controlName).hasError(errorCode)
+      && this.generalInfoServiceTypeForm.get(controlName).touched;
   }
 
   onCancel() {
@@ -115,4 +131,17 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   onSaveAndExit() {
     this.submit(this.SAVE_AND_EXIT);
   }
+
+  private getEthnicity(patient: Patient) {
+    let result = patient.findExtension(patient.extension[0].url);
+    console.log(result);
+    return null;
+  }
+
+  private getRace(patient: Patient) {
+    let result = patient.filterExtensions("http://hl7.org/fhir/us/core/StructureDefinition/us-core-race");
+    console.log(result);
+    return [];
+  }
+
 }

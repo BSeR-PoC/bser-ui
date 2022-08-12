@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
+import {FhirClientService} from "../../fhir-client.service";
 
 @Component({
   selector: 'app-patient-demographics',
@@ -6,10 +8,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./patient-demographics.component.scss']
 })
 export class PatientDemographicsComponent implements OnInit {
-
-  constructor() { }
+  patient: Patient;
+  constructor(private fhirClient: FhirClientService) { }
 
   ngOnInit(): void {
+    this.fhirClient.getPatient().subscribe({
+      next: value => { this.patient = Object.assign(new Patient(), value); console.log(typeof this.patient); console.log(this.patient instanceof Patient)}
+    });
   }
 
 }
