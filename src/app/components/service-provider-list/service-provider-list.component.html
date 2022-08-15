@@ -1,3 +1,6 @@
+<mat-card *ngIf="selectedServiceProvider">
+  Service Provider: {{selectedServiceProvider | json}}
+</mat-card>
 <div class="scrollable-container">
   <div *ngFor="let serviceProvider of serviceProviders">
     <div style="margin-bottom: 1em">
@@ -10,8 +13,12 @@
   </div>
 </div>
 
-<div align="end" style="margin-top: 2em">
+<div class="row-button-wrapper">
   <button mat-raised-button (click)="onCancel()">Cancel</button>
+  <span class="spacer"></span>
   <button mat-raised-button (click)="onSave()" [disabled]="!selectedServiceProvider">Save</button>
-  <button mat-raised-button (click)="onSaveAndContinue()" [disabled]="!selectedServiceProvider">Save and Continue</button>
+  <button mat-raised-button (click)="onSaveAndContinue()" [disabled]="!selectedServiceProvider"
+          style="margin-left: 1em">
+    Save and Continue
+  </button>
 </div>

@@ -1,10 +1,12 @@
-import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Router} from "@angular/router";
 import {FhirClientService} from "../../fhir-client.service";
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 import {USCorePatient} from "../../domain/USCorePatient";
+import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-general-information-and-service-type',
@@ -16,7 +18,9 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   // Multiple checkbox reactive form solution inspired by:
   // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
 
+  @Input() referral: any;
   @Output() savedSuccessEvent = new EventEmitter();
+
   SAVE_AND_EXIT = 'saveAndExit';
   SAVE_AND_CONTINUE = 'saveAndContinue';
 
@@ -27,6 +31,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
     public fhirConstants: FhirTerminologyConstants,
     private router: Router,
     private fhirClient: FhirClientService,
+    private dialog: MatDialog
   ) {
   }
 
@@ -142,7 +147,33 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   }
 
   onCancel() {
-    this.generalInfoServiceTypeForm.reset();
+    if(true
+    ){
+      this.router.navigate(['/']);
+    }
+    else {
+      openConformationDialog(
+        this.dialog,
+        {
+          title: "Save Changes",
+          content: "Save your current changes?",
+          confirmBtnTitle: "Save",
+          rejectBtnTitle: "Cancel",
+          width: "20em",
+          height: "12em"
+        })
+        .subscribe(
+          action => {
+            if (action == 'rejected') {
+              this.router.navigate(['/']);
+              this.generalInfoServiceTypeForm.reset();
+            }
+            else if (action == 'confirmed') {
+              this.onSaveAndContinue();
+            }
+          }
+        )
+    }
   }
 
   onSaveAndContinue() {
@@ -154,4 +185,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   }
 
 
+  onSave() {
+
+  }
 }

@@ -135,14 +135,13 @@
   <pre>{{usCorePatient| json}}</pre>
 </div>
 
-<div align="end" style="margin-top: 2em">
-  <app-save-cancel-form-controls
-    [isCancelEnabled]="true"
-    [isSaveAndContinueEnabled]="true"
-    [isSaveAndExitEnabled]="true"
-    (cancelEvent)= "onCancel()"
-    (saveAndContinueEvent)="onSaveAndContinue()"
-    (saveAndExitEvent)="onSaveAndExit()"
-  ></app-save-cancel-form-controls>
+<div class="row-button-wrapper">
+  <button mat-raised-button (click)="onCancel()">Cancel</button>
+  <span class="spacer"></span>
+  <button mat-raised-button (click)="onSave()">Save</button>
+  <button mat-raised-button (click)="onSaveAndContinue()"
+          style="margin-left: 1em">
+    Save and Continue
+  </button>
 </div>
 
