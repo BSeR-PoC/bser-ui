@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AppConstants} from "../../providers/app-constants";
 import {Router} from "@angular/router";
+import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 
 @Component({
   selector: 'app-request-supporting-information',
@@ -14,7 +15,8 @@ export class RequestSupportingInformationComponent implements OnInit {
 
   constructor(
     public appConstants: AppConstants,
-    private router: Router
+    private router: Router,
+    public fhirConstants: FhirTerminologyConstants,
   ) { }
 
   ngOnInit(): void {
@@ -25,6 +27,7 @@ export class RequestSupportingInformationComponent implements OnInit {
       'bp':new FormControl(null, [Validators.required]),
       'allergies':new FormControl(null, [Validators.required]),
       'medicalHistory':new FormControl(null, [Validators.required]),
+      'smockingStatus':new FormControl(null, [Validators.required]),
     });
 
   }

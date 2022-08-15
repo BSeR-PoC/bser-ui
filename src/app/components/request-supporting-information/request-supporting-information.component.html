@@ -42,7 +42,7 @@
 
     <div class="row">
       <div class="col">
-        <mat-form-field appearance="outline" style="width: 14%">
+        <mat-form-field appearance="outline" style="width: 30%">
           <mat-label>BP (SYS)</mat-label>
           <span matSuffix>mmHg</span>
           <input matInput type='text' formControlName="bp">
@@ -50,19 +50,30 @@
 
         <span style="margin-right: 1em; margin-left: 1em; font-weight: bold; font-size: x-large">/</span>
 
-        <mat-form-field appearance="outline" style="margin-right: 1em; width: 14%">
+        <mat-form-field appearance="outline" style="margin-right: 1em; width: 30%">
           <mat-label>BP (DIA)</mat-label>
           <span matSuffix>mmHg</span>
           <input matInput type='text' formControlName="bp">
         </mat-form-field>
       </div>
-    </div>
 
-    <div class="row" style="margin-top: 1em">
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Allergies/Intolerances</mat-label>
-        <textarea matInput type='text' formControlName="allergies" rows="6"></textarea>
-      </mat-form-field>
+      <div class="col">
+        <mat-form-field appearance="outline" style="width: 85%">
+          <mat-label>Smoking Status</mat-label>
+          <mat-select formControlName="smokingStatus">
+            <mat-option
+              *ngFor="let smokingStatus of fhirConstants.SMOKING_STATUS"
+              [value]="smokingStatus">
+              {{smokingStatus.display}}
+            </mat-option>
+          </mat-select>
+          <mat-error>
+            Please select smoking status
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+
     </div>
 
     <div class="row" style="margin-top: 1em">
