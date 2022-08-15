@@ -12,4 +12,5 @@ export class AppConstants{
     'cm', 'in'
   ];
 
+  BSER_REFERRAL_RECIPIENT_PRACTITIONER_ROLE_PROFILE = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ReferralRecipientPractitionerRole";
 }

@@ -111,17 +111,11 @@ export class ServiceRequestHandlerService {
     currentSnapshot.performer.push(Reference.fromResource(recipientTest));
   }
 
-
-  setParameter(currentParameters: Parameters, name: string, type: string, value: string) {
-    let parameter = new ParametersParameter({name: "test", valueString: value});
+  setServiceType(currentParameters: Parameters, serviceType: string) {
+    let parameter = new ParametersParameter({name: "test", valueCode: serviceType});
     currentParameters.parameter.push(parameter);
     this.currentParameters.next(currentParameters);
-    // typeMatchDictionary[name]
-    // { "name": name, typeMatchDictionary[name]: value }
   }
-
-  // { "name": type }
-  // { "serviceType" : "valueCode", "educationLevel" : "code" }
 
   deleteTestData() {
     let connectionUrl = environment.bserProviderServer + "ServiceRequest";
