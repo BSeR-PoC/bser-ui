@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ServiceProviderService} from "../../service/service-provider.service";
 
 @Component({
@@ -6,22 +6,18 @@ import {ServiceProviderService} from "../../service/service-provider.service";
   templateUrl: './service-provider.component.html',
   styleUrls: ['./service-provider.component.scss']
 })
-export class ServiceProviderComponent implements OnInit {
+export class ServiceProviderComponent {
 
   @Input() serviceProvider: any;
+  @Output() selectedProviderEvent = new EventEmitter();
 
-  constructor(private serviceProviderService: ServiceProviderService) { }
+  constructor() { }
 
   ngOnInit(): void {}
 
   onToggleSelectValue(serviceProvider: any) {
     serviceProvider.selected = !serviceProvider.selected;
-    if(serviceProvider.selected){
-      this.serviceProviderService.setSelectedServiceProvider(serviceProvider);
-    }
-    else {
-      this.serviceProviderService.setSelectedServiceProvider(null);
-    }
+    this.selectedProviderEvent.emit(serviceProvider);
   }
 
 }

@@ -14,11 +14,23 @@ export class ReferralService {
   constructor(private http: HttpClient) { }
 
   //The minimum data we need to create a referral is the patient id
-  createReferral(params: any): Observable<any[]> {
+  create(params: any): Observable<any[]> {
     const requestBody = {
       params: params
     };
-
     return this.http.post<any[]>(this.serverBase + 'referral', requestBody);
   }
+
+  update(referral: any): Observable<any[]> {
+    return this.http.put<any[]>(this.serverBase + 'referral', referral);
+  }
+
+  get(referralId: string): Observable<any[]> {
+    return this.http.get<any[]>(this.serverBase + 'referral/' + referralId);
+  }
+
+  delete(referralId: string): Observable<any[]> {
+    return this.http.delete<any[]>(this.serverBase + 'referral/' + referralId);
+  }
+
 }

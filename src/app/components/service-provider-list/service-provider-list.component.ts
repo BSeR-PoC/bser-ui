@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {ServiceProviderService} from "../../service/service-provider.service";
 import {Subscription} from "rxjs";
 import {Router} from "@angular/router";
@@ -10,12 +10,12 @@ import {openConformationDialog} from "../conformation-dialog/conformation-dialog
   templateUrl: './service-provider-list.component.html',
   styleUrls: ['./service-provider-list.component.scss']
 })
-export class ServiceProviderListComponent implements OnInit {
+export class ServiceProviderListComponent implements OnInit, OnChanges {
 
   serviceProviders: any[] = null;
-  selectedServiceProvider$: Subscription;
   selectedServiceProvider: any = null;
 
+  @Input() referral: any;
   @Output() savedSuccessEvent = new EventEmitter();
 
   constructor(
@@ -28,68 +28,77 @@ export class ServiceProviderListComponent implements OnInit {
     this.serviceProviderService.getServiceProviders()
       .subscribe({
         next: (data: any) => this.serviceProviders = data,
-        error: console.error
+        error: (err)=> console.error(err)
       });
-  }
-
-  //This may need to just be extracted as a service
-  setServiceProviderList(): void {
-    this.selectedServiceProvider$ = this.serviceProviderService.getSelectedServiceProvider().subscribe({
-        next: selectedServiceProvider => {
-          if (selectedServiceProvider) {
-            this.serviceProviders = this.serviceProviders.map(
-              serviceProvider => {
-                if (selectedServiceProvider.serviceProviderId === serviceProvider.serviceProviderId) {
-                  serviceProvider = selectedServiceProvider;
-                }
-                else {
-                  serviceProvider.selected = false;
-                }
-                return serviceProvider;
-              }
-            );
-          }
-          else {
-            this.serviceProviders?.forEach(serviceProvider => serviceProvider.selected = false)
-          }
-        }
-      }
-    );
   }
 
   ngOnInit(): void {
     this.getServiceProviders();
-    this.setServiceProviderList();
-  }
-
-  ngOnDestroy() : void{
-    this.selectedServiceProvider$.unsubscribe();
   }
 
   onCancel() {
-    openConformationDialog(
-      this.dialog,
-      {
-        title: "Save Changes",
-        content: "Save your current changes?",
-        confirmBtnTitle:"Save",
-        rejectBtnTitle:"Cancel",
-        width: "20em",
-        height: "12em"
-      })
-      .subscribe(
-        action=> {
-          if(action == 'rejected'){
-            // redirect to home
+    if(!this.selectedServiceProvider
+      ||
+      this.referral?.serviceProvider == this.selectedServiceProvider
+    ){
+      this.router.navigate(['/']);
+    }
+    else {
+      openConformationDialog(
+        this.dialog,
+        {
+          title: "Save Changes",
+          content: "Save your current changes?",
+          confirmBtnTitle: "Save",
+          rejectBtnTitle: "Cancel",
+          width: "20em",
+          height: "12em"
+        })
+        .subscribe(
+          action => {
+            if (action == 'rejected') {
+              this.router.navigate(['/']);
+            }
+            else if (action == 'confirmed') {
+              this.onSaveAndContinue();
+            }
           }
-          else if(action == 'confirmed'){
-            this.onSaveAndContinue();
-          }
-        }
-      )
+        )
+    }
+
   }
 
   onSaveAndContinue() {
     this.savedSuccessEvent.emit({step: 1, data: this.selectedServiceProvider});
   }
+
+  onSave() {
+    this.savedSuccessEvent.emit({data: this.selectedServiceProvider});
+  }
+
+  onSelectedServiceProvider(serviceProvider: any) {
+    if(serviceProvider.selected){
+      this.selectedServiceProvider = serviceProvider;
+      this.serviceProviders = this.serviceProviders
+        .map(serviceProvider => {
+          if(serviceProvider.serviceProviderId === this.selectedServiceProvider.serviceProviderId){
+             return this.selectedServiceProvider
+          }
+          else {
+            serviceProvider.selected = false;
+            return serviceProvider;
+          }
+        });
+    }
+    else {
+      this.serviceProviders.forEach(serviceProvider => serviceProvider.selected = false);
+      this.selectedServiceProvider = null;
+    }
+
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+  }
+
 }

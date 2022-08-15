@@ -3,6 +3,7 @@
     <div style="margin-bottom: 1em">
       <app-service-provider
         [serviceProvider]=serviceProvider
+        (selectedProviderEvent)="onSelectedServiceProvider($event)"
       >
       </app-service-provider>
     </div>
@@ -10,14 +11,7 @@
 </div>
 
 <div align="end" style="margin-top: 2em">
-  <button mat-raised-button (click)="onSaveAndContinue()" [disabled]="!selectedServiceProvider">Save</button>
   <button mat-raised-button (click)="onCancel()">Cancel</button>
-<!--  <app-save-cancel-form-controls-->
-<!--    [isCancelEnabled]="true"-->
-<!--    [isSaveAndContinueEnabled]="isSaveAndContinueEnabled()"-->
-<!--    [isSaveAndExitEnabled]="isSaveAndExitEnabled()"-->
-<!--    (cancelEvent)= "onCancel()"-->
-<!--    (saveAndContinueEvent)="onSaveAndContinue()"-->
-<!--    (saveAndExitEvent)="onSaveAndExit()"-->
-<!--  ></app-save-cancel-form-controls>-->
+  <button mat-raised-button (click)="onSave()" [disabled]="!selectedServiceProvider">Save</button>
+  <button mat-raised-button (click)="onSaveAndContinue()" [disabled]="!selectedServiceProvider">Save and Continue</button>
 </div>
