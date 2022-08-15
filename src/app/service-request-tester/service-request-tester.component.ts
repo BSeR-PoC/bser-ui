@@ -3,6 +3,7 @@ import { ServiceRequest } from '@fhir-typescript/r4-core/dist/fhir';
 import { ServiceRequestHandlerService } from '../service/service-request-handler.service';
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
 import {FhirClientService} from "../fhir-client.service";
+import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 
 @Component({
   selector: 'app-service-request-tester',
@@ -13,6 +14,8 @@ export class ServiceRequestTesterComponent implements OnInit {
 
   currentSnapshot: ServiceRequest;
   lastSnapshot: ServiceRequest;
+  currentParameters: Parameters;
+  lastParameters: Parameters;
 
   constructor(public serviceRequestHandler: ServiceRequestHandlerService) { }
 
@@ -29,13 +32,22 @@ export class ServiceRequestTesterComponent implements OnInit {
           error: console.error
         }
       );
+    this.serviceRequestHandler.currentParameters$.subscribe(
+      {
+        next: (data: any) => {
+          this.currentParameters = data;
+          console.log("DATA:", data)
+        },
+        error: console.error
+      }
+    );
   }
 
   saveServiceRequest(serviceRequest: ServiceRequest) {
     this.serviceRequestHandler.saveServiceRequest(serviceRequest).subscribe(
       {
         next: (data: any) => {
-          this.lastSnapshot = Object.assign({}, data)
+          this.lastSnapshot = Object.assign({}, data);
           this.currentSnapshot = Object.assign({}, data);
         },
         error: console.error

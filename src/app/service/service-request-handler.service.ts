@@ -4,14 +4,11 @@ import { ServiceRequest } from '@fhir-typescript/r4-core/dist/fhir/ServiceReques
 import {BehaviorSubject, catchError, Subject} from 'rxjs';
 import { environment } from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
-import {DomainResource} from "@fhir-typescript/r4-core/dist/fhir/DomainResource";
-import {Resource} from "@fhir-typescript/r4-core/dist/fhir/Resource";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
 import {v4 as uuidv4} from 'uuid';
 import {FhirClientService} from "../fhir-client.service";
-import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
-import {FhirDateTime} from "@fhir-typescript/r4-core/dist/fhir/FhirDateTime";
+import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +18,10 @@ export class ServiceRequestHandlerService {
   // TODO: Why is only working as a BehaviorSubject and not just Subject?
   private currentSnapshot = new BehaviorSubject<any>(null);
   public currentSnapshot$ = this.currentSnapshot.asObservable();
+  private currentParameters = new BehaviorSubject<any>(null);
+  public currentParameters$ = this.currentParameters.asObservable();
   private lastSnapshot: ServiceRequest = null;
+  private lastParameters: Parameters = null;
 
   private practitioner: Practitioner;
 
@@ -35,6 +35,39 @@ export class ServiceRequestHandlerService {
   deepCompare(object1: any, object2): boolean {
     // Returns true if contents same.
     return JSON.stringify(object1) === JSON.stringify(object2);
+  }
+
+  // STEP 1
+  public getServiceProviders() {}
+
+  // STEP 2
+  // Resume or Create
+  resumeServiceRequest() {
+    //TODO: Implement
+  }
+
+  createNewServiceRequest() {
+    //let code = createServiceRequestCoding();
+    this.fhirClient.getPractitioner().subscribe({
+      next: practitioner => {
+        this.practitioner = Object.assign(new Practitioner(), practitioner);
+        let parameters = new Parameters( {id: uuidv4()});
+        let serviceRequest = new ServiceRequest({
+          requester: Reference.fromResource(practitioner),
+          status: "draft",
+          intent: "order",
+          authoredOn: new Date().toISOString(),
+          supportingInfo: [Reference.fromResource(parameters)]
+        });
+        this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
+        this.lastParameters = new Parameters(this.deepCopy(parameters));
+        console.log(serviceRequest)
+        console.log(this.lastSnapshot)
+        this.currentSnapshot.next(serviceRequest);
+        this.currentParameters.next(parameters);
+        console.log("SERVICE REQUEST CREATED");
+      }
+    });
   }
 
   private createServiceRequestCoding() {
@@ -51,29 +84,10 @@ export class ServiceRequestHandlerService {
     // },
   }
 
-  createNewServiceRequest() {
-    //let code = createServiceRequestCoding();
-    this.fhirClient.getPractitioner().subscribe({
-      next: practitioner => {
-        this.practitioner = Object.assign(new Practitioner(), practitioner);
-        let serviceRequest = new ServiceRequest({
-          requester: Reference.fromResource(practitioner),
-          status: "draft",
-          intent: "order",
-          authoredOn: new Date().toISOString()
-        });
-        this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
-        console.log(serviceRequest)
-        console.log(this.lastSnapshot)
-        this.currentSnapshot.next(serviceRequest);
-        console.log("SERVICE REQUEST CREATED");
-      }
-    });
-  }
 
-  checkIfSnapshotStateChanged(currentSnapshot: ServiceRequest): boolean {
+  checkIfSnapshotStateChanged(currentSnapshot: ServiceRequest, currentParameters: Parameters): boolean {
     // Compare currentSnapshot to lastSnapshot.
-    if (this.deepCompare(currentSnapshot, this.lastSnapshot)) {
+    if (this.deepCompare(currentSnapshot, this.lastSnapshot) && this.deepCompare(currentParameters, this.lastParameters)) {
       console.log("Service Request Not Changed");
       return false;
     }
@@ -95,5 +109,28 @@ export class ServiceRequestHandlerService {
     let recipientTest = new PractitionerRole({id: uuidv4() })
     currentSnapshot.performer.length = 0;
     currentSnapshot.performer.push(Reference.fromResource(recipientTest));
+  }
+
+
+  setParameter(currentParameters: Parameters, name: string, type: string, value: string) {
+    let parameter = new ParametersParameter({name: "test", valueString: value});
+    currentParameters.parameter.push(parameter);
+    this.currentParameters.next(currentParameters);
+    // typeMatchDictionary[name]
+    // { "name": name, typeMatchDictionary[name]: value }
+  }
+
+  // { "name": type }
+  // { "serviceType" : "valueCode", "educationLevel" : "code" }
+
+  deleteTestData() {
+    let connectionUrl = environment.bserProviderServer + "ServiceRequest";
+    this.http.get(connectionUrl).toPromise().then((data: any) => {
+      console.log(data);
+      data.entry.forEach(resource => {
+        let id = resource.resource.id;
+        this.http.delete(connectionUrl + "/" + id).toPromise().then(result => console.log(result));
+      });
+    });
   }
 }
