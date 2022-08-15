@@ -4,11 +4,11 @@ import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest"
 import {MatStepper} from "@angular/material/stepper";
 
 @Component({
-  selector: 'app-create-referral',
-  templateUrl: './create-referral.component.html',
-  styleUrls: ['./create-referral.component.scss']
+  selector: 'app-referral-manager',
+  templateUrl: './referral-manager.component.html',
+  styleUrls: ['./referral-manager.component.scss']
 })
-export class CreateReferralComponent implements OnInit {
+export class ReferralManagerComponent implements OnInit {
   @ViewChild(MatStepper) stepper: MatStepper;
 
   referral: ServiceRequest;

@@ -22,7 +22,6 @@ import {MatListModule} from "@angular/material/list";
 import {PatientDemographicsComponent} from './components/patient-demographics/patient-demographics.component';
 import {ActiveReferralsComponent} from './components/active-referrals/active-referrals.component';
 import {MatSidenavModule} from "@angular/material/sidenav";
-import {CreateReferralComponent} from './components/create-referral/create-referral.component';
 import {MatStepperModule} from "@angular/material/stepper";
 import {ServiceProviderComponent} from './components/service-provider/service-provider.component';
 import {ServiceProviderListComponent} from './components/service-provider-list/service-provider-list.component';
@@ -37,11 +36,9 @@ import {MatSelectModule} from "@angular/material/select";
 import {AppConstants} from "./providers/app-constants";
 import {FhirTerminologyConstants} from "./providers/fhir-terminology-constants";
 import {MatCheckboxModule} from "@angular/material/checkbox";
-import {
-  SaveCancelFormControlsComponent
-} from './components/save-cancel-form-controls/save-cancel-form-controls.component';
 import { ConformationDialogComponent } from './components/conformation-dialog/conformation-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import {ReferralManagerComponent} from "./components/referral-manager/referral-manager.component";
 
 @NgModule({
   declarations: [
@@ -50,12 +47,11 @@ import {MatDialogModule} from "@angular/material/dialog";
     MainComponent,
     PatientDemographicsComponent,
     ActiveReferralsComponent,
-    CreateReferralComponent,
+    ReferralManagerComponent,
     ServiceProviderComponent,
     ServiceProviderListComponent,
     GeneralInformationAndServiceTypeComponent,
     RequestSupportingInformationComponent,
-    SaveCancelFormControlsComponent,
     ConformationDialogComponent,
   ],
   imports: [
