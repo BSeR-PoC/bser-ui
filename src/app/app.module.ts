@@ -40,6 +40,8 @@ import { ConformationDialogComponent } from './components/conformation-dialog/co
 import {MatDialogModule} from "@angular/material/dialog";
 import {ReferralManagerComponent} from "./components/referral-manager/referral-manager.component";
 import {MatTabsModule} from "@angular/material/tabs";
+import { ServiceRequestTesterComponent } from './service-request-tester/service-request-tester.component';
+import { RegistrationComponent } from './components/registration/registration.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +56,8 @@ import {MatTabsModule} from "@angular/material/tabs";
     GeneralInformationAndServiceTypeComponent,
     RequestSupportingInformationComponent,
     ConformationDialogComponent,
+    ServiceRequestTesterComponent,
+    RegistrationComponent,
   ],
   imports: [
     BrowserModule,

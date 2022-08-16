@@ -3,6 +3,7 @@ import { oauth2 as SmartClient } from 'fhirclient';
 import { environment } from "../environments/environment";
 import {from, Observable, of, switchMap, tap} from 'rxjs';
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
+import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 
 
 @Injectable({
@@ -13,6 +14,7 @@ export class FhirClientService {
   private fhirClient: any;
   private patient: any;
   private patientObj: Patient;
+  private practitionerObj: Practitioner;
 
   constructor() {}
 
@@ -82,6 +84,20 @@ export class FhirClientService {
     )
   }
 
+  getPractitioner(): Observable<Practitioner> {
+    if (this.practitionerObj) {
+      console.log(this.practitionerObj instanceof Practitioner)
+      return of(this.practitionerObj)
+    }
+    return this.getPractitionerClient().pipe(
+      tap((result: Practitioner) => {
+        console.log(result);
+        this.practitionerObj = Object.assign(new Practitioner(), result)
+        console.log(this.practitionerObj instanceof Practitioner)
+      })
+    )
+  }
+
   getPatientClient(): Observable<any>{
     return this.getClient().pipe(
       switchMap(client => {
@@ -89,5 +105,23 @@ export class FhirClientService {
       })
     )
   }
+
+  getPractitionerClient(): Observable<any>{
+    return this.getClient().pipe(
+      switchMap(client => {
+        return from (client.user.read())
+      })
+    )
+  }
+  // getPractitionerClient(): Observable<any>{
+  //   return this.getClient().pipe(
+  //     switchMap(client => {
+  //       return from (client.practitionerObj.read())
+  //     })
+  //   )
+  // }
+  // saveDraftServiceRequest(): Observable<any> {
+
+  // }
 
 }
