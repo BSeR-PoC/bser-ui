@@ -39,6 +39,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import { ConformationDialogComponent } from './components/conformation-dialog/conformation-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {ReferralManagerComponent} from "./components/referral-manager/referral-manager.component";
+import {MatTabsModule} from "@angular/material/tabs";
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import {ReferralManagerComponent} from "./components/referral-manager/referral-m
     ReactiveFormsModule,
     MatSelectModule,
     MatCheckboxModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTabsModule
   ],
   providers: [AppConstants, FhirTerminologyConstants],
   bootstrap: [AppComponent]

@@ -1,6 +1,15 @@
-<mat-card *ngIf="selectedServiceProvider">
-  Service Provider: {{selectedServiceProvider | json}}
+<mat-card>
+  <mat-card-title>Selected Service Provider</mat-card-title>
+  <mat-card-content>
+    <!--If a service provider is selected, render the provider information-->
+    <div *ngIf="selectedServiceProvider">{{selectedServiceProvider | json}}</div>
+
+    <!--If no service provider is selected prompt the user to select one-->
+    <div *ngIf="!selectedServiceProvider">Please select a service provider from the list below.</div>
+
+  </mat-card-content>
 </mat-card>
+
 <div class="scrollable-container">
   <div *ngFor="let serviceProvider of serviceProviders">
     <div style="margin-bottom: 1em">
