@@ -41,14 +41,21 @@ export class ServiceRequestTesterComponent implements OnInit {
         error: console.error
       }
     );
+    this.serviceRequestHandler.getServiceProviders().subscribe(
+      {
+        next: (results: any) => {
+          console.log(results);
+        }
+      }
+    )
   }
 
   saveServiceRequest(serviceRequest: ServiceRequest) {
     this.serviceRequestHandler.saveServiceRequest(serviceRequest).subscribe(
       {
         next: (data: any) => {
-          this.lastSnapshot = Object.assign({}, data);
-          this.currentSnapshot = Object.assign({}, data);
+          this.lastSnapshot = this.serviceRequestHandler.deepCopy(data);
+          this.currentSnapshot = this.serviceRequestHandler.deepCopy(data);
         },
         error: console.error
       }

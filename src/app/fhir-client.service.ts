@@ -139,6 +139,13 @@ export class FhirClientService {
       })
     )
   }
+  // getPractitionerClient(): Observable<any>{
+  //   return this.getClient().pipe(
+  //     switchMap(client => {
+  //       return from (client.practitionerObj.read())
+  //     })
+  //   )
+  // }
   // saveDraftServiceRequest(): Observable<any> {
 
   // }
