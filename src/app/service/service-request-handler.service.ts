@@ -29,20 +29,17 @@ export class ServiceRequestHandlerService {
 
   constructor(private http: HttpClient, private fhirClient: FhirClientService) {}
 
-  public deepCopy(object: any): any {
-    // TODO: Can be replaced by structuredClone in Node 17.
-    return JSON.parse(JSON.stringify(object));
-  }
-
-  public deepCompare(object1: any, object2): boolean {
-    // Returns true if contents same.
-    return JSON.stringify(object1) === JSON.stringify(object2);
-  }
-
   // STEP 0
+
+  getDraftServiceRequests() {
+    // TODO: Implement
+    // Function for the front page to pull the list of Drafts.
+  }
+
   // Resume or Create
   resumeServiceRequest() {
-    //TODO: Implement
+    // TODO: Implement
+    // Front page can pass ID on load.
   }
 
   createNewServiceRequest() {
@@ -159,6 +156,18 @@ export class ServiceRequestHandlerService {
   // TODO: Race, Ethnicity, Employment, Education
 
   // Third Screen User Input (Supporting Info)
+  
+
+  // Helper Functions
+  public deepCopy(object: any): any {
+    // TODO: Can be replaced by structuredClone in Node 17.
+    return JSON.parse(JSON.stringify(object));
+  }
+
+  public deepCompare(object1: any, object2): boolean {
+    // Returns true if contents same.
+    return JSON.stringify(object1) === JSON.stringify(object2);
+  }
 
 
   // TODO: Delete later, testing only.
