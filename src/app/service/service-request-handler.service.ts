@@ -11,6 +11,7 @@ import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
 import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
+import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 
 @Injectable({
   providedIn: 'root'
@@ -34,10 +35,11 @@ export class ServiceRequestHandlerService {
   getDraftServiceRequests() {
     // TODO: Implement
     // Function for the front page to pull the list of Drafts.
+
   }
 
   // Resume or Create
-  resumeServiceRequest() {
+  resumeServiceRequest(serviceRequest: ServiceRequest) {
     // TODO: Implement
     // Front page can pass ID on load.
   }
@@ -54,7 +56,8 @@ export class ServiceRequestHandlerService {
           status: "draft",
           intent: "order",
           authoredOn: new Date().toISOString(),
-          supportingInfo: [Reference.fromResource(parameters)]
+          supportingInfo: [Reference.fromResource(parameters)],
+          subject: Reference.fromResource(new Patient({id: uuidv4() })) // TODO: Switch to currently selected patient
         });
         this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
         this.lastParameters = new Parameters(this.deepCopy(parameters));
@@ -74,37 +77,7 @@ export class ServiceRequestHandlerService {
   }
 
   // STEP 1 - Get Service Providers
-  public getServiceProviders() {
-    let profile = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ReferralRecipientPractitionerRole";
-    let include = "&_include=PractitionerRole:practitioner&_include=PractitionerRole:organization"
-    let connectionUrl = environment.bserProviderServer + "PractitionerRole?_profile=" + profile + include;
-    return this.http.get(connectionUrl).pipe(
-      map(results => {
-        return this.packageServiceProvidersIntoList(results);
-      })
-    );
-  }
-
-  // Takes the Bundle with the includes and sorts them into a single object capturing all 4 potential resources.
-  private packageServiceProvidersIntoList(results: any): any {
-    let serviceProviderList = []
-    let practitionerRoles = results.entry.filter(entry => entry.resource.resourceType === "PractitionerRole");
-    practitionerRoles.forEach(practitionerRole => {
-        let serviceProvider = { "practitionerRole": practitionerRole.resource};
-        if ("practitioner" in practitionerRole.resource) {
-          serviceProvider["practitioner"] = (results.entry.find(entry => entry.fullUrl.endsWith(practitionerRole.resource.practitioner.reference))).resource;
-        }
-        if ("organization" in practitionerRole.resource) {
-          serviceProvider["organization"] = (results.entry.find(entry => entry.fullUrl.endsWith(practitionerRole.resource.organization.reference))).resource;
-        }
-        if ("location" in practitionerRole.resource) {
-          // TODO: Implement Location
-        }
-        serviceProviderList.push(serviceProvider)
-      }
-    )
-    return serviceProviderList
-  }
+  // In the Service-Provider Service
 
   checkIfSnapshotStateChanged(currentSnapshot: ServiceRequest, currentParameters: Parameters): boolean {
     // Compare currentSnapshot to lastSnapshot.
@@ -140,7 +113,7 @@ export class ServiceRequestHandlerService {
 
   // First Screen User Input
   setRecipient(currentSnapshot: ServiceRequest, recipient: PractitionerRole) {
-    let recipientTest = new PractitionerRole({id: uuidv4() })
+    let recipientTest = new PractitionerRole({id: uuidv4() }) // TODO: Switch to real selection
     currentSnapshot.performer.length = 0;
     currentSnapshot.performer.push(Reference.fromResource(recipientTest));
   }
@@ -156,7 +129,7 @@ export class ServiceRequestHandlerService {
   // TODO: Race, Ethnicity, Employment, Education
 
   // Third Screen User Input (Supporting Info)
-  
+
 
   // Helper Functions
   public deepCopy(object: any): any {

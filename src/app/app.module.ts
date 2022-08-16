@@ -43,6 +43,7 @@ import {
 import { ConformationDialogComponent } from './components/conformation-dialog/conformation-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import { ServiceRequestTesterComponent } from './service-request-tester/service-request-tester.component';
+import { RegistrationComponent } from './components/registration/registration.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { ServiceRequestTesterComponent } from './service-request-tester/service-
     SaveCancelFormControlsComponent,
     ConformationDialogComponent,
     ServiceRequestTesterComponent,
+    RegistrationComponent,
   ],
   imports: [
     BrowserModule,

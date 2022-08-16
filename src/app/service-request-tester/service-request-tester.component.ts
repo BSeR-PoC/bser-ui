@@ -4,6 +4,7 @@ import { ServiceRequestHandlerService } from '../service/service-request-handler
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
 import {FhirClientService} from "../fhir-client.service";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
+import {ServiceProviderService} from "../service/service-provider.service";
 
 @Component({
   selector: 'app-service-request-tester',
@@ -17,7 +18,7 @@ export class ServiceRequestTesterComponent implements OnInit {
   currentParameters: Parameters;
   lastParameters: Parameters;
 
-  constructor(public serviceRequestHandler: ServiceRequestHandlerService) { }
+  constructor(public serviceRequestHandler: ServiceRequestHandlerService, private serviceProviderService: ServiceProviderService) { }
 
   ngOnInit(): void {
       // TODO: REMOVE THIS COMPONENT INCLUDING ROUTE, TESTING ONLY
@@ -41,7 +42,7 @@ export class ServiceRequestTesterComponent implements OnInit {
         error: console.error
       }
     );
-    this.serviceRequestHandler.getServiceProviders().subscribe(
+    this.serviceProviderService.getServiceProviders().subscribe(
       {
         next: (results: any) => {
           console.log(results);
