@@ -53,3 +53,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   align-items:center;
 }
 
+.row {
+  display: flex;  /* aligns all child elements (flex items) in a row */
+}
+
+.col {
+  flex: 1;        /* distributes space on the line equally among items */
+}

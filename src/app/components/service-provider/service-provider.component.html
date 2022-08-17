@@ -2,13 +2,47 @@
   <mat-card-title [ngStyle]="{'color':serviceProvider.selected ? '#0d47a1' : '' }">
     {{serviceProvider?.name}}
   </mat-card-title>
-  <mat-card-subtitle>Service Provider Info</mat-card-subtitle>
+  <mat-card-subtitle>{{serviceProvider?.description}}</mat-card-subtitle>
   <mat-card-content>
-    <div *ngIf="serviceProvider?.selected"> {{serviceProvider?.details}}<br/>
-      We can add more content here as we need.<br/><br/>
-      Address: 123 Main Street
+
+    <div class="row">
+      <div class="col">
+        <div style="font-weight: bold">Services Provided:</div>
+        <div>* Diabetes Prevention</div>
+        <div>* Obesity Management</div>
+      </div>
+      <div class="col">
+        <div style="font-weight: bold; margin-bottom: 0.2em">Service Delivery Location:</div>
+        <div>Online</div>
+      </div>
     </div>
-    <div *ngIf="!serviceProvider?.selected"> Minimal content.</div>
+
+    <div class="row" style="margin-top: 1em">
+      <div class="col">
+        <div style="font-weight: bold; margin-bottom: 0.2em">Available Times:</div>
+        <div>M-F 8am-5pm</div>
+        <div>Sat 9am-1pm</div>
+      </div>
+      <div class="col">
+        <div style="font-weight: bold; margin-bottom: 0.2em">Languages:</div>
+        <div>* English</div>
+        <div>* Spanish</div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 1em">
+      <div class="col">
+        <div style="font-weight: bold; margin-bottom: 0.2em">Provider Contact Info:</div>
+        <div>123-456-7890     email@email.com </div>
+        <div>123 Street St. Citytown, CA, 12345</div>
+      </div>
+      <div class="col">
+        <div style="font-weight: bold; margin-bottom: 0.2em">Organization Contact Info:</div>
+        <div>123-456-7890     email@email.com</div>
+        <div>123 Street St. Citytown, CA, 12345 </div>
+      </div>
+    </div>
+
   </mat-card-content>
   <mat-card-actions  align="end">
     <button *ngIf="!serviceProvider?.selected" mat-raised-button color="primary"
