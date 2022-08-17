@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {MatTableDataSource} from "@angular/material/table";
+import {ServiceProviderRegistrationService} from "../../service/service-provider-registration.service";
 
 @Component({
   selector: 'app-registration',
@@ -7,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RegistrationComponent implements OnInit {
 
-  constructor() { }
+  public dataSource = new MatTableDataSource<any>([]);
+  displayedColumns: string[] = ['organization', 'practitioner'];
+
+  constructor(private providerRegistrationService: ServiceProviderRegistrationService) { }
 
   ngOnInit(): void {
+    this.providerRegistrationService.getServiceProviders()
+      .subscribe({
+        next: (data: any) => this.dataSource = data,
+        error: console.error
+      });
   }
 
 }

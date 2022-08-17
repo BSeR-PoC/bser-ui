@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {map, Observable, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
+import {HumanName} from "@fhir-typescript/r4-core/dist/fhir/HumanName";
 
 @Injectable({
   providedIn: 'root'
@@ -40,29 +41,43 @@ export class ServiceProviderService {
     let serviceProviderList = []
     let practitionerRoles = results.entry.filter(entry => entry.resource.resourceType === "PractitionerRole");
     practitionerRoles.forEach(practitionerRole => {
-        let serviceProvider = { "practitionerRole": practitionerRole.resource, "practitioner": undefined, "organization": undefined, "location": undefined};
+        // IF NEITHER PRACTITIONER NOR ORGANIZATION DISCARD AS INVALID
+        if ("practitioner" in practitionerRole.resource || "organization" in practitionerRole.resource){
+          let serviceProvider = { "practitionerRole": practitionerRole.resource, "practitioner": undefined, "organization": undefined, "location": undefined};
 
-        if ("practitioner" in practitionerRole.resource) {
-          serviceProvider.practitioner = (results.entry.find(entry => entry.fullUrl.endsWith(practitionerRole.resource.practitioner.reference))).resource;
+          if ("practitioner" in practitionerRole.resource) {
+            serviceProvider.practitioner = (results.entry.find(entry => entry.fullUrl.endsWith(practitionerRole.resource.practitioner.reference))).resource;
+          }
+          if ("organization" in practitionerRole.resource) {
+            serviceProvider.organization = (results.entry.find(entry => entry.fullUrl.endsWith(practitionerRole.resource.organization.reference))).resource;
+          }
+          if ("location" in practitionerRole.resource) {
+            // TODO: Implement Location
+          }
+          let serviceProviderObj = this.createServiceProviderObj(serviceProvider)
+          serviceProviderList.push(serviceProviderObj)
         }
-        if ("organization" in practitionerRole.resource) {
-          serviceProvider.organization = (results.entry.find(entry => entry.fullUrl.endsWith(practitionerRole.resource.organization.reference))).resource;
+        else {
+          console.log("Invalid PractitionerRole with id " + practitionerRole.resource.id + ". Requires either or both of Practitioner and Organization.")
         }
-        if ("location" in practitionerRole.resource) {
-          // TODO: Implement Location
-        }
-        // IF NEITHER PRACTITIONER NOR ORGANIZATION DO NOT ADD TO LIST
 
-        // TODO: Switch the data model to the real version
-        let serviceProviderObj =   {
-          "serviceProviderId": serviceProvider.practitionerRole.id,
-          "name" : serviceProvider.organization?.name,
-          "description": "Place holder description",
-          "selected": false
-        }
-        serviceProviderList.push(serviceProviderObj)
       }
     )
     return serviceProviderList
+  }
+
+  private createServiceProviderObj(serviceProvider: any) {
+    return {
+      "serviceProviderId": serviceProvider.practitionerRole.id,
+      "practitionerName" : this.getFullName(serviceProvider.practitioner.name),
+      "organizationName" : serviceProvider.organization?.name,
+      "description": "Placeholder description",
+      "selected": false
+    }
+  }
+
+  private getFullName(humanName: HumanName[]){
+    console.log(humanName)
+    return "Test Name"
   }
 }
