@@ -2,6 +2,9 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {ReferralService} from "../../service/referral.service";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {MatStepper} from "@angular/material/stepper";
+import {ActivatedRoute} from "@angular/router";
+import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
+import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 
 @Component({
   selector: 'app-referral-manager',
@@ -12,15 +15,40 @@ export class ReferralManagerComponent implements OnInit {
   @ViewChild(MatStepper) stepper: MatStepper;
 
   referral: ServiceRequest;
-  originalReferral: ServiceRequest;
+
+  currentSnapshot: ServiceRequest;
+  lastSnapshot: ServiceRequest;
+
+  currentParameters: Parameters;
+  lastParameters: Parameters;
 
   constructor(
-    referralService: ReferralService,
-  ) { }
+    private referralService: ReferralService,
+    private serviceRequestHandler: ServiceRequestHandlerService,
+    private route: ActivatedRoute
+) { }
 
   ngOnInit(): void {
-    //TODO Get the current referral if the operation is update
-    //TODO Make a copy of the current referral it and store it in the originalReferral variable
+
+    this.route.params.subscribe({
+      next: params => {
+        if(params && params['id']){
+          this.getServiceRequestById(params['id']);
+        }
+        else {
+          this.createNewServiceRequest();
+        }
+      }
+    });
+
+    this.serviceRequestHandler.currentParameters$.subscribe(
+      {
+        next: (data: any) => {
+          this.currentParameters = data;
+        },
+        error: console.error
+      }
+    );
   }
 
   isStepCompleted(stepNumber: number): boolean {
@@ -28,10 +56,43 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   onSaveProvider(event: any) {
-    if(event.step){
+    if(event?.data.step){
       this.stepper.next();
     }
-    //TODO refresh the referral( we can pass it as an event property or we can make a getReferral call here).
+    if(event?.data.selected && event?.data.serviceProviderId){
+      this.serviceRequestHandler.setRecipient(this.currentSnapshot, event.data.serviceProviderId);
+      this.saveServiceRequest(this.currentSnapshot);
+    }
   }
+
+  private getServiceRequestById(serviceRequestId: any) {
+    console.log(serviceRequestId);
+  }
+
+  private createNewServiceRequest() {
+    this.serviceRequestHandler.currentSnapshot$.subscribe(
+      {
+        next: (data: any) => {
+          this.currentSnapshot = data;
+          console.log("DATA:", data)
+        },
+        error: console.error
+      }
+    );
+  }
+
+  saveServiceRequest(serviceRequest: ServiceRequest) {
+    this.serviceRequestHandler.saveServiceRequest(serviceRequest).subscribe(
+      {
+        next: (data: any) => {
+          this.lastSnapshot = this.serviceRequestHandler.deepCopy(data);
+          this.currentSnapshot = this.serviceRequestHandler.deepCopy(data);
+        },
+        error: console.error
+      }
+    );
+  }
+
+
 }
 

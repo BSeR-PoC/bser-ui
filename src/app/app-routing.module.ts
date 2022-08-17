@@ -8,6 +8,7 @@ import {RegistrationComponent} from "./components/registration/registration.comp
 
 const routes: Routes = [
   { path: '', component: ActiveReferralsComponent},
+  { path: 'referral-manager/:id', component: ReferralManagerComponent},
   { path: 'referral-manager', component: ReferralManagerComponent},
   { path: 'launch', component: LaunchComponent},
   { path: 'register', component: RegistrationComponent},

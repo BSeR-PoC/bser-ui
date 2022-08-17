@@ -27,7 +27,7 @@ export class RequestSupportingInformationComponent implements OnInit {
       'bp':new FormControl(null, [Validators.required]),
       'allergies':new FormControl(null, [Validators.required]),
       'medicalHistory':new FormControl(null, [Validators.required]),
-      'smockingStatus':new FormControl(null, [Validators.required]),
+      'smokingStatus':new FormControl(null, [Validators.required]),
     });
 
   }

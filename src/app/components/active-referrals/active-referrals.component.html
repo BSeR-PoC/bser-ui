@@ -2,7 +2,7 @@
   <div class="controls">
     <div style="font-size: large">Active Referrals and Drafts</div>
     <div class="spacer"></div>
-    <button mat-raised-button color="primary" [routerLink]="'/referral-manager'">
+    <button mat-raised-button color="primary" [routerLink]="['/referral-manager']">
       <mat-icon>add</mat-icon>
       Create New Referral
     </button>
@@ -56,6 +56,13 @@
     <!--TODO Replace this with a table. Maybe add to a component?-->
       <div style="margin: 1em">
         This patient does not active referrals.
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Complete">
+      <!--TODO Replace this with a table. Maybe add to a component?-->
+      <div style="margin: 1em">
+        This patient does not complete referrals.
       </div>
     </mat-tab>
 

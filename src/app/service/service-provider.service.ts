@@ -10,27 +10,14 @@ export class ServiceProviderService {
 
   constructor(private http: HttpClient) { }
 
-  private selectedServiceProvider = new Subject<any>();
-
-  public setSelectedServiceProvider(serviceProvider){
-    this.selectedServiceProvider.next(serviceProvider);
-  }
-
-  public getSelectedServiceProvider(){
-    return this.selectedServiceProvider.asObservable();
-  }
-
-  // getServiceProviders(): Observable<any[]> {
-  //   return this.http.get<any[]>('./assets/mock_data/service_providers.json');
-  // }
-
   public getServiceProviders() {
     let profile = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ReferralRecipientPractitionerRole";
     let include = "&_include=PractitionerRole:practitioner&_include=PractitionerRole:organization" // TODO: ADD HEALTHCARE SERVICE INCLUDE
     let connectionUrl = environment.bserProviderServer + "PractitionerRole?_profile=" + profile + include;
     return this.http.get(connectionUrl).pipe(
       map(results => {
-        return this.packageServiceProvidersIntoList(results);
+        const result = this.packageServiceProvidersIntoList(results);
+        return result;
       })
     );
   }
