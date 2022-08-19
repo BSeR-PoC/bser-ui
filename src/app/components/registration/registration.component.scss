@@ -6,3 +6,7 @@
 .flex-cell {
   flex: 1;
 }
+.flex-col {
+  flex-direction: column;
+  display: flex;
+}
