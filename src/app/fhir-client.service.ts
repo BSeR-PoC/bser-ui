@@ -78,40 +78,14 @@ export class FhirClientService {
     return from (SmartClient.ready())
   }
 
-  // getPatient(): Observable<any>{
-  //   if(this.patientObj){
-  //     return of(this.patientObj)
-  //   }
-  //   else {
-  //     return this.getClient().pipe(
-  //       tap((result: any) => {
-  //         this.patientObj = Object.assign(new Patient(), result);
-  //       }),
-  //       switchMap(client => {
-  //         return from (client.patient.read())
-  //       })
-  //     )
-  //   }
-  // }
-
-  // getPatient(): Observable<any>{
-  //   return this.getClient().pipe(
-  //     switchMap(client => {
-  //       return from (client.patient.read())
-  //     })
-  //   )
-  // }
 
   getPatient(): Observable<Patient> {
     if (this.patientObj) {
-      console.log(this.patientObj instanceof Patient)
       return of(this.patientObj)
     }
     return this.getPatientClient().pipe(
       tap((result: Patient) => {
-        console.log(result);
         this.patientObj = Object.assign(new Patient(), result)
-        console.log(this.patientObj instanceof Patient)
       })
     )
   }

@@ -11,14 +11,29 @@ export class ActiveReferralsComponent implements OnInit {
 
   displayedColumns: string[] = ['service', 'serviceProvider', 'status', 'dateCreated', 'lastUpdated'];
   public dataSource = new MatTableDataSource<any>([]);
+  isLoading: boolean = false;
+
   constructor(private mockDataRetrievalService: MockDataRetrievalService) { }
 
-  ngOnInit(): void {
+  getActiveReferrals(){
+
+    this.isLoading = true;
+
     this.mockDataRetrievalService.getActiveReferrals()
       .subscribe({
-        next: (data: any) => this.dataSource = data,
-        error: console.error
+        next: (data: any) => {
+          this.dataSource = data;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error(err);
+          this.isLoading = false;
+        }
       });
+  }
+
+  ngOnInit(): void {
+    this.getActiveReferrals();
   }
 
 }

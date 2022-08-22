@@ -134,7 +134,32 @@ export class FhirTerminologyConstants{
 
   // We are using the two core 2 OMB ethnicity categories
   // http://hl7.org/fhir/us/core/STU5/StructureDefinition-us-core-ethnicity.html
-  ETHNICITY = ["Hispanic or Latino", "Not Hispanic or Latino"];
+  ETHNICITY = [
+    {
+        "code": "2135-2",
+        "system": "urn:oid:2.16.840.1.113883.6.238",
+        "display": "Hispanic or Latino",
+        "definition": "",
+      },
+      {
+        "code": "2186-5",
+        "system": "urn:oid:2.16.840.1.113883.6.238",
+        "display": "Not Hispanic or Latino",
+        "definition": "",
+      },
+      {
+        "code": "ASKU",
+        "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+        "display": "Asked but unknown",
+        "definition": "Information was sought but not found (e.g., patient was asked but didn't know)",
+      },
+      {
+        "code": "UNK",
+        "system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+        "display": "Unknown",
+        "definition": "\t**Description:**A proper value is applicable, but not known. **Usage Notes**: This means the actual value is not known. If the only thing that is unknown is how to properly express the value in the necessary constraints (value set, datatype, etc.), then the OTH or UNC flavor should be used. No properties should be included for a datatype with this property unless: 1. Those properties themselves directly translate to a semantic of \"unknown\". (E.g. a local code sent as a translation that conveys 'unknown') 2. Those properties further qualify the nature of what is unknown. (E.g. specifying a use code of \"H\" and a URL prefix of \"tel:\" to convey that it is the home phone number that is unknown.)",
+      }
+  ];
 
   //http://hl7.org/fhir/us/core/STU3.1/ValueSet-us-core-observation-smokingstatus.html
   SMOKING_STATUS = [
@@ -144,7 +169,7 @@ export class FhirTerminologyConstants{
     {"code": "266919005",         "display":	"Never smoker"},
     {"code": "77176002",          "display":	"Smoker, current status unknown"},
     {"code": "266927001",         "display":	"Unknown if ever smoked"},
-    {"code": "428071000124103",   "display": "Current Heavy tobacco smoker"},
+    {"code": "428071000124103",   "display":  "Current Heavy tobacco smoker"},
     {"code": "428061000124105",   "display":	"Current Light tobacco smoker"},
   ];
 

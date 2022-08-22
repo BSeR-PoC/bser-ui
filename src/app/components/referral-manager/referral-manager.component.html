@@ -9,7 +9,8 @@
         <mat-step label="Select Recipient" [completed]='isStepCompleted(1)' >
           <div>
             <app-service-provider-list
-              (savedSuccessEvent)="stepper.next()"
+              (savedSuccessEvent)="onSaveProvider($event)"
+              [referral] = "referral"
             ></app-service-provider-list>
           </div>
         </mat-step>
@@ -18,6 +19,7 @@
         <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)' >
           <app-general-information-and-service-type
             (savedSuccessEvent)="stepper.next()"
+            [referral] = "referral"
           ></app-general-information-and-service-type>
         </mat-step>
 

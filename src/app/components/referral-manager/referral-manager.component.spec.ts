@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateReferralComponent } from './create-referral.component';
+import { ReferralManagerComponent } from './create-referral.component';
 
 describe('CreateReferralComponent', () => {
-  let component: CreateReferralComponent;
-  let fixture: ComponentFixture<CreateReferralComponent>;
+  let component: ReferralManagerComponent;
+  let fixture: ComponentFixture<ReferralManagerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CreateReferralComponent ]
+      declarations: [ ReferralManagerComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateReferralComponent);
+    fixture = TestBed.createComponent(ReferralManagerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

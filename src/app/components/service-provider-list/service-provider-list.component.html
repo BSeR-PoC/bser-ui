@@ -1,23 +1,35 @@
+<mat-card>
+  <mat-card-title>Selected Service Provider</mat-card-title>
+  <mat-card-content>
+    <!--If a service provider is selected, render the provider information-->
+    <div *ngIf="selectedServiceProvider">{{selectedServiceProvider | json}}</div>
+
+    <!--If no service provider is selected prompt the user to select one-->
+    <div *ngIf="!selectedServiceProvider">Please select a service provider from the list below.</div>
+
+  </mat-card-content>
+</mat-card>
+
 <div class="scrollable-container">
   <div *ngFor="let serviceProvider of serviceProviders">
     <div style="margin-bottom: 1em">
       <app-service-provider
         [serviceProvider]=serviceProvider
+        (selectedProviderEvent)="onSelectedServiceProvider($event)"
       >
       </app-service-provider>
     </div>
   </div>
+
+  <pre>{{serviceProviders | json}}</pre>
 </div>
 
-<div align="end" style="margin-top: 2em">
-  <button mat-raised-button (click)="onSaveAndContinue()" [disabled]="!selectedServiceProvider">Save</button>
+<div class="row-button-wrapper">
   <button mat-raised-button (click)="onCancel()">Cancel</button>
-<!--  <app-save-cancel-form-controls-->
-<!--    [isCancelEnabled]="true"-->
-<!--    [isSaveAndContinueEnabled]="isSaveAndContinueEnabled()"-->
-<!--    [isSaveAndExitEnabled]="isSaveAndExitEnabled()"-->
-<!--    (cancelEvent)= "onCancel()"-->
-<!--    (saveAndContinueEvent)="onSaveAndContinue()"-->
-<!--    (saveAndExitEvent)="onSaveAndExit()"-->
-<!--  ></app-save-cancel-form-controls>-->
+  <span class="spacer"></span>
+  <button mat-raised-button (click)="onSave()" [disabled]="!selectedServiceProvider">Save</button>
+  <button mat-raised-button (click)="onSaveAndContinue()" [disabled]="!selectedServiceProvider"
+          style="margin-left: 1em">
+    Save and Continue
+  </button>
 </div>

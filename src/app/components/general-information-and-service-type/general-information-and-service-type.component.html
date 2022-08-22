@@ -1,7 +1,5 @@
 <!-- TODO In addition to the form functionality we need to extract all the css into classes-->
 <div class="scrollable-container">
-
-  <pre>{{patient| json}}</pre>
   <form [formGroup]="generalInfoServiceTypeForm">
 
     <mat-card>
@@ -58,8 +56,9 @@
               <!-- radio buttons -->
               <mat-radio-group formControlName="raceCategoriesListRadioBtns" class="radio-group">
                 <mat-list-item *ngFor="let raceCategory of fhirConstants.RACE_CATEGORIES.slice(-2)">
-                  <mat-radio-button [value]=raceCategory style="margin-top: 1em; margin-left: 1em"
-                                    (change)="onRaceCategoryRadioBtnChange($event)">
+                  <mat-radio-button
+                    [value]=raceCategory style="margin-top: 1em; margin-left: 1em"
+                    (change)="onRaceCategoryRadioBtnChange($event)">
                     {{raceCategory.display}}
                   </mat-radio-button>
                 </mat-list-item>
@@ -83,7 +82,7 @@
               <mat-radio-group formControlName="ethnicity" class="radio-group">
                 <mat-list-item *ngFor="let ethnicGroup of fhirConstants.ETHNICITY">
                   <mat-radio-button [value]=ethnicGroup style="margin-top: 1em; margin-left: 1em">
-                    {{ethnicGroup}}
+                    {{ethnicGroup.display}}
                   </mat-radio-button>
                 </mat-list-item>
               </mat-radio-group>
@@ -132,16 +131,17 @@
     </mat-card>
 
   </form>
+
+  <pre>{{usCorePatient| json}}</pre>
 </div>
 
-<div align="end" style="margin-top: 2em">
-  <app-save-cancel-form-controls
-    [isCancelEnabled]="true"
-    [isSaveAndContinueEnabled]="true"
-    [isSaveAndExitEnabled]="true"
-    (cancelEvent)= "onCancel()"
-    (saveAndContinueEvent)="onSaveAndContinue()"
-    (saveAndExitEvent)="onSaveAndExit()"
-  ></app-save-cancel-form-controls>
+<div class="row-button-wrapper">
+  <button mat-raised-button (click)="onCancel()">Cancel</button>
+  <span class="spacer"></span>
+  <button mat-raised-button (click)="onSave()">Save</button>
+  <button mat-raised-button (click)="onSaveAndContinue()"
+          style="margin-left: 1em">
+    Save and Continue
+  </button>
 </div>
 
