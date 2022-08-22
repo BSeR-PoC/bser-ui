@@ -1,1 +1,66 @@
-<p>registration works!</p>
+<div class="container top-spacer">
+  <div class="flex-row">
+    <div class="flex-cell">
+      <span  style="font-size: large">Registered Service Providers</span>
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="practitionerName">
+          <th mat-header-cell *matHeaderCellDef> Practitioner </th>
+          <td mat-cell *matCellDef="let element"> {{element.practitioner.familyName}}, {{element.practitioner.givenName}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="organizationName">
+          <th mat-header-cell *matHeaderCellDef> Organization </th>
+          <td mat-cell *matCellDef="let element"> {{element.organization.name}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+    <div class="flex-cell">
+      <div class="flex-col">
+        <span style="font-size: large">Create Service Provider</span>
+        <p>For multiple practitioners represented under a single organization without additional distinction,
+        the practitioner fields should be left empty.</p>
+        <form [formGroup]="serviceProviderRegistrationForm" class="flex-col">
+          <div formGroupName="practitioner">
+            <mat-form-field appearance="fill">
+              <mat-label>Practitioner Given Name</mat-label>
+              <input matInput formControlName="givenName">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Practitioner Family Name</mat-label>
+              <input matInput formControlName="familyName">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Practitioner Phone #</mat-label>
+              <input matInput formControlName="phone">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Practitioner NPI</mat-label>
+              <input matInput formControlName="npi">
+            </mat-form-field>
+          </div>
+          <div formGroupName="organization">
+            <mat-form-field appearance="fill">
+              <mat-label>Organization Name</mat-label>
+              <input matInput formControlName="name">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Organization Phone #</mat-label>
+              <input matInput formControlName="phone">
+            </mat-form-field>
+          </div>
+          <mat-form-field appearance="fill">
+            <mat-label>Endpoint</mat-label>
+            <input matInput formControlName="endpoint">
+          </mat-form-field>
+          <button mat-raised-button color=primary (click)="onSubmit()">
+            Create Service Provider
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
