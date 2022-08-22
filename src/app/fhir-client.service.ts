@@ -15,8 +15,13 @@ export class FhirClientService {
   private patient: any;
   private patientObj: Patient;
   private practitionerObj: Practitioner;
+  private serverUrl: string;
 
   constructor() {}
+
+  getFhirClient() {
+    return this.fhirClient;
+  }
 
   authorize() {
     SmartClient.authorize(
@@ -67,6 +72,7 @@ export class FhirClientService {
         console.error(error);
       })
   }
+
 
   getClient(): Observable<any> {
     return from (SmartClient.ready())
@@ -127,6 +133,7 @@ export class FhirClientService {
   getPatientClient(): Observable<any>{
     return this.getClient().pipe(
       switchMap(client => {
+        console.log(client.getState("serverUrl"));
         return from (client.patient.read())
       })
     )
@@ -139,6 +146,11 @@ export class FhirClientService {
       })
     )
   }
+
+  getClientState(): Observable<any> {
+    return this.getClient().pipe()
+  }
+
   // getPractitionerClient(): Observable<any>{
   //   return this.getClient().pipe(
   //     switchMap(client => {

@@ -6,12 +6,17 @@
 
         <ng-container matColumnDef="practitionerName">
           <th mat-header-cell *matHeaderCellDef> Practitioner </th>
-          <td mat-cell *matCellDef="let element"> {{element.practitioner.familyName}}, {{element.practitioner.givenName}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.practitioner?.familyName}}, {{element.practitioner?.givenName}} </td>
         </ng-container>
 
         <ng-container matColumnDef="organizationName">
           <th mat-header-cell *matHeaderCellDef> Organization </th>
           <td mat-cell *matCellDef="let element"> {{element.organization.name}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="deleteButton">
+          <th mat-header-cell *matHeaderCellDef>  </th>
+          <td mat-cell *matCellDef="let element"> <mat-icon (click)="onDeleteProvider(element.resources)">delete</mat-icon> </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -56,9 +61,14 @@
             <mat-label>Endpoint</mat-label>
             <input matInput formControlName="endpoint">
           </mat-form-field>
-          <button mat-raised-button color=primary (click)="onSubmit()">
-            Create Service Provider
-          </button>
+          <div>
+            <button mat-raised-button color=primary (click)="clear()">
+              Clear Form
+            </button>
+            <button mat-raised-button color=primary (click)="onSubmit()">
+              Create Service Provider
+            </button>
+          </div>
         </form>
       </div>
     </div>

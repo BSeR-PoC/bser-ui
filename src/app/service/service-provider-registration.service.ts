@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {map, Observable} from "rxjs";
+import {forkJoin, map, Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {ServiceProviderService} from "./service-provider.service";
 import {Bundle, BundleEntry, BundleEntryRequest} from "@fhir-typescript/r4-core/dist/fhir/Bundle";
@@ -26,8 +26,6 @@ export class ServiceProviderRegistrationService {
   getServiceProviders(): Observable<any> {
     return this.serviceProviderService.getServiceProviders().pipe(
       map(searchResult =>{
-          console.log("FETCHED SERVICE PROVIDERS");
-          console.log(searchResult);
           return this.serviceProviderService.getServiceProviders();
         }
       )
@@ -48,15 +46,24 @@ export class ServiceProviderRegistrationService {
     this.createBundlePostRequestEntries([practitionerRole, practitioner, organization, endpoint]).forEach(
       bundleEntry => transBundle.entry.push(bundleEntry)
     );
-    return this.http.post(environment.bserProviderServer, transBundle.toJSON())
-      //.pipe(
-      // map( result => {
-      //     console.log(result);
-      //     // TODO: Check Success. Is there a better way to do this??? This feels bad.
-      //     return this.getServiceProviders();
-      //   }
-      // )
-    //);
+    return this.http.post(environment.bserProviderServer, transBundle.toJSON());
+  }
+
+  deleteServiceProvider(resources: any): Observable<any> {
+    console.log(resources);
+    // return new Observable<any>();
+    // let observables = []
+    // Object.entries()
+    // const response = forkJoin([
+    //   this.http.delete()
+    //
+    //   ]);
+    let transBundle = new Bundle({type: "transaction"});
+    this.createBundleDeleteRequestEntries(resources).forEach(
+      bundleEntry => transBundle.entry.push(bundleEntry)
+    );
+    console.log(transBundle);
+    return this.http.post(environment.bserProviderServer, transBundle.toJSON());
   }
 
   createBundlePostRequestEntries(resources: Resource[]): BundleEntry[] {
@@ -71,6 +78,26 @@ export class ServiceProviderRegistrationService {
         })
       });
       bundleEntries.push(bundleEntry);
+    });
+    return bundleEntries;
+  }
+
+  createBundleDeleteRequestEntries(resources: any): BundleEntry[] {
+    let bundleEntries = []
+    Object.entries(resources).forEach(entry => {
+        if (!(entry[1] === undefined)) {
+          console.log(entry[1])
+          let resource:any = entry[1];
+          let bundleEntry = new BundleEntry({
+            //fullUrl: resource.resourceType + "/" + resource.id,
+            //resource: resource.toJSON(),
+            request: new BundleEntryRequest({
+              method: "DELETE",
+              url: resource.resourceType + "/" + resource.id,
+            })
+          });
+          bundleEntries.push(bundleEntry);
+        }
     });
     return bundleEntries;
   }

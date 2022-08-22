@@ -12,7 +12,7 @@ import {Subscription} from "rxjs";
 export class RegistrationComponent implements OnInit {
 
   public dataSource = new MatTableDataSource<any>([]);
-  displayedColumns: string[] = ['organizationName', 'practitionerName'];
+  displayedColumns: string[] = ['organizationName', 'practitionerName', 'deleteButton'];
   serviceProviderRegistrationForm: FormGroup;
   dataSubscription: Subscription;
 
@@ -49,7 +49,10 @@ export class RegistrationComponent implements OnInit {
       {
         next: (data: any) => {
            this.dataSubscription = this.providerRegistrationService.getServiceProviders().subscribe({
-              next: (data: any) => this.dataSource = data,
+              next: (data: any) => {
+                this.dataSource = data;
+                this.serviceProviderRegistrationForm.reset();
+              },
               error: console.error
             })
         },
@@ -58,4 +61,24 @@ export class RegistrationComponent implements OnInit {
     );
   }
 
+  clear(): void {
+    this.serviceProviderRegistrationForm.reset();
+  }
+
+  onDeleteProvider(resources): void {
+    this.providerRegistrationService.deleteServiceProvider(resources).subscribe(
+      {
+        next: (data: any) => {
+          this.dataSubscription = this.providerRegistrationService.getServiceProviders().subscribe({
+            next: (data: any) => {
+              this.dataSource = data;
+              this.serviceProviderRegistrationForm.reset();
+            },
+            error: console.error
+          })
+        },
+        error: console.error
+      }
+    );
+  }
 }

@@ -46,6 +46,9 @@ export class ServiceRequestHandlerService {
 
   createNewServiceRequest() {
     //let code = createServiceRequestCoding();
+    // this.fhirClient.getClientState().subscribe({
+    //   next: data => console.log(data)
+    // });
     this.fhirClient.getPractitioner().subscribe({
       next: practitioner => {
         this.practitioner = Object.assign(new Practitioner(), practitioner);
