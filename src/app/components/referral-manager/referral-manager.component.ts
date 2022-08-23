@@ -62,7 +62,7 @@ export class ReferralManagerComponent implements OnInit {
     }
     if(event?.data.selected && event?.data.serviceProviderId){
       this.serviceRequestHandler.createNewServiceRequest();
-      this.serviceRequestHandler.setRecipient(this.currentSnapshot, event.data.serviceProviderId);
+      this.serviceRequestHandler.setRecipient(this.currentSnapshot, event.data);
       this.saveServiceRequest(this.currentSnapshot);
     }
   }

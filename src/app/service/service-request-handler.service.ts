@@ -121,8 +121,16 @@ export class ServiceRequestHandlerService {
   }
 
   // First Screen User Input
-  setRecipient(currentSnapshot: ServiceRequest, recipient: PractitionerRole) {
-    let recipientTest = new PractitionerRole({id: uuidv4() }) // TODO: Switch to real selection
+  setRecipient(currentSnapshot: ServiceRequest, recipient: any) {
+    //TODO refactor the code for testing
+    let recipientTest = null;
+    if(recipient.resources?.practitionerRole){
+      recipientTest = new PractitionerRole(recipient.resources.practitionerRole);
+    }
+    else {
+      recipientTest = new PractitionerRole({id: uuidv4() }); //only for testing
+    }
+
     currentSnapshot.performer.length = 0;
     currentSnapshot.performer.push(Reference.fromResource(recipientTest));
   }

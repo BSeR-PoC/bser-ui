@@ -19,7 +19,7 @@
         <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)' >
           <app-general-information-and-service-type
             (savedSuccessEvent)="stepper.next()"
-            [referral] = "referral"
+            [referral] = "currentSnapshot"
           ></app-general-information-and-service-type>
         </mat-step>
 

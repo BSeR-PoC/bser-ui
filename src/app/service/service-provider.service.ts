@@ -72,14 +72,14 @@ export class ServiceProviderService {
     return {
       "serviceProviderId": serviceProvider.practitionerRole.id,
       "practitioner": {
-        "givenName": serviceProvider.practitioner?.name[0]?.given[0] || null,
-        "familyName": serviceProvider.practitioner?.name[0]?.family || null,
-        "phone": serviceProvider.practitioner?.telecom[0]?.value || null,
-        "npi": serviceProvider.practitioner?.identifier[0]?.value || null
+        "givenName": serviceProvider.practitioner?.name?.[0]?.given?.[0] || null,
+        "familyName": serviceProvider.practitioner?.name?.[0]?.family || null,
+        "phone": serviceProvider.practitioner?.telecom?.[0]?.value || null,
+        "npi": serviceProvider.practitioner?.identifier?.[0]?.value || null
       },
       "organization": {
         "name": serviceProvider.organization.name,
-        "phone": serviceProvider.organization?.telecom[0]?.value || null
+        "phone": serviceProvider.organization?.telecom?.[0]?.value || null
       },
       "endpoint": serviceProvider.endpoint?.address,
       "selected": false,

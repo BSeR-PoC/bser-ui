@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Router} from "@angular/router";
@@ -14,7 +14,8 @@ import {ServiceRequestHandlerService} from "../../service/service-request-handle
   templateUrl: './general-information-and-service-type.component.html',
   styleUrls: ['./general-information-and-service-type.component.scss']
 })
-export class GeneralInformationAndServiceTypeComponent implements OnInit {
+
+export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChanges {
 
   // Multiple checkbox reactive form solution inspired by:
   // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
@@ -54,7 +55,13 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         this.updateFormControls(this.usCorePatient);
       }
     });
+
+    this.serviceRequestHandlerService.currentSnapshot$.subscribe({
+      next: value=> console.log(value)
+      }
+    )
   }
+
   private updateFormControls(usCorePatient) {
 
     if(usCorePatient.ethnicity){
@@ -189,5 +196,9 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
 
   onSave() {
 
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
   }
 }
