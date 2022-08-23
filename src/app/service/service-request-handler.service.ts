@@ -45,14 +45,17 @@ export class ServiceRequestHandlerService {
   }
 
   createNewServiceRequest(){
+
     const client$ = this.fhirClient.getClient();
-
     const practitioner$ = this.fhirClient.getPractitioner();
+    const patient$ = this.fhirClient.getPatient()
 
-    forkJoin([client$, practitioner$]).subscribe(
+    forkJoin([client$, practitioner$, patient$]).subscribe(
       results => {
         const client = results[0];
         const practitioner = results[1];
+        const patient = results[2];
+
         const smartServerUrl = client.getState("serverUrl");
 
         this.practitioner = Object.assign(new Practitioner(), practitioner);
@@ -64,7 +67,7 @@ export class ServiceRequestHandlerService {
           intent: "order",
           authoredOn: new Date().toISOString(),
           supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
-          subject: Reference.fromResource(new Patient({id: uuidv4() }), smartServerUrl) // TODO: Switch to currently selected patient
+          subject: Reference.fromResource(patient, smartServerUrl) // TODO: Switch to currently selected patient
         });
         this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
         this.lastParameters = new Parameters(this.deepCopy(parameters));
