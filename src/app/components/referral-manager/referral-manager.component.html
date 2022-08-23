@@ -10,7 +10,7 @@
           <div>
             <app-service-provider-list
               (savedSuccessEvent)="onSaveProvider($event)"
-              [referral] = "referral"
+              [referral]="currentSnapshot"
             ></app-service-provider-list>
           </div>
         </mat-step>

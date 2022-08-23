@@ -7,6 +7,7 @@ import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 import {USCorePatient} from "../../domain/USCorePatient";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 
 @Component({
   selector: 'app-general-information-and-service-type',
@@ -31,7 +32,8 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
     public fhirConstants: FhirTerminologyConstants,
     private router: Router,
     private fhirClient: FhirClientService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private serviceRequestHandlerService: ServiceRequestHandlerService
   ) {
   }
 
@@ -51,7 +53,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         this.usCorePatient = new USCorePatient(patient);
         this.updateFormControls(this.usCorePatient);
       }
-    })
+    });
   }
   private updateFormControls(usCorePatient) {
 

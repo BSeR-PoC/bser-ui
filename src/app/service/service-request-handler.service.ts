@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
-import {BehaviorSubject, forkJoin, from, map, mergeMap, Observable, of, switchMap, timer} from 'rxjs';
+import {BehaviorSubject, forkJoin, map, Observable} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -11,7 +11,6 @@ import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
 import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
-import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 
 @Injectable({
   providedIn: 'root'
@@ -67,7 +66,7 @@ export class ServiceRequestHandlerService {
           intent: "order",
           authoredOn: new Date().toISOString(),
           supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
-          subject: Reference.fromResource(patient, smartServerUrl) // TODO: Switch to currently selected patient
+          subject: Reference.fromResource(patient, smartServerUrl)
         });
         this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
         this.lastParameters = new Parameters(this.deepCopy(parameters));
@@ -76,11 +75,8 @@ export class ServiceRequestHandlerService {
         this.currentSnapshot.next(serviceRequest);
         this.currentParameters.next(parameters);
         console.log("SERVICE REQUEST CREATED");
-
       }
     )
-
-
   }
 
   private createServiceRequestCoding(): CodeableConcept {
@@ -167,4 +163,14 @@ export class ServiceRequestHandlerService {
       });
     });
   }
+
+  getAll() : Observable<any[]> {
+    let connectionUrl = environment.bserProviderServer + "ServiceRequest";
+
+    return this.http.get(connectionUrl)
+      .pipe( map((result: any) => (
+        result.entry as Object[]
+      )));
+  }
+
 }

@@ -1,6 +1,6 @@
 <mat-card [class.mat-elevation-z1]="!serviceProvider?.selected" [class.mat-elevation-z8]="serviceProvider?.selected">
   <mat-card-title [ngStyle]="{'color':serviceProvider.selected ? '#0d47a1' : '' }">
-    {{serviceProvider?.name}}
+    {{serviceProvider.practitioner?.familyName}}, {{serviceProvider.practitioner?.givenName}} ({{serviceProvider.organization?.name}})
   </mat-card-title>
   <mat-card-subtitle>{{serviceProvider?.description}}</mat-card-subtitle>
   <mat-card-content>

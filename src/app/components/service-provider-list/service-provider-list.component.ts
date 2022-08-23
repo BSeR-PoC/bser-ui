@@ -14,6 +14,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
 
   serviceProviders: any[] = null;
   selectedServiceProvider: any = null;
+  isLoading: boolean = false
 
   @Input() referral: any;
   @Output() savedSuccessEvent = new EventEmitter();
@@ -24,11 +25,19 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
     private dialog: MatDialog
   ) { }
 
+
   getServiceProviders(): void {
+    this.isLoading = true;
     this.serviceProviderService.getServiceProviders()
       .subscribe({
-        next: (data: any) => this.serviceProviders = data,
-        error: (err)=> console.error(err)
+        next: (data: any) => {
+          this.serviceProviders = data;
+          this.isLoading = false;
+        },
+        error: (err)=> {
+          console.error(err);
+          this.isLoading = false;
+        }
       });
   }
 
@@ -98,7 +107,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-  //  console.log(changes);
+    console.log(changes);
   }
 
 }

@@ -2,8 +2,10 @@
   <mat-card-title>Selected Service Provider</mat-card-title>
   <mat-card-content>
     <!--If a service provider is selected, render the provider information-->
-    <div *ngIf="selectedServiceProvider">{{selectedServiceProvider | json}}</div>
-
+    <div *ngIf="selectedServiceProvider" style="color: #0d47a1">
+      {{selectedServiceProvider.practitioner?.familyName}}, {{selectedServiceProvider.practitioner?.givenName}}
+      ({{selectedServiceProvider.organization?.name}})
+    </div>
     <!--If no service provider is selected prompt the user to select one-->
     <div *ngIf="!selectedServiceProvider">Please select a service provider from the list below.</div>
 
@@ -11,6 +13,12 @@
 </mat-card>
 
 <div class="scrollable-container">
+  <div *ngIf="isLoading" class="loading" style="margin-top: 1em">
+    Loading Service Providers
+  </div>
+  <div *ngIf="!isLoading && !serviceProviders?.length" style="margin-top: 1em">
+    No service providers found.
+  </div>
   <div *ngFor="let serviceProvider of serviceProviders">
     <div style="margin-bottom: 1em">
       <app-service-provider
@@ -21,7 +29,7 @@
     </div>
   </div>
 
-  <pre>{{serviceProviders | json}}</pre>
+<!--  <pre>{{serviceProviders | json}}</pre>-->
 </div>
 
 <div class="row-button-wrapper">

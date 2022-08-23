@@ -45,6 +45,7 @@ export class ReferralManagerComponent implements OnInit {
       {
         next: (data: any) => {
           this.currentParameters = data;
+          console.log("DATA:", data)
         },
         error: console.error
       }
@@ -60,6 +61,7 @@ export class ReferralManagerComponent implements OnInit {
       this.stepper.next();
     }
     if(event?.data.selected && event?.data.serviceProviderId){
+      this.serviceRequestHandler.createNewServiceRequest();
       this.serviceRequestHandler.setRecipient(this.currentSnapshot, event.data.serviceProviderId);
       this.saveServiceRequest(this.currentSnapshot);
     }
