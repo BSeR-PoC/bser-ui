@@ -173,5 +173,27 @@ export class FhirTerminologyConstants{
     {"code": "428061000124105",   "display":	"Current Light tobacco smoker"},
   ];
 
+  // https://hl7.org/fhir/R4/valueset-days-of-week.html
+  DAYS_OF_WEEK = [
+    {"code": "mon", "display": "Monday"},
+    {"code": "tue", "display": "Tuesday"},
+    {"code": "wed", "display": "Wednesday"},
+    {"code": "thu", "display": "Thursday"},
+    {"code": "fri", "display": "Friday"},
+    {"code": "sat", "display": "Saturday"},
+    {"code": "sun", "display": "Sunday"},
+  ]
+
+  // https://confluence.icl.gtri.org/display/T17BPC/API+Design
+  // Not a real FHIR valueset, but defined FHIR like.
+  private bserSystem = "urn:uuid:da3e49a2-b25e-4bf5-98d2-dd9b211dfc0c"
+  SERVICE_TYPES = [
+    {"code": "arthritis", "display": "Arthritis", "system": this.bserSystem},
+    {"code": "diabetes-prevention", "display": "Diabetes Prevention", "system": this.bserSystem},
+    {"code": "early-childhood-nutrition", "display": "Early Childhood Nutrition", "system": this.bserSystem},
+    {"code": "hypertension", "display": "Hypertension", "system": this.bserSystem},
+    {"code": "obesity", "display": "Obesity", "system": this.bserSystem},
+    {"code": "tobacco-use-cessation", "display": "Tobacco Use Cessation", "system": this.bserSystem},
+  ]
 
 }

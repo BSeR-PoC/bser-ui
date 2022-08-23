@@ -13,7 +13,7 @@ export class ServiceProviderService {
 
   public getServiceProviders() {
     let profile = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ReferralRecipientPractitionerRole";
-    let include = "&_include=PractitionerRole:practitioner&_include=PractitionerRole:organization&_include=PractitionerRole:endpoint" // TODO: ADD HEALTHCARE SERVICE INCLUDE
+    let include = "&_include=PractitionerRole:practitioner&_include=PractitionerRole:organization&_include=PractitionerRole:endpoint&_include=PractitionerRole:healthcareService" // TODO: ADD HEALTHCARE SERVICE INCLUDE
     let connectionUrl = environment.bserProviderServer + "PractitionerRole?_profile=" + profile + include;
     return this.http.get(connectionUrl).pipe(
       map(results => {
@@ -23,7 +23,7 @@ export class ServiceProviderService {
     );
   }
 
-  // Takes the Bundle with the includes and sorts them into a single object capturing all 4 potential resources.
+  // Takes the Bundle with the includes and sorts them into a single object capturing all potential resources.
   private packageServiceProvidersIntoList(results: any): any {
     let serviceProviderList = []
     if(results.entry && results.entry.length) {
@@ -75,7 +75,7 @@ export class ServiceProviderService {
         "givenName": serviceProvider.practitioner?.name[0]?.given[0] || null,
         "familyName": serviceProvider.practitioner?.name[0]?.family || null,
         "phone": serviceProvider.practitioner?.telecom[0]?.value || null,
-        "npi": serviceProvider.practitioner?.identifier[0]?.value || null
+        "npi": "123"//serviceProvider?.practitioner?.identifier[0]?.value || null
       },
       "organization": {
         "name": serviceProvider.organization.name,

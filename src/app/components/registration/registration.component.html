@@ -29,7 +29,8 @@
         <p>For multiple practitioners represented under a single organization without additional distinction,
         the practitioner fields should be left empty.</p>
         <form [formGroup]="serviceProviderRegistrationForm" class="flex-col">
-          <div formGroupName="practitioner">
+          <div formGroupName="practitioner" style="border: 1px black solid">
+            <h2>Practitioner</h2>
             <mat-form-field appearance="fill">
               <mat-label>Practitioner Given Name</mat-label>
               <input matInput formControlName="givenName">
@@ -47,7 +48,9 @@
               <input matInput formControlName="npi">
             </mat-form-field>
           </div>
-          <div formGroupName="organization">
+
+          <div formGroupName="organization" style="border: 1px black solid">
+            <h2>Organization</h2>
             <mat-form-field appearance="fill">
               <mat-label>Organization Name</mat-label>
               <input matInput formControlName="name">
@@ -57,10 +60,52 @@
               <input matInput formControlName="phone">
             </mat-form-field>
           </div>
-          <mat-form-field appearance="fill">
-            <mat-label>Endpoint</mat-label>
-            <input matInput formControlName="endpoint">
-          </mat-form-field>
+
+          <div style="border: 1px black solid">
+            <h2>Endpoint</h2>
+            <mat-form-field appearance="fill">
+              <mat-label>Endpoint</mat-label>
+              <input matInput formControlName="endpoint">
+            </mat-form-field>
+          </div>
+
+          <!-- Services-->
+          <div style="border: 1px black solid" class="flex-row">
+            <div style="border: 1px black solid">
+              <mat-selection-list>
+                <mat-list-item (change)="onDaysOfWeekChanged($event)"
+                               *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['serviceType']['controls'];
+                    let i=index;">
+                  <mat-checkbox [formControl]="control" [value]="fhirConstants.SERVICE_TYPES[i].code">
+                    <span style="font-size:14px">{{fhirConstants.SERVICE_TYPES[i].display}}</span>
+                  </mat-checkbox>
+                </mat-list-item>
+              </mat-selection-list>
+            </div>
+            <div>
+              <mat-selection-list>
+                <mat-list-item (change)="onDaysOfWeekChanged($event)"
+                               *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['days']['controls'];
+                    let i=index;">
+                  <mat-checkbox [formControl]="control" [value]="fhirConstants.DAYS_OF_WEEK[i].code">
+                    <span style="font-size:14px">{{fhirConstants.DAYS_OF_WEEK[i].display}}</span>
+                  </mat-checkbox>
+                </mat-list-item>
+              </mat-selection-list>
+            </div>
+            <div formGroupName="services">
+              <div class="flex-col">
+                <mat-form-field appearance="fill">
+                  <mat-label>Start Time</mat-label>
+                  <input matInput formControlName="startTime" type="time">
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                  <mat-label>End Time</mat-label>
+                  <input matInput formControlName="endTime" type="time">
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
           <div>
             <button mat-raised-button color=primary (click)="clear()">
               Clear Form

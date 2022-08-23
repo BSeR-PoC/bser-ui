@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {ServiceProviderRegistrationService} from "../../service/service-provider-registration.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Subscription} from "rxjs";
+import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 
 @Component({
   selector: 'app-registration',
@@ -10,13 +11,12 @@ import {Subscription} from "rxjs";
   styleUrls: ['./registration.component.scss']
 })
 export class RegistrationComponent implements OnInit {
-
   public dataSource = new MatTableDataSource<any>([]);
   displayedColumns: string[] = ['organizationName', 'practitionerName', 'deleteButton'];
   serviceProviderRegistrationForm: FormGroup;
   dataSubscription: Subscription;
 
-  constructor(private providerRegistrationService: ServiceProviderRegistrationService) { }
+  constructor(public fhirConstants: FhirTerminologyConstants, private providerRegistrationService: ServiceProviderRegistrationService) { }
 
   ngOnInit(): void {
     this.dataSubscription = this.providerRegistrationService.getServiceProviders()
@@ -30,21 +30,46 @@ export class RegistrationComponent implements OnInit {
     // TODO: Add Healthcare Services Provided.
     this.serviceProviderRegistrationForm = new FormGroup({
       practitioner: new FormGroup({
-          givenName: new FormControl(),
-          familyName: new FormControl(),
-          phone: new FormControl(),
-          npi: new FormControl()
-        }),
+        givenName: new FormControl(),
+        familyName: new FormControl(),
+        phone: new FormControl(),
+        npi: new FormControl()
+      }),
       organization: new FormGroup({
         name: new FormControl(null, [Validators.required]),
         phone: new FormControl(null, [Validators.required])
       }),
+      services: new FormGroup({
+        serviceType: this.createServiceTypeControls(this.fhirConstants.SERVICE_TYPES),
+        days: this.createDayOfWeekControls(this.fhirConstants.DAYS_OF_WEEK),
+        startTime: new FormControl(),
+        endTime: new FormControl()
+      }),
       endpoint: new FormControl(null, [Validators.required]),
       });
+    console.log(this.serviceProviderRegistrationForm)
+  }
+
+  private createDayOfWeekControls(daysOfWeek: any[]) {
+    const arr = daysOfWeek.map(day => {
+      return new FormControl();
+    });
+    return new FormArray(arr);
+  }
+  private createServiceTypeControls(serviceTypes: any[]) {
+    const arr = serviceTypes.map(day => {
+      return new FormControl();
+    });
+    return new FormArray(arr);
+  }
+
+  public onDaysOfWeekChanged(event) {
+    console.log(event)
   }
 
   // TODO: Review this, need a better way to handle refreshing from server since the return of a transaction bundle is just success/error.
   onSubmit(): void {
+    //console.log(this.serviceProviderRegistrationForm.value);
     this.providerRegistrationService.createNewServiceProvider(this.serviceProviderRegistrationForm.value).subscribe(
       {
         next: (data: any) => {

@@ -13,15 +13,17 @@ import {Meta} from "@fhir-typescript/r4-core/dist/fhir/Meta";
 import {ContactPoint} from "@fhir-typescript/r4-core/dist/fhir/ContactPoint";
 import {HumanName} from "@fhir-typescript/r4-core/dist/fhir/HumanName";
 import {v4 as uuidv4} from 'uuid';
-import {Identifier, Reference, Resource} from "@fhir-typescript/r4-core/dist/fhir";
+import {FhirCode, HealthcareService, Identifier, Reference, Resource} from "@fhir-typescript/r4-core/dist/fhir";
 import {environment} from "../../environments/environment";
+import {FhirTerminologyConstants} from "../providers/fhir-terminology-constants";
+import {DaysOfWeekCodes, DaysOfWeekCodeType} from "@fhir-typescript/r4-core/dist/fhirValueSets/DaysOfWeekCodes";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceProviderRegistrationService {
 
-  constructor(private http: HttpClient, private serviceProviderService: ServiceProviderService) { }
+  constructor(private fhirConstants: FhirTerminologyConstants, private http: HttpClient, private serviceProviderService: ServiceProviderService) { }
 
   getServiceProviders(): Observable<any> {
     return this.serviceProviderService.getServiceProviders().pipe(
@@ -39,11 +41,12 @@ export class ServiceProviderRegistrationService {
     }
     let endpoint = this.buildEndpointResource(formData.endpoint);
     let organization = this.buildBserOrganizationResource(formData.organization);
-    let practitionerRole = this.buildBserRecipientPractitionerRole(practitioner, organization, endpoint);
+    let healthcareService = this.buildHealthcareServiceResource(formData.services, organization);
+    let practitionerRole = this.buildBserRecipientPractitionerRole(practitioner, organization, endpoint, healthcareService);
 
     let transBundle = new Bundle({type: "transaction"});
 
-    this.createBundlePostRequestEntries([practitionerRole, practitioner, organization, endpoint]).forEach(
+    this.createBundlePostRequestEntries([practitionerRole, practitioner, organization, endpoint, healthcareService]).forEach(
       bundleEntry => transBundle.entry.push(bundleEntry)
     );
     return this.http.post(environment.bserProviderServer, transBundle.toJSON());
@@ -102,12 +105,13 @@ export class ServiceProviderRegistrationService {
     return bundleEntries;
   }
 
-  buildBserRecipientPractitionerRole(practitioner, organization, endpoint): PractitionerRole {
+  buildBserRecipientPractitionerRole(practitioner, organization, endpoint, healthcareService): PractitionerRole {
     let profile = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ReferralRecipientPractitionerRole";
     let bserPractitionerRole = new PractitionerRole({
       meta: new Meta({profile: [profile]}),
       id: uuidv4(),
       organization: Reference.fromResource(organization),
+      healthcareService: [Reference.fromResource(healthcareService)],
       endpoint: [Reference.fromResource(endpoint)]
     });
     if (practitioner !== undefined) {
@@ -189,5 +193,35 @@ export class ServiceProviderRegistrationService {
       name: organizationDetails.name,
       telecom: [phoneContactPoint]
     });
+  }
+
+  buildHealthcareServiceResource(serviceDetails: any, organization: Organization): HealthcareService {
+    let daysOfWeekSelected: string[] = [];
+    for (let i = 0; i < serviceDetails.days.length; i++){
+      if (serviceDetails.days[i]) {
+        daysOfWeekSelected.push(this.fhirConstants.DAYS_OF_WEEK[i].code);
+      }
+    }
+    let serviceTypes: CodeableConcept[] = [];
+    for (let i = 0; i < serviceDetails.serviceType.length; i++) {
+      if (serviceDetails.serviceType[i]) {
+        let typeCodeableConcept = new CodeableConcept({
+          coding: [this.fhirConstants.SERVICE_TYPES[i]]
+        });
+        serviceTypes.push(typeCodeableConcept);
+      }
+    }
+    return new HealthcareService({
+      id: uuidv4(),
+      providedBy: Reference.fromResource(organization),
+      type: serviceTypes,
+      availableTime: [
+        {
+          daysOfWeek: daysOfWeekSelected,
+          availableStartTime: serviceDetails.startTime + ":00",
+          availableEndTime: serviceDetails.endTime + ":00"
+        }
+      ]
+    })
   }
 }
