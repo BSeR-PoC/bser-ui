@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
-import {BehaviorSubject, map} from 'rxjs';
+import {BehaviorSubject, forkJoin, from, map, mergeMap, Observable, of, switchMap, timer} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -44,20 +44,27 @@ export class ServiceRequestHandlerService {
     // Front page can pass ID on load.
   }
 
-  createNewServiceRequest() {
-    //let code = createServiceRequestCoding();
-    this.fhirClient.getPractitioner().subscribe({
-      next: practitioner => {
+  createNewServiceRequest(){
+    const client$ = this.fhirClient.getClient();
+
+    const practitioner$ = this.fhirClient.getPractitioner();
+
+    forkJoin([client$, practitioner$]).subscribe(
+      results => {
+        const client = results[0];
+        const practitioner = results[1];
+        const smartServerUrl = client.getState("serverUrl");
+
         this.practitioner = Object.assign(new Practitioner(), practitioner);
         let parameters = new Parameters( {id: uuidv4()});
         let serviceRequest = new ServiceRequest({
           code: this.createServiceRequestCoding(),
-          requester: Reference.fromResource(practitioner),
+          requester: Reference.fromResource(practitioner, smartServerUrl),
           status: "draft",
           intent: "order",
           authoredOn: new Date().toISOString(),
-          supportingInfo: [Reference.fromResource(parameters)],
-          subject: Reference.fromResource(new Patient({id: uuidv4() })) // TODO: Switch to currently selected patient
+          supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
+          subject: Reference.fromResource(new Patient({id: uuidv4() }), smartServerUrl) // TODO: Switch to currently selected patient
         });
         this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
         this.lastParameters = new Parameters(this.deepCopy(parameters));
@@ -66,8 +73,11 @@ export class ServiceRequestHandlerService {
         this.currentSnapshot.next(serviceRequest);
         this.currentParameters.next(parameters);
         console.log("SERVICE REQUEST CREATED");
+
       }
-    });
+    )
+
+
   }
 
   private createServiceRequestCoding(): CodeableConcept {
