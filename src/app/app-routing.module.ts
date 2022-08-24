@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {LaunchComponent} from "./launch/launch.component";
+import {LaunchComponent} from "./components/launch/launch.component";
 import {ActiveReferralsComponent} from "./components/active-referrals/active-referrals.component";
 import {ReferralManagerComponent} from "./components/referral-manager/referral-manager.component";
 import { ServiceRequestTesterComponent } from './service-request-tester/service-request-tester.component';
