@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {MatTableDataSource} from "@angular/material/table";
-import {map, Observable} from "rxjs";
+import {map, mergeMap, Observable} from "rxjs";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 
 @Component({
@@ -38,9 +38,22 @@ export class ActiveReferralsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getActiveReferrals();
-    this.serviceRequestHandlerService.getAll().subscribe({
+    this.serviceRequestHandlerService.getServiceRequestList().subscribe({
       next: value => console.log(value)
     });
+
+    this.serviceRequestHandlerService
+      .getServiceRequestList()
+      .pipe(
+        mergeMap((result) => {
+          console.log(result);
+          return result;
+         // return this.serviceRequestHandlerService.getResourceFromUrl(result.resource[0].performer[0].reference)
+        }
+        )
+      ).subscribe({
+      next: (value) => console.log(value)
+    })
   }
 
 

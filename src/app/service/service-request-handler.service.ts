@@ -132,7 +132,7 @@ export class ServiceRequestHandlerService {
     }
 
     currentSnapshot.performer.length = 0;
-    currentSnapshot.performer.push(Reference.fromResource(recipientTest));
+    currentSnapshot.performer.push(Reference.fromResource(recipientTest,  environment.bserProviderServer));
   }
 
   // Second Screen User Input
@@ -172,12 +172,20 @@ export class ServiceRequestHandlerService {
     });
   }
 
-  getAll() : Observable<any[]> {
+  getServiceRequestList() : Observable<any[]> {
     let connectionUrl = environment.bserProviderServer + "ServiceRequest";
 
     return this.http.get(connectionUrl)
       .pipe( map((result: any) => (
         result.entry as Object[]
+      )));
+  }
+
+
+  getResourceFromUrl(url) : Observable<any> {
+    return this.http.get(url)
+      .pipe( map((result: any) => (
+        result.entry as Object
       )));
   }
 

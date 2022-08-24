@@ -61,7 +61,6 @@ export class ReferralManagerComponent implements OnInit {
       this.stepper.next();
     }
     if(event?.data.selected && event?.data.serviceProviderId){
-      this.serviceRequestHandler.createNewServiceRequest();
       this.serviceRequestHandler.setRecipient(this.currentSnapshot, event.data);
       this.saveServiceRequest(this.currentSnapshot);
     }
@@ -72,6 +71,7 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   private createNewServiceRequest() {
+    this.serviceRequestHandler.createNewServiceRequest();
     this.serviceRequestHandler.currentSnapshot$.subscribe(
       {
         next: (data: any) => {
