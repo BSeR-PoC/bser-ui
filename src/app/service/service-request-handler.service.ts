@@ -183,10 +183,7 @@ export class ServiceRequestHandlerService {
 
 
   getResourceFromUrl(url) : Observable<any> {
-    return this.http.get(url)
-      .pipe( map((result: any) => (
-        result.entry as Object
-      )));
+    return this.http.get(url);
   }
 
 }

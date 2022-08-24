@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {MatTableDataSource} from "@angular/material/table";
-import {map, mergeMap, Observable} from "rxjs";
+import {catchError, forkJoin, map, mergeMap, Observable, of, switchMap} from "rxjs";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 
 @Component({
@@ -38,23 +38,47 @@ export class ActiveReferralsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getActiveReferrals();
+
     this.serviceRequestHandlerService.getServiceRequestList().subscribe({
       next: value => console.log(value)
-    });
+    })
 
     this.serviceRequestHandlerService
       .getServiceRequestList()
       .pipe(
-        mergeMap((result) => {
-          console.log(result);
-          return result;
-         // return this.serviceRequestHandlerService.getResourceFromUrl(result.resource[0].performer[0].reference)
-        }
-        )
+        switchMap(serviceRequestList =>
+          forkJoin(
+            serviceRequestList.map(
+              serviceRequest => forkJoin([
+                this.serviceRequestHandlerService.getResourceFromUrl(serviceRequest.resource?.performer?.[0]?.reference),
+                this.serviceRequestHandlerService.getResourceFromUrl(serviceRequest.resource?.requester?.reference),
+                this.serviceRequestHandlerService.getResourceFromUrl(serviceRequest.resource?.subject?.reference),
+
+              ]).pipe(
+                map (result=>
+                  ({
+                    serviceRequest: serviceRequest,
+                    performer: result[0],
+                    requester: result[1],
+                    subject: result[2]
+                  })
+                )
+              )
+            )
+          )
+        ),
+        catchError(error => {
+          console.log(error);
+          return null;
+        })
       ).subscribe({
-      next: (value) => console.log(value)
-    })
+      next: value => {
+        console.log(value)
+      }
+    });
+
   }
+
 
 
 }
