@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {MatTableDataSource} from "@angular/material/table";
-import {catchError, forkJoin, map, switchMap} from "rxjs";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
-import {environment} from "../../../environments/environment";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-active-referrals',
@@ -21,25 +20,10 @@ export class ActiveReferralsComponent implements OnInit {
   draftServiceRequests: any[] = [];
   completeServiceRequests: any[] = [];
 
-  constructor(private mockDataRetrievalService: MockDataRetrievalService,
-              private serviceRequestHandlerService: ServiceRequestHandlerService) { }
-
-  getActiveReferrals(){
-
-    this.isLoading = true;
-
-    this.mockDataRetrievalService.getActiveReferrals()
-      .subscribe({
-        next: (data: any) => {
-          this.dataSource = data;
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error(err);
-          this.isLoading = false;
-        }
-      });
-  }
+  constructor(
+    private mockDataRetrievalService: MockDataRetrievalService,
+    private serviceRequestHandlerService: ServiceRequestHandlerService,
+    private router: Router) { }
 
   findResourceById(bundle, resourceId){
     if(!bundle.entry || bundle.entry.length === 0 || !resourceId){
@@ -49,9 +33,12 @@ export class ActiveReferralsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.isLoading = true;
     this.serviceRequestHandlerService.getServiceRequestList().subscribe({
       next: results => {
+
+        this.isLoading = false;
+
         if (results.entry && results.entry.length) {
 
           this.serviceRequestList = results.entry.filter(entry => entry.resource.resourceType === "ServiceRequest");
@@ -66,7 +53,7 @@ export class ActiveReferralsComponent implements OnInit {
               performerOrganization: this.findResourceById(results, element.performer?.resource?.organization?.reference.replace('Organization/', ''))
             }))
             .map(element => ({
-              requesterId: element.serviceRequest?.resource?.id,
+              serviceRequestId: element.serviceRequest?.resource?.id,
               serviceProvider: element.performerOrganization?.resource.name,
               dateCreated: element.serviceRequest?.resource?.authored,
               lastUpdated: element.serviceRequest?.resource?.meta?.lastUpdated,
@@ -85,4 +72,7 @@ export class ActiveReferralsComponent implements OnInit {
 
   }
 
+  onEdit(element) {
+    this.router.navigate(['referral-manager', element.serviceRequestId])
+  }
 }
