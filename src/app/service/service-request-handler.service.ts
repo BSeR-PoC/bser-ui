@@ -62,11 +62,14 @@ export class ServiceRequestHandlerService {
         let serviceRequest = new ServiceRequest({
           code: this.createServiceRequestCoding(),
           requester: Reference.fromResource(practitioner, smartServerUrl),
+         // requester: Reference.fromResource(practitioner),
           status: "draft",
           intent: "order",
           authoredOn: new Date().toISOString(),
-          supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
+          //supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
+          supportingInfo: [Reference.fromResource(parameters)],
           subject: Reference.fromResource(patient, smartServerUrl)
+          //subject: Reference.fromResource(patient)
         });
         this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
         this.lastParameters = new Parameters(this.deepCopy(parameters));
@@ -132,7 +135,8 @@ export class ServiceRequestHandlerService {
     }
 
     currentSnapshot.performer.length = 0;
-    currentSnapshot.performer.push(Reference.fromResource(recipientTest,  environment.bserProviderServer));
+    //currentSnapshot.performer.push(Reference.fromResource(recipientTest,  environment.bserProviderServer));
+    currentSnapshot.performer.push(Reference.fromResource(recipientTest));
   }
 
   // Second Screen User Input
