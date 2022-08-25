@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
-import {BehaviorSubject, forkJoin, map, Observable} from 'rxjs';
+import {BehaviorSubject, forkJoin, map, Observable, switchMap} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -176,13 +176,29 @@ export class ServiceRequestHandlerService {
     });
   }
 
-  getServiceRequestList() : Observable<any[]> {
-    let connectionUrl = environment.bserProviderServer + "ServiceRequest";
+  getServiceRequestList() : Observable<any> {
 
-    return this.http.get(connectionUrl)
-      .pipe( map((result: any) => (
-        result.entry as Object[]
-      )));
+    const patient$ = this.fhirClient.getPatient();
+    const client$ = this.fhirClient.getClient();
+
+    return forkJoin([patient$, client$])
+      .pipe(
+        switchMap(results => {
+            const patientId = results[0].id;
+            const serverUrl = results[1].getState("serverUrl");
+            const subject = "subject=" + serverUrl;
+            const patient = "/Patient/" + patientId;
+            const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
+
+            const requestUrl = environment.bserProviderServer +
+              "ServiceRequest?" +
+              subject +
+              patient +
+              include;
+            return this.http.get(requestUrl)
+          }
+        )
+      );
   }
 
 

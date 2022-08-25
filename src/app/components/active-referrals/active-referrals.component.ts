@@ -41,80 +41,48 @@ export class ActiveReferralsComponent implements OnInit {
       });
   }
 
+  findResourceById(bundle, resourceId){
+    if(!bundle.entry || bundle.entry.length === 0 || !resourceId){
+      return null;
+    }
+    return bundle.entry.find(entry => entry?.resource?.id === resourceId);
+  }
+
   ngOnInit(): void {
 
-      this.serviceRequestHandlerService
-      .getServiceRequestList()
-      .pipe(
-        switchMap(serviceRequestList =>
-          forkJoin(
-            serviceRequestList.map(
-              serviceRequest => forkJoin([
-                this.serviceRequestHandlerService.getResourceFromUrl(serviceRequest.resource?.performer?.[0]?.reference),
-                this.serviceRequestHandlerService.getResourceFromUrl(serviceRequest.resource?.requester?.reference),
-                this.serviceRequestHandlerService.getResourceFromUrl(serviceRequest.resource?.subject?.reference),
-
-              ]).pipe(
-                map (result=>
-                  //TODO we may have to map the resources to some FHIR type, but for now we just create something we can use.
-                  ({
-                    serviceRequest: serviceRequest,
-                    performer: result[0],
-                    requester: result[1],
-                    subject: result[2]
-                  })
-                )
-              )
-            )
-          ).pipe(
-            switchMap(serviceRequestList =>
-              forkJoin(
-                serviceRequestList.map(
-                  serviceRequest => forkJoin([
-                    this.serviceRequestHandlerService.getResourceFromUrl(environment.bserProviderServer + serviceRequest.performer.practitioner.reference),
-                    this.serviceRequestHandlerService.getResourceFromUrl(environment.bserProviderServer + serviceRequest.performer.organization.reference)
-                  ]).pipe(
-                    map( result =>
-                      ({
-                        serviceRequest: serviceRequest.serviceRequest,
-                        performerPractitioner: result[0],
-                        performerOrganization: result[1],
-                        performer: serviceRequest.performer,
-                        requester: serviceRequest.requester,
-                        subject: serviceRequest.subject
-                      })
-                    )
-                  )
-                )
-              )
-            )
-          )
-        ),
-        catchError(error => {
-          console.log(error);
-          return null;
-        })
-      ).subscribe({
+    this.serviceRequestHandlerService.getServiceRequestList().subscribe({
       next: results => {
-        this.serviceRequestList = results as Array<any>;
+        if (results.entry && results.entry.length) {
 
-        const mappedServiceRequests = this.serviceRequestList
-          .map(serviceRequest => ({
-            requesterId: serviceRequest.serviceRequest?.resource?.id,
-            serviceProvider: serviceRequest.performerOrganization?.name,
-            dateCreated: serviceRequest.serviceRequest?.resource?.authoredOn,
-            lastUpdated: serviceRequest.serviceRequest?.resource?.meta?.lastUpdated,
-            service: "unknown parameter",
-            status: serviceRequest.serviceRequest?.resource?.status,
-          }));
+          this.serviceRequestList = results.entry.filter(entry => entry.resource.resourceType === "ServiceRequest");
 
-        this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
-        this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
-        this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');
+          let mappedServiceRequests = this.serviceRequestList
+            .map(element => ({
+              serviceRequest: element,
+              performer: this.findResourceById(results, element.resource?.performer?.[0].reference.replace('PractitionerRole/', ''))
+            }))
+            .map(element => ({
+              serviceRequest: element.serviceRequest,
+              performerOrganization: this.findResourceById(results, element.performer?.resource?.organization?.reference.replace('Organization/', ''))
+            }))
+            .map(element => ({
+              requesterId: element.serviceRequest?.resource?.id,
+              serviceProvider: element.performerOrganization?.resource.name,
+              dateCreated: element.serviceRequest?.resource?.authored,
+              lastUpdated: element.serviceRequest?.resource?.meta?.lastUpdated,
+              service: "unknown parameter",
+              status: element.serviceRequest?.resource?.status,
+            }));
 
-        this.dataSource.data = this.draftServiceRequests;
+          this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
+          this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
+          this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');
+
+          this.dataSource.data = this.draftServiceRequests;
+        }
       }
-    });
+    })
+
   }
 
 }
