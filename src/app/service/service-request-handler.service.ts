@@ -202,37 +202,4 @@ export class ServiceRequestHandlerService {
   }
 
 
-  getResourceFromUrl(url) : Observable<any> {
-    return this.http.get(url);
-  }
-
-
-  public getServiceRequestsNew() {
-
-    const client$ = this.fhirClient.getClient();
-    const practitioner$ = this.fhirClient.getPractitioner();
-    const patient$ = this.fhirClient.getPatient()
-
-    forkJoin([client$, practitioner$, patient$]).subscribe(
-      results => {
-        const client = results[0];
-        const patient = results[2];
-        const includeStr = "&_include=ServiceRequest:requester";
-
-        let connectionUrl = environment.bserProviderServer + "ServiceRequest?subject=" + client.getState("serverUrl") + "/Patient/" + patient.id + includeStr;
-
-        return this.http.get(connectionUrl).pipe(
-          map(results => {
-            console.log(results);
-            return results;
-          })
-        ).subscribe(
-          {
-            next: value => console.log(value)
-          }
-        );
-      }
-    )
-  }
-
 }
