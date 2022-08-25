@@ -18,7 +18,7 @@ TODO:
       Address:<br/>
       <span *ngIf="patient?.address[0]?.use">{{ patient?.address[0]?.use }}<br/></span>
       {{ patient?.address[0]?.line[0] }}<br/>
-      {{ patient?.address[0]?.city }} {{ patient?.address[0]?.state }},  {{ patient?.address[0]?.postalCode }}
+      {{ patient?.address[0]?.city }}, {{ patient?.address[0]?.state }},  {{ patient?.address[0]?.postalCode }}
     </div>
     <div class="col">Telecom:
       <div *ngFor="let phone of patient?.telecom">
