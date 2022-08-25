@@ -57,6 +57,11 @@ export class ServiceRequestHandlerService {
 
         const smartServerUrl = client.getState("serverUrl");
 
+        //TODO: delete the codeable concept code, it should come from the UI when the user selects the Recipient
+        let coding = new Coding({code: "diabetes-prevention", display : "Diabetes Prevention"});
+        let codeableConcept = new CodeableConcept({coding: [coding], text: "Diabetes Prevention"});
+        console.log(codeableConcept);
+
         this.practitioner = Object.assign(new Practitioner(), practitioner);
         let parameters = new Parameters( {id: uuidv4()});
         let serviceRequest = new ServiceRequest({
@@ -68,8 +73,9 @@ export class ServiceRequestHandlerService {
           authoredOn: new Date().toISOString(),
           //supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
           supportingInfo: [Reference.fromResource(parameters)],
-          subject: Reference.fromResource(patient, smartServerUrl)
-          //subject: Reference.fromResource(patient)
+          subject: Reference.fromResource(patient, smartServerUrl),
+          orderDetail: [new CodeableConcept(codeableConcept)]
+          //subject: Reference.fromResource(patient),
         });
         this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
         this.lastParameters = new Parameters(this.deepCopy(parameters));
@@ -104,6 +110,14 @@ export class ServiceRequestHandlerService {
   }
 
   saveServiceRequest(currentSnapshot: ServiceRequest) {
+    const orderDetail =  [{
+      coding:  {
+        code: "diabetes-prevention",
+        display: "Diabetes Prevention"
+      } ,
+      text: "Diabetes Prevention"
+    }];
+
     if (!("id" in currentSnapshot)) {
       let connectionUrl = environment.bserProviderServer + "ServiceRequest";
       this.lastSnapshot = this.deepCopy(currentSnapshot);
@@ -188,6 +202,7 @@ export class ServiceRequestHandlerService {
             const serverUrl = results[1].getState("serverUrl");
             const subject = "subject=" + serverUrl;
             const patient = "/Patient/" + patientId;
+            //const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
             const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
 
             const requestUrl = environment.bserProviderServer +

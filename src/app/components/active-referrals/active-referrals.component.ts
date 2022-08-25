@@ -12,7 +12,7 @@ import {environment} from "../../../environments/environment";
 })
 export class ActiveReferralsComponent implements OnInit {
 
-  displayedColumns: string[] = ['service', 'serviceProvider', 'status', 'dateCreated', 'lastUpdated'];
+  displayedColumns: string[] = ['service', 'serviceProvider', 'status', 'dateCreated', 'lastUpdated', 'actions'];
   public dataSource = new MatTableDataSource<any>([]);
   isLoading: boolean = false;
   serviceRequestList: any[];
@@ -70,7 +70,7 @@ export class ActiveReferralsComponent implements OnInit {
               serviceProvider: element.performerOrganization?.resource.name,
               dateCreated: element.serviceRequest?.resource?.authored,
               lastUpdated: element.serviceRequest?.resource?.meta?.lastUpdated,
-              service: "unknown parameter",
+              service: element.serviceRequest?.resource?.orderDetail?.[0]?.text,
               status: element.serviceRequest?.resource?.status,
             }));
 
