@@ -3,6 +3,7 @@ import {map, Observable, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {HumanName} from "@fhir-typescript/r4-core/dist/fhir/HumanName";
+import {HealthcareService} from "@fhir-typescript/r4-core/dist/fhir";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class ServiceProviderService {
 
   public getServiceProviders() {
     let profile = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ReferralRecipientPractitionerRole";
-    let include = "&_include=PractitionerRole:practitioner&_include=PractitionerRole:organization&_include=PractitionerRole:endpoint&_include=PractitionerRole:healthcareService" // TODO: ADD HEALTHCARE SERVICE INCLUDE
+    let include = "&_include=PractitionerRole:practitioner&_include=PractitionerRole:organization&_include=PractitionerRole:endpoint&_include=PractitionerRole:service"
     let connectionUrl = environment.bserProviderServer + "PractitionerRole?_profile=" + profile + include;
     return this.http.get(connectionUrl).pipe(
       map(results => {
@@ -56,7 +57,8 @@ export class ServiceProviderService {
               serviceProvider.healthcareService = (results.entry.find(entry => entry.fullUrl.endsWith(practitionerRole.resource.healthcareService[0].reference)))?.resource;
             }
             let serviceProviderObj = this.createServiceProviderObj(serviceProvider)
-            serviceProviderList.push(serviceProviderObj)
+            serviceProviderList.push(serviceProviderObj);
+            console.log(serviceProviderObj);
           } else {
             console.log("Invalid PractitionerRole with id " + practitionerRole.resource.id + ". Requires Organization.")
           }
@@ -81,10 +83,24 @@ export class ServiceProviderService {
         "name": serviceProvider.organization.name,
         "phone": serviceProvider.organization?.telecom?.[0]?.value || null
       },
+      "services": {
+        "serviceType": this.getServiceTypes(serviceProvider.healthcareService) || null,
+        "daysOfWeek": serviceProvider.healthcareService?.availableTime?.[0]?.daysOfWeek || null,
+        "startTime": serviceProvider.healthcareService?.availableTime?.[0]?.availableStartTime || null,
+        "endTime": serviceProvider.healthcareService?.availableTime?.[0]?.availableEndTime || null
+      },
       "endpoint": serviceProvider.endpoint?.address,
       "selected": false,
       "resources": serviceProvider
     }
+  }
+
+  private getServiceTypes(healthcareService: HealthcareService){
+    const serviceTypes = [];
+    healthcareService?.type?.forEach(serviceType => {
+      serviceTypes.push(serviceType.coding?.[0]?.code)
+    });
+    return serviceTypes;
   }
 
   // TODO: Add "use" handling.
