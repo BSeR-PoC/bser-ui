@@ -21,6 +21,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
   // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
 
   @Input() referral: any;
+  @Input() selectedServiceProvider: any;
   @Output() savedSuccessEvent = new EventEmitter();
 
   SAVE_AND_EXIT = 'saveAndExit';

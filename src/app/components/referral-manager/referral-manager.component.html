@@ -10,7 +10,8 @@
           <div>
             <app-service-provider-list
               (savedSuccessEvent)="onSaveProvider($event)"
-              [referral]="currentSnapshot"
+              (serviceProviderSelectedEvent)="onServiceProviderSelected($event)"
+              [serviceRequest]="currentSnapshot"
             ></app-service-provider-list>
           </div>
         </mat-step>
@@ -20,6 +21,7 @@
           <app-general-information-and-service-type
             (savedSuccessEvent)="stepper.next()"
             [referral] = "currentSnapshot"
+            [selectedServiceProvider]="selectedServiceProvider"
           ></app-general-information-and-service-type>
         </mat-step>
 
@@ -34,7 +36,7 @@
       </mat-stepper>
 
 
-      Referral <pre> {{ referral | json }}</pre>
+      Referral <pre> {{ serviceRequest | json }}</pre>
 
     </mat-card-content>
 

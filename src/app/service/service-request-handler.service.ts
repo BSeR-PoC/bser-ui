@@ -217,4 +217,13 @@ export class ServiceRequestHandlerService {
   }
 
 
+  getServiceRequestById(serviceRequestId: string) : Observable<ServiceRequest> {
+    const requestUrl = environment.bserProviderServer + "/ServiceRequest/" + serviceRequestId;
+
+    return this.http.get(requestUrl).pipe(map(result => {
+        this.currentSnapshot.next(result);
+        return  result as ServiceRequest;
+      }
+    ))
+  }
 }

@@ -14,13 +14,15 @@ import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 export class ReferralManagerComponent implements OnInit {
   @ViewChild(MatStepper) stepper: MatStepper;
 
-  referral: ServiceRequest;
+  serviceRequest: ServiceRequest;
 
   currentSnapshot: ServiceRequest;
   lastSnapshot: ServiceRequest;
 
   currentParameters: Parameters;
   lastParameters: Parameters;
+
+  selectedServiceProvider: any;
 
   constructor(
     private referralService: ReferralService,
@@ -67,7 +69,19 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   private getServiceRequestById(serviceRequestId: any) {
-    console.log(serviceRequestId);
+    this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
+      next: value => {
+        this.serviceRequestHandler.currentSnapshot$.subscribe(
+          {
+            next: (data: any) => {
+              this.currentSnapshot = data;
+              console.log("DATA:", data)
+            },
+            error: console.error
+          }
+        );
+      }
+    })
   }
 
   private createNewServiceRequest() {
@@ -96,5 +110,8 @@ export class ReferralManagerComponent implements OnInit {
   }
 
 
+  onServiceProviderSelected(event: any) {
+    console.log(event);
+  }
 }
 
