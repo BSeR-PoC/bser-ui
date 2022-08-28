@@ -200,6 +200,16 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+
+  }
+
+  getServices(selectedServiceProvider: any) {
+    if(!selectedServiceProvider || !selectedServiceProvider.services?.serviceType?.length){
+      return null
+    }
+    const result = this.fhirConstants.SERVICE_TYPES.filter(
+      service => selectedServiceProvider.services.serviceType.indexOf(service.code) != -1
+    );
+    return result;
   }
 }

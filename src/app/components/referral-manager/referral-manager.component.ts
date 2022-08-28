@@ -110,8 +110,8 @@ export class ReferralManagerComponent implements OnInit {
   }
 
 
-  onServiceProviderSelected(event: any) {
-    console.log(event);
+  onServiceProviderSelected(serviceProvider: any) {
+    this.selectedServiceProvider = serviceProvider;
   }
 }
 

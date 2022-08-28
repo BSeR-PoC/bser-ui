@@ -11,9 +11,9 @@
               Service Type
             </mat-label>
             <mat-select id="serviceType" formControlName="serviceType">
-              <mat-option *ngFor="let educationLevel of fhirConstants.EDUCATION_LEVEL"
-                          [value]="educationLevel">
-                {{educationLevel.display}}
+              <mat-option *ngFor="let service of getServices(selectedServiceProvider)"
+                          [value]="service">
+                {{service.display}}
               </mat-option>
             </mat-select>
             <mat-error>
