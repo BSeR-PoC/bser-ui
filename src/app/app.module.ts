@@ -42,6 +42,9 @@ import {ReferralManagerComponent} from "./components/referral-manager/referral-m
 import {MatTabsModule} from "@angular/material/tabs";
 import { ServiceRequestTesterComponent } from './service-request-tester/service-request-tester.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { DaysOfWeekPipe } from './pipes/days-of-week.pipe';
+import { MilitaryToStandardTimePipe } from './pipes/military-to-standard-time.pipe';
+import { ServiceTypePipe } from './pipes/service-type.pipe';
 
 @NgModule({
   declarations: [
@@ -58,6 +61,9 @@ import { RegistrationComponent } from './components/registration/registration.co
     ConformationDialogComponent,
     ServiceRequestTesterComponent,
     RegistrationComponent,
+    DaysOfWeekPipe,
+    MilitaryToStandardTimePipe,
+    ServiceTypePipe,
   ],
   imports: [
     BrowserModule,

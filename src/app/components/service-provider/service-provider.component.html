@@ -1,15 +1,18 @@
 <mat-card [class.mat-elevation-z1]="!serviceProvider?.selected" [class.mat-elevation-z8]="serviceProvider?.selected">
   <mat-card-title [ngStyle]="{'color':serviceProvider.selected ? '#0d47a1' : '' }">
-    {{serviceProvider.practitioner?.familyName}}, {{serviceProvider.practitioner?.givenName}} ({{serviceProvider.organization?.name}})
+    {{serviceProvider.practitioner?.familyName}},
+    {{serviceProvider.practitioner?.givenName}}
+    ({{serviceProvider.organization?.name}})
   </mat-card-title>
-  <mat-card-subtitle>{{serviceProvider?.description}}</mat-card-subtitle>
+  <mat-card-subtitle>{{ serviceProvider?.description }}</mat-card-subtitle>
   <mat-card-content>
 
     <div class="row">
       <div class="col">
         <div style="font-weight: bold">Services Provided:</div>
-        <div>* Diabetes Prevention</div>
-        <div>* Obesity Management</div>
+        <div class=row *ngFor="let serviceType of serviceProvider.services?.serviceType">
+          * {{ serviceType | serviceType}}
+        </div>
       </div>
       <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em">Service Delivery Location:</div>
@@ -20,8 +23,15 @@
     <div class="row" style="margin-top: 1em">
       <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em">Available Times:</div>
-        <div>M-F 8am-5pm</div>
-        <div>Sat 9am-1pm</div>
+        <div class=row *ngFor="let day of serviceProvider.services?.daysOfWeek">
+          <div class="col">
+            {{day | daysOfWeek}}
+          </div>
+          <div class="col">
+            {{ serviceProvider.services.startTime | militaryToStandardTime }} -
+            {{ serviceProvider.services.endTime | militaryToStandardTime }}
+          </div>
+        </div>
       </div>
       <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em">Languages:</div>
@@ -33,13 +43,13 @@
     <div class="row" style="margin-top: 1em">
       <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em">Provider Contact Info:</div>
-        <div>123-456-7890     email@email.com </div>
-        <div>123 Street St. Citytown, CA, 12345</div>
+        <div>{{ serviceProvider?.practitioner?.name }}</div>
+        <div>phone: {{ serviceProvider?.practitioner?.phone }}</div>
       </div>
       <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em">Organization Contact Info:</div>
-        <div>123-456-7890     email@email.com</div>
-        <div>123 Street St. Citytown, CA, 12345 </div>
+         <div>{{ serviceProvider?.organization?.name }}</div>
+          <div>phone: {{ serviceProvider?.organization?.phone }}</div>
       </div>
     </div>
 

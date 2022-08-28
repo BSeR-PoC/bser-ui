@@ -138,6 +138,11 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
       return null;
     }
     const serviceProvider = this.serviceProviders.find( serviceProvider => serviceProvider.serviceProviderId === serviceProviderId);
+    if(!serviceProvider){
+      // TODO fix this error for create new service request.
+      console.error("Service provider with id: " + serviceProviderId + "is not a valid service provider.");
+      return null;
+    }
     serviceProvider.selected = true;
     return serviceProvider;
   }
