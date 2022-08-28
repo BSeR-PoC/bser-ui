@@ -20,7 +20,6 @@ import {MatCardModule} from "@angular/material/card";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatListModule} from "@angular/material/list";
 import {PatientDemographicsComponent} from './components/patient-demographics/patient-demographics.component';
-import {ActiveReferralsComponent} from './components/active-referrals/active-referrals.component';
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatStepperModule} from "@angular/material/stepper";
 import {ServiceProviderComponent} from './components/service-provider/service-provider.component';
@@ -45,6 +44,8 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { DaysOfWeekPipe } from './pipes/days-of-week.pipe';
 import { MilitaryToStandardTimePipe } from './pipes/military-to-standard-time.pipe';
 import { ServiceTypePipe } from './pipes/service-type.pipe';
+import { LandingComponent } from './components/landing/landing.component';
+import { ServiceRequestListComponent } from './components/service-request-list/service-request-list.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,6 @@ import { ServiceTypePipe } from './pipes/service-type.pipe';
     LaunchComponent,
     MainComponent,
     PatientDemographicsComponent,
-    ActiveReferralsComponent,
     ReferralManagerComponent,
     ServiceProviderComponent,
     ServiceProviderListComponent,
@@ -64,6 +64,8 @@ import { ServiceTypePipe } from './pipes/service-type.pipe';
     DaysOfWeekPipe,
     MilitaryToStandardTimePipe,
     ServiceTypePipe,
+    LandingComponent,
+    ServiceRequestListComponent,
   ],
   imports: [
     BrowserModule,

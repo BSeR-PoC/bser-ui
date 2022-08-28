@@ -1,18 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {MatTableDataSource} from "@angular/material/table";
+import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-active-referrals',
-  templateUrl: './active-referrals.component.html',
-  styleUrls: ['./active-referrals.component.scss']
+  selector: 'app-landing',
+  templateUrl: './landing.component.html',
+  styleUrls: ['./landing.component.scss']
 })
-export class ActiveReferralsComponent implements OnInit {
+export class LandingComponent implements OnInit {
 
-  displayedColumns: string[] = ['service', 'serviceProvider', 'status', 'dateCreated', 'lastUpdated', 'actions'];
-  public dataSource = new MatTableDataSource<any>([]);
   isLoading: boolean = false;
   serviceRequestList: any[];
 
@@ -64,8 +62,7 @@ export class ActiveReferralsComponent implements OnInit {
           this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
           this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
           this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');
-
-          this.dataSource.data = this.draftServiceRequests;
+          console.log(this.draftServiceRequests);
         }
       }
     })
