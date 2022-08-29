@@ -13,6 +13,7 @@ export class ServiceRequestListComponent implements OnInit, OnChanges {
 
   @Input() serviceRequest: any[];
   @Input() isLoading: boolean;
+  @Input() serviceRequestType: string;
 
   displayedColumns: string[] = ['service', 'serviceProvider', 'status', 'dateCreated', 'lastUpdated', 'actions'];
   public dataSource = new MatTableDataSource<any>([]);

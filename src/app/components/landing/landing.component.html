@@ -13,6 +13,7 @@
       <app-service-request-list
         [serviceRequest]="draftServiceRequests"
         [isLoading]="isLoading"
+        [serviceRequestType]="'draft'"
       ></app-service-request-list>
     </mat-tab>
 
@@ -20,6 +21,7 @@
       <app-service-request-list
         [serviceRequest]="activeServiceRequests"
         [isLoading]="isLoading"
+        [serviceRequestType]="'active'"
       ></app-service-request-list>
     </mat-tab>
 
@@ -27,6 +29,7 @@
       <app-service-request-list
         [serviceRequest]="completeServiceRequests"
         [isLoading]="isLoading"
+        [serviceRequestType]="'complete'"
       ></app-service-request-list>
     </mat-tab>
 

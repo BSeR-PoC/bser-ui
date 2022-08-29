@@ -36,18 +36,13 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-  <ng-container *ngIf="!isLoading">
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-        This patient does not draft referrals.
-      </td>
-    </tr>
-  </ng-container>
-
   <ng-container *ngIf="isLoading">
     <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell loading" [attr.colspan]="displayedColumns.length">
+      <td *ngIf="isLoading" class="mat-cell loading" [attr.colspan]="displayedColumns.length">
         Loading Referrals
+      </td>
+      <td *ngIf="!isLoading" class="mat-cell" [attr.colspan]="displayedColumns.length">
+        This patient does not have {{serviceRequestType}} referrals.
       </td>
     </tr>
   </ng-container>
