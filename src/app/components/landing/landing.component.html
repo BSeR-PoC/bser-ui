@@ -9,7 +9,7 @@
   </div>
 
   <mat-tab-group class="mat-elevation-z4">
-    <mat-tab label="Draft">
+    <mat-tab label="Draft {{ isLoading? '' : '(' + (draftServiceRequests?.length || 0) + ')' }}">
       <app-service-request-list
         [serviceRequest]="draftServiceRequests"
         [isLoading]="isLoading"
@@ -17,7 +17,7 @@
       ></app-service-request-list>
     </mat-tab>
 
-    <mat-tab label="Active">
+    <mat-tab label="Active {{ isLoading? '' : '(' + (activeServiceRequests?.length || 0) + ')' }}">
       <app-service-request-list
         [serviceRequest]="activeServiceRequests"
         [isLoading]="isLoading"
@@ -25,7 +25,7 @@
       ></app-service-request-list>
     </mat-tab>
 
-    <mat-tab label="Complete">
+    <mat-tab label="Complete {{ isLoading? '' : '(' + (activeServiceRequests?.length || 0) + ')' }}">
       <app-service-request-list
         [serviceRequest]="completeServiceRequests"
         [isLoading]="isLoading"
