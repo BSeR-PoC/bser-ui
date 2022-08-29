@@ -19,7 +19,7 @@
         <!-- Select supporting information -->
         <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)' >
           <app-general-information-and-service-type
-            (savedSuccessEvent)="stepper.next()"
+            (savedSuccessEvent)="onSaveGeneralInfoAndServiceType($event)"
             [referral] = "currentSnapshot"
             [selectedServiceProvider]="selectedServiceProvider"
           ></app-general-information-and-service-type>

@@ -190,13 +190,10 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
     this.submit(this.SAVE_AND_CONTINUE);
   }
 
-  onSaveAndExit() {
-    this.submit(this.SAVE_AND_EXIT);
-  }
-
-
   onSave() {
-
+    this.generalInfoServiceTypeForm.markAllAsTouched();
+    const serviceType = this.generalInfoServiceTypeForm.controls['serviceType'].value;
+    this.savedSuccessEvent.emit({data: {serviceType: serviceType}});
   }
 
   ngOnChanges(changes: SimpleChanges): void {

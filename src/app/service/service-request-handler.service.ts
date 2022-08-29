@@ -161,6 +161,18 @@ export class ServiceRequestHandlerService {
     currentParameters.parameter.push(parameter);
     this.currentParameters.next(currentParameters);
   }
+
+  setServiceTypePlamen(currentSnapshot: ServiceRequest, serviceType: CodeableConcept) {
+    // TODO: Check if Parameter exists -- get from Raven 1 code.
+    // TODO: See how best to do an update using the Microsoft library.
+    // let parameter = new ParametersParameter({name: "test", valueCode: serviceType});
+    // currentParameters.parameter.push(parameter);
+    // this.currentParameters.next(currentParameters);
+    currentSnapshot.orderDetail.length = 0;
+    currentSnapshot.orderDetail.push(serviceType);
+  }
+
+
   // TODO: Race, Ethnicity, Employment, Education
 
   // Third Screen User Input (Supporting Info)

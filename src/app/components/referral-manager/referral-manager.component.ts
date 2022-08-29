@@ -6,6 +6,8 @@ import {ActivatedRoute} from "@angular/router";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {UtilsService} from "../../service/utils.service";
+import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
+import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
 
 @Component({
   selector: 'app-referral-manager',
@@ -71,6 +73,22 @@ export class ReferralManagerComponent implements OnInit {
     }
   }
 
+  onSaveGeneralInfoAndServiceType(event: any){
+    let advanceRequested = false;
+    if(event?.step){
+      advanceRequested = true;
+    }
+    console.log(event);
+    console.log(event.data);
+    if(event?.data?.serviceType){
+      let coding = new Coding({code: event.data?.serviceType?.code, display : event.data?.serviceType?.display});
+      let codeableConcept = new CodeableConcept({coding: [coding], text: event.data?.serviceType?.display});
+
+      this.serviceRequestHandler.setServiceTypePlamen(this.currentSnapshot, codeableConcept);
+      this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+    }
+  }
+
   private getServiceRequestById(serviceRequestId: any) {
     this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
       next: value => {
@@ -101,6 +119,7 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   saveServiceRequest(serviceRequest: ServiceRequest, advanceRequested: boolean) {
+    console.log(serviceRequest);
     this.serviceRequestHandler.saveServiceRequest(serviceRequest).subscribe(
       {
         next: (data: any) => {
