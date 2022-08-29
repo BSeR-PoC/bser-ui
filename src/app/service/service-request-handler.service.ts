@@ -110,13 +110,13 @@ export class ServiceRequestHandlerService {
   }
 
   saveServiceRequest(currentSnapshot: ServiceRequest) {
-    const orderDetail =  [{
-      coding:  {
-        code: "diabetes-prevention",
-        display: "Diabetes Prevention"
-      } ,
-      text: "Diabetes Prevention"
-    }];
+    // const orderDetail =  [{
+    //   coding:  {
+    //     code: "diabetes-prevention",
+    //     display: "Diabetes Prevention"
+    //   } ,
+    //   text: "Diabetes Prevention"
+    // }];
 
     if (!("id" in currentSnapshot)) {
       let connectionUrl = environment.bserProviderServer + "ServiceRequest";
@@ -141,7 +141,7 @@ export class ServiceRequestHandlerService {
   setRecipient(currentSnapshot: ServiceRequest, recipient: any) {
     //TODO refactor the code for testing
     let recipientTest = null;
-    if(recipient.resources?.practitionerRole){
+    if(recipient?.resources?.practitionerRole){
       recipientTest = new PractitionerRole(recipient.resources.practitionerRole);
     }
     else {
@@ -202,7 +202,6 @@ export class ServiceRequestHandlerService {
             const serverUrl = results[1].getState("serverUrl");
             const subject = "subject=" + serverUrl;
             const patient = "/Patient/" + patientId;
-            //const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
             const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
 
             const requestUrl = environment.bserProviderServer +
