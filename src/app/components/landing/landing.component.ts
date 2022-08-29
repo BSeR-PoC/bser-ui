@@ -53,7 +53,7 @@ export class LandingComponent implements OnInit {
             .map(element => ({
               serviceRequestId: element.serviceRequest?.resource?.id,
               serviceProvider: element.performerOrganization?.resource.name,
-              dateCreated: element.serviceRequest?.resource?.authored,
+              dateCreated: element.serviceRequest?.resource?.authoredOn,
               lastUpdated: element.serviceRequest?.resource?.meta?.lastUpdated,
               service: element.serviceRequest?.resource?.orderDetail?.[0]?.text,
               status: element.serviceRequest?.resource?.status,

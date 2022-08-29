@@ -58,7 +58,13 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
     });
 
     this.serviceRequestHandlerService.currentSnapshot$.subscribe({
-      next: value=> console.log(value)
+        next: value => {
+          const serviceCode = this.fhirConstants.SERVICE_TYPES
+            .find(serviceType => serviceType.code === value?.orderDetail?.[0]?.coding?.[0]?.code);
+          if (serviceCode) {
+            this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceCode);
+          }
+        }
       }
     )
   }
