@@ -46,6 +46,7 @@ import { MilitaryToStandardTimePipe } from './pipes/military-to-standard-time.pi
 import { ServiceTypePipe } from './pipes/service-type.pipe';
 import { LandingComponent } from './components/landing/landing.component';
 import { ServiceRequestListComponent } from './components/service-request-list/service-request-list.component';
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -91,7 +92,8 @@ import { ServiceRequestListComponent } from './components/service-request-list/s
     MatSelectModule,
     MatCheckboxModule,
     MatDialogModule,
-    MatTabsModule
+    MatTabsModule,
+    MatSnackBarModule
   ],
   providers: [AppConstants, FhirTerminologyConstants],
   bootstrap: [AppComponent]

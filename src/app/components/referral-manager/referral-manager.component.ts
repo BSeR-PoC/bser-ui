@@ -5,6 +5,7 @@ import {MatStepper} from "@angular/material/stepper";
 import {ActivatedRoute} from "@angular/router";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
+import {UtilsService} from "../../service/utils.service";
 
 @Component({
   selector: 'app-referral-manager',
@@ -27,7 +28,8 @@ export class ReferralManagerComponent implements OnInit {
   constructor(
     private referralService: ReferralService,
     private serviceRequestHandler: ServiceRequestHandlerService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private utilsService: UtilsService
 ) { }
 
   ngOnInit(): void {
@@ -59,12 +61,13 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   onSaveProvider(event: any) {
-    if(event?.data.step){
-      this.stepper.next();
+    let advanceRequested = false;
+    if(event?.step){
+      advanceRequested = true;
     }
     if(event?.data.selected && event?.data.serviceProviderId){
       this.serviceRequestHandler.setRecipient(this.currentSnapshot, event.data);
-      this.saveServiceRequest(this.currentSnapshot);
+      this.saveServiceRequest(this.currentSnapshot, advanceRequested);
     }
   }
 
@@ -97,14 +100,21 @@ export class ReferralManagerComponent implements OnInit {
     );
   }
 
-  saveServiceRequest(serviceRequest: ServiceRequest) {
+  saveServiceRequest(serviceRequest: ServiceRequest, advanceRequested: boolean) {
     this.serviceRequestHandler.saveServiceRequest(serviceRequest).subscribe(
       {
         next: (data: any) => {
           this.lastSnapshot = this.serviceRequestHandler.deepCopy(data);
           this.currentSnapshot = this.serviceRequestHandler.deepCopy(data);
+          if(advanceRequested) {
+            this.stepper.next();
+          }
+          this.utilsService.showSuccessNotification("The referral was saved successfully.");
         },
-        error: console.error
+        error: (data => {
+          console.error(data);
+          // TODO we need to render the error in an error message widget.
+        })
       }
     );
   }

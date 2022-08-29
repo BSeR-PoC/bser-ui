@@ -56,7 +56,9 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
   }
 
   onCancel() {
-    if(!this.selectedServiceProvider
+    //TODO I think this should compare lastSnapshot with the current snapshot.
+    if (
+      !this.selectedServiceProvider
       ||
       this.serviceRequest?.serviceProvider == this.selectedServiceProvider
     ){
