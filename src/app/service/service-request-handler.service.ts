@@ -237,4 +237,9 @@ export class ServiceRequestHandlerService {
       }
     ))
   }
+
+  deleteServiceRequest(serviceRequestId: any)  : Observable<any> {
+    let connectionUrl = environment.bserProviderServer + "ServiceRequest";
+    return this.http.delete(connectionUrl + "/" + serviceRequestId)
+  }
 }

@@ -10,8 +10,13 @@ TODO:
   </div>
   <div class="row container" style="padding-top: 1em; padding-bottom: 1em">
     <div class="col">
-      Gender: {{ patient?.gender }}<br/>
-      Marital Status: {{ patient?.maritalStatus}}<br/>
+      Gender: {{ (patient?.gender || '').toString() | titlecase }}<br/>
+      Marital Status: {{ ( patient?.maritalStatus?.text
+                          || patient?.maritalStatus?.coding?.[0]?.display
+                          || patient?.maritalStatus?.coding?.[0]?.code
+                          || '')
+                        .toString() | titlecase
+                      }} <br/>
       Date of Birth: {{ patient?.birthDate }}<br/>
     </div>
     <div class="col">

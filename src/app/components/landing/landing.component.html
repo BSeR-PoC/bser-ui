@@ -14,6 +14,7 @@
         [serviceRequest]="draftServiceRequests"
         [isLoading]="isLoading"
         [serviceRequestType]="'draft'"
+        (serviceRequestDeletedEvent)="getServiceRequests()"
       ></app-service-request-list>
     </mat-tab>
 
@@ -22,6 +23,7 @@
         [serviceRequest]="activeServiceRequests"
         [isLoading]="isLoading"
         [serviceRequestType]="'active'"
+        (serviceRequestDeletedEvent)="getServiceRequests()"
       ></app-service-request-list>
     </mat-tab>
 
@@ -30,6 +32,7 @@
         [serviceRequest]="completeServiceRequests"
         [isLoading]="isLoading"
         [serviceRequestType]="'complete'"
+        (serviceRequestDeletedEvent)="getServiceRequests()"
       ></app-service-request-list>
     </mat-tab>
 

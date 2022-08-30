@@ -30,7 +30,7 @@ export class LandingComponent implements OnInit {
     return bundle.entry.find(entry => entry?.resource?.id === resourceId);
   }
 
-  ngOnInit(): void {
+  getServiceRequests(){
     this.isLoading = true;
     this.serviceRequestHandlerService.getServiceRequestList().subscribe({
       next: results => {
@@ -62,11 +62,14 @@ export class LandingComponent implements OnInit {
           this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
           this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
           this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');
-          console.log(this.draftServiceRequests);
         }
       }
     })
 
+  }
+
+  ngOnInit(): void {
+   this.getServiceRequests();
   }
 
   onEdit(element) {
