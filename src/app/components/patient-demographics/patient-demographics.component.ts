@@ -17,4 +17,21 @@ export class PatientDemographicsComponent implements OnInit {
     });
   }
 
+  getLanguageList(patient: Patient): any[] {
+    let languageList = patient?.communication?.map(element => {
+      if (element.language?.text){
+        return element.language?.text;
+      }
+      else if (element.language?.coding?.[0]?.display){
+        return element.language?.coding?.[0]?.display.charAt(0).toUpperCase() + element.language?.coding?.[0]?.display.slice(1);
+      }
+      else if(element.language?.coding?.[0]?.code) {
+        return element.language?.coding?.[0]?.code.charAt(0).toUpperCase() + element.language?.coding?.[0]?.code.slice(1);
+      }
+      else return null;
+    }).filter(
+      element => !!element
+    );
+    return languageList;
+  }
 }

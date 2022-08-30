@@ -30,7 +30,9 @@ TODO:
       {{phone.use}}: {{phone.value}}<br/>
       </div>
     </div>
-    <div class="col">Preferred Language(s): </div>
+    <div class="col" *ngFor="let language of getLanguageList(patient)">Language(s):<br/>
+      {{language}}<br/>
+    </div>
     <div class="col" style="border-style: solid; border-width: thin; padding: 0.5em">Insurance Coverage:
       <br/>
       Aetna<br/>
