@@ -62,19 +62,19 @@ export class ServiceRequestListComponent implements OnInit, OnChanges {
     openConformationDialog(
       this.dialog,
       {
-        title: "Delete Referral",
-        content: "Delete the referral for " + serviceRequest.service + ' provided by ' + serviceRequest.serviceProvider + '?',
-        confirmBtnTitle: "Delete",
-        rejectBtnTitle: "Cancel",
+        title: "Discard Referral",
+        content: "Discard the " + serviceRequest.status + " referral for " + serviceRequest.service + ' provided by ' + serviceRequest.serviceProvider + '?',
+        defaultActionBtnTitle: "Cancel",
+        secondaryActionBtnTitle: "Discard",
         width: "30em",
         height: "14em"
       })
       .subscribe(
         action => {
-          if (action == 'rejected') {
+          if (action == 'defaultAction') {
             this.router.navigate(['/']);
           }
-          else if (action == 'confirmed') {
+          else if (action == 'secondaryAction') {
             this.deleteServiceRequest(serviceRequest);
           }
         }

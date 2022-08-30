@@ -10,27 +10,27 @@ export class ConformationDialogComponent implements OnInit {
 
   content: string = "Do you want to continue?";
   title: string = null;
-  confirmBtnTitle: string = "Yes";
-  rejectBtnTitle: string = "No";
+  defaultActionBtnTitle: string = "Yes";
+  secondaryActionBtnTitle: string = "No";
 
   constructor(
     private dialogRef: MatDialogRef<any>,
     @Inject(MAT_DIALOG_DATA) private dialogData: any
   ) { }
 
-  reject() {
-    this.dialogRef.close('rejected');
+  onSecondaryClick() {
+    this.dialogRef.close('secondaryAction');
   }
 
-  confirm() {
-    this.dialogRef.close('confirmed');
+  onDefaultClick() {
+    this.dialogRef.close('defaultAction');
   }
 
   ngOnInit(): void {
     this.content = this.dialogData.content;
     this.title = this.dialogData.title;
-    this.confirmBtnTitle = this.dialogData.confirmBtnTitle;
-    this.rejectBtnTitle = this.dialogData.rejectBtnTitle;
+    this.defaultActionBtnTitle = this.dialogData.defaultActionBtnTitle;
+    this.secondaryActionBtnTitle = this.dialogData.secondaryActionBtnTitle;
   }
 }
 

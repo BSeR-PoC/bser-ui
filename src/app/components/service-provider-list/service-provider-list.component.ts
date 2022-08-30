@@ -70,17 +70,17 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
         {
           title: "Save Changes",
           content: "Save your current changes?",
-          confirmBtnTitle: "Save",
-          rejectBtnTitle: "Cancel",
+          defaultActionBtnTitle: "Save and Continue",
+          secondaryActionBtnTitle: "Cancel",
           width: "20em",
           height: "12em"
         })
         .subscribe(
           action => {
-            if (action == 'rejected') {
+            if (action == 'secondaryAction') {
               this.router.navigate(['/']);
             }
-            else if (action == 'confirmed') {
+            else if (action == 'defaultAction') {
               this.onSaveAndContinue();
             }
           }

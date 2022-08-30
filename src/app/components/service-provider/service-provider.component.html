@@ -1,4 +1,4 @@
-<mat-card [class.mat-elevation-z1]="!serviceProvider?.selected" [class.mat-elevation-z8]="serviceProvider?.selected">
+<mat-card [ngClass]="{'selected-mat-card': serviceProvider.selected}" class="mat-elevation-z3">
   <mat-card-title [ngStyle]="{'color':serviceProvider.selected ? '#0d47a1' : '' }">
     {{serviceProvider.practitioner?.familyName}},
     {{serviceProvider.practitioner?.givenName}}
@@ -15,17 +15,10 @@
         </div>
       </div>
       <div class="col">
-        <div style="font-weight: bold; margin-bottom: 0.2em">Service Delivery Location:</div>
-        <div>Online</div>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: 1em">
-      <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em">Available Times:</div>
         <div class=row *ngFor="let day of serviceProvider.services?.daysOfWeek">
           <div class="col">
-            {{day | daysOfWeek}}
+            {{ day | daysOfWeek }}
           </div>
           <div class="col">
             {{ serviceProvider.services.startTime | militaryToStandardTime }} -
@@ -33,14 +26,31 @@
           </div>
         </div>
       </div>
-      <div class="col">
+      <div class="col" style="padding-left: 2em">
         <div style="font-weight: bold; margin-bottom: 0.2em">Languages:</div>
         <div>* English</div>
         <div>* Spanish</div>
       </div>
     </div>
-
     <div class="row" style="margin-top: 1em">
+      <div class="col">
+        <div style="font-weight: bold; margin-bottom: 0.2em;">Service Delivery Location:</div>
+        <div>Online</div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 1em;">
+      <button *ngIf="!contactInfoExpanded" style="width: 100%" mat-button color="primary"
+              (click)="contactInfoExpanded=true">
+        <mat-icon>expand_more</mat-icon>Show Contact Info
+      </button>
+      <button *ngIf="contactInfoExpanded" style="width: 100%" mat-button color="primary"
+              (click)="contactInfoExpanded=false">
+        <mat-icon>expand_less</mat-icon>Hide Contact Info
+      </button>
+    </div>
+
+    <div class="row" style="margin-top: 1em" *ngIf="contactInfoExpanded">
       <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em">Provider Contact Info:</div>
         <div>{{ serviceProvider?.practitioner?.name }}</div>
@@ -54,6 +64,7 @@
     </div>
 
   </mat-card-content>
+
   <mat-card-actions  align="end">
     <button *ngIf="!serviceProvider?.selected" mat-raised-button color="primary"
             (click)="onToggleSelectValue(serviceProvider)">
@@ -66,4 +77,5 @@
       Deselect
     </button>
   </mat-card-actions>
+
 </mat-card>

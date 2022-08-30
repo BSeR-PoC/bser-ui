@@ -10,6 +10,7 @@ export class ServiceProviderComponent {
 
   @Input() serviceProvider: any;
   @Output() selectedProviderEvent = new EventEmitter();
+  contactInfoExpanded = false;
 
   constructor() { }
 

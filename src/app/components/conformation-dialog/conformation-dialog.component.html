@@ -3,6 +3,6 @@
   {{content}}
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button (click)="reject()">{{rejectBtnTitle}}</button>
-  <button mat-button color="primary" (click)="confirm()" cdkFocusInitial>{{confirmBtnTitle}}</button>
+  <button mat-button (click)="onSecondaryClick()">{{secondaryActionBtnTitle}}</button>
+  <button mat-button color="primary" (click)="onDefaultClick()" cdkFocusInitial>{{defaultActionBtnTitle}}</button>
 </div>
