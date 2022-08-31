@@ -8,4 +8,8 @@ import * as fhir from "@fhir-typescript/r4-core/src/fhir";
 })
 export class TelecomComponent  {
   @Input() telecom: fhir.ContactPoint[];
+
+  toTitleCase(value: string) {
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  }
 }
