@@ -51,12 +51,13 @@ export class RegistrationComponent implements OnInit {
       services: new FormGroup({
         serviceType: this.createServiceTypeControls(this.fhirConstants.SERVICE_TYPES),
         days: this.createDayOfWeekControls(this.fhirConstants.DAYS_OF_WEEK),
+        languages: this.createLanguageControls(this.fhirConstants.LANGUAGE),
         startTime: new FormControl(),
         endTime: new FormControl()
       }),
-      endpoint: new FormControl(null, [Validators.required]),
-      });
-    console.log(this.serviceProviderRegistrationForm)
+      endpoint: new FormGroup({
+        address: new FormControl(null, [Validators.required]),
+      })});
   }
 
   private createDayOfWeekControls(daysOfWeek: any[]) {
@@ -66,19 +67,21 @@ export class RegistrationComponent implements OnInit {
     return new FormArray(arr);
   }
   private createServiceTypeControls(serviceTypes: any[]) {
-    const arr = serviceTypes.map(day => {
+    const arr = serviceTypes.map(serviceType => {
+      return new FormControl();
+    });
+    return new FormArray(arr);
+  }
+  private createLanguageControls(languages: any[]) {
+    const arr = languages.map(language => {
       return new FormControl();
     });
     return new FormArray(arr);
   }
 
-  public onDaysOfWeekChanged(event) {
-    console.log(event)
-  }
-
   // TODO: Review this, need a better way to handle refreshing from server since the return of a transaction bundle is just success/error.
   onSubmit(): void {
-    //console.log(this.serviceProviderRegistrationForm.value);
+    console.log(this.serviceProviderRegistrationForm.value);
     this.providerRegistrationService.createNewServiceProvider(this.serviceProviderRegistrationForm.value).subscribe(
       {
         next: (data: any) => {

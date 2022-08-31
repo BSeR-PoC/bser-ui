@@ -184,15 +184,16 @@ export class ServiceProviderRegistrationService {
     return practitioner;
   }
 
-  buildEndpointResource(endpoint: string): Endpoint {
+  buildEndpointResource(endpointDetails: any): Endpoint {
     return new Endpoint({
       id: uuidv4().toString(),
       status: "active",
       connectionType: new Coding({system: "http://terminology.hl7.org/CodeSystem/endpoint-connection-type", code: "hl7-fhir-msg"}),
-      payloadType: [new CodeableConcept(
-        {text: "BSeR Referral Message"
-        })],
-      address: endpoint
+      payloadType: [new CodeableConcept({
+          text: "BSeR Referral Request Message"
+        }
+        )],
+      address: endpointDetails.address
     })
   }
 
@@ -228,6 +229,7 @@ export class ServiceProviderRegistrationService {
         daysOfWeekSelected.push(this.fhirConstants.DAYS_OF_WEEK[i].code);
       }
     }
+
     let serviceTypes: CodeableConcept[] = [];
     for (let i = 0; i < serviceDetails.serviceType.length; i++) {
       if (serviceDetails.serviceType[i]) {
@@ -237,10 +239,23 @@ export class ServiceProviderRegistrationService {
         serviceTypes.push(typeCodeableConcept);
       }
     }
+
+    let communication: CodeableConcept[] = [];
+    for (let i = 0; i < serviceDetails.languages.length; i++) {
+      if (serviceDetails.languages[i]) {
+        let languageCodeableConcept = new CodeableConcept({
+          coding: [this.fhirConstants.LANGUAGE[i]],
+          text: this.fhirConstants.LANGUAGE[i].display
+        });
+        communication.push(languageCodeableConcept);
+      }
+    }
+
     return new HealthcareService({
       id: uuidv4(),
       providedBy: Reference.fromResource(organization),
       type: serviceTypes,
+      communication: communication,
       availableTime: [
         {
           daysOfWeek: daysOfWeekSelected,
@@ -267,7 +282,7 @@ export class ServiceProviderRegistrationService {
       postalCode: locationDetails.zip
     });
 
-    if (locationDetails.street2 !== undefined) {
+    if (locationDetails.street2 !== undefined && locationDetails.street2 !== null) {
       address.line.push(locationDetails.street2); // Optional
     }
 

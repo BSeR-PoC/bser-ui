@@ -122,8 +122,7 @@
               <div>
                 <h3>Service Types</h3>
                 <mat-selection-list>
-                  <mat-list-item (change)="onDaysOfWeekChanged($event)"
-                                 *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['serviceType']['controls'];
+                  <mat-list-item *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['serviceType']['controls'];
                     let i=index;">
                     <mat-checkbox [formControl]="control" [value]="fhirConstants.SERVICE_TYPES[i].code">
                       <span style="font-size:14px">{{fhirConstants.SERVICE_TYPES[i].display}}</span>
@@ -135,8 +134,7 @@
               <div>
                 <h3>Days Available</h3>
                 <mat-selection-list>
-                  <mat-list-item (change)="onDaysOfWeekChanged($event)"
-                                 *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['days']['controls'];
+                  <mat-list-item *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['days']['controls'];
                     let i=index;">
                     <mat-checkbox [formControl]="control" [value]="fhirConstants.DAYS_OF_WEEK[i].code">
                       <span style="font-size:14px">{{fhirConstants.DAYS_OF_WEEK[i].display}}</span>
@@ -145,7 +143,7 @@
                 </mat-selection-list>
               </div>
               <div class="serviceDivider"></div>
-              <div formGroupName="services">
+              <div>
                 <div class="flex-col">
                   <h3>Times Available</h3>
                   <mat-form-field appearance="fill">
@@ -158,17 +156,29 @@
                   </mat-form-field>
                 </div>
               </div>
+              <div class="serviceDivider"></div>
+              <div>
+                <h3>Languages</h3>
+                <mat-selection-list>
+                  <mat-list-item *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['languages']['controls'];
+                    let i=index;">
+                    <mat-checkbox [formControl]="control" [value]="fhirConstants.LANGUAGE[i].code">
+                      <span style="font-size:14px">{{fhirConstants.LANGUAGE[i].display}}</span>
+                    </mat-checkbox>
+                  </mat-list-item>
+                </mat-selection-list>
+              </div>
             </div>
             <div>
               <button mat-button matStepperPrevious>Back</button>
               <button mat-button matStepperNext>Next</button>
             </div>
           </mat-step>
-          <mat-step>
+          <mat-step formGroupName="endpoint">
             <ng-template matStepLabel>Endpoint</ng-template>
             <mat-form-field appearance="fill">
               <mat-label>Endpoint</mat-label>
-              <input matInput formControlName="endpoint">
+              <input matInput formControlName="address">
             </mat-form-field>
             <div>
               <button mat-button matStepperPrevious>Back</button>
