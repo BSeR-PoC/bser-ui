@@ -39,6 +39,15 @@ export class RegistrationComponent implements OnInit {
         name: new FormControl(null, [Validators.required]),
         phone: new FormControl(null, [Validators.required])
       }),
+      location: new FormGroup( {
+        name: new FormControl(),
+        phone: new FormControl(),
+        street1: new FormControl(),
+        street2: new FormControl(),
+        city: new FormControl(),
+        state: new FormControl(),
+        zip: new FormControl()
+      }),
       services: new FormGroup({
         serviceType: this.createServiceTypeControls(this.fhirConstants.SERVICE_TYPES),
         days: this.createDayOfWeekControls(this.fhirConstants.DAYS_OF_WEEK),

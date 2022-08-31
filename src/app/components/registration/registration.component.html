@@ -25,12 +25,14 @@
     </div>
     <div class="flex-cell">
       <div class="flex-col">
-        <span style="font-size: large">Create Service Provider</span>
-        <p>For multiple practitioners represented under a single organization without additional distinction,
-        the practitioner fields should be left empty.</p>
+        <h2 style="font-size: large">Register New Service Provider</h2>
         <form [formGroup]="serviceProviderRegistrationForm" class="flex-col">
-          <div formGroupName="practitioner" style="border: 1px black solid">
-            <h2>Practitioner</h2>
+
+        <mat-stepper orientation="vertical" #stepper>
+          <mat-step formGroupName="practitioner">
+            <ng-template matStepLabel>Practitioner</ng-template>
+            <p>For organizations which will handle assignment of practitioners after the referral request is made,
+              the practitioner fields should be left empty.</p>
             <mat-form-field appearance="fill">
               <mat-label>Practitioner Given Name</mat-label>
               <input matInput formControlName="givenName">
@@ -47,10 +49,18 @@
               <mat-label>Practitioner NPI</mat-label>
               <input matInput formControlName="npi">
             </mat-form-field>
-          </div>
-
-          <div formGroupName="organization" style="border: 1px black solid">
-            <h2>Organization</h2>
+            <p>Note: Additional Fields Omitted for Testing</p>
+            <div>
+              <button mat-button matStepperNext>Next</button>
+            </div>
+          </mat-step>
+          <mat-step formGroupName="organization">
+            <ng-template matStepLabel>Organization</ng-template>
+            <p>For organizations with multiple service delivery locations that will be assigned by the provider, this
+              should represent the information pertaining to the primary managing organization (e.g. a headquarters).
+              Additional information pertaining to a child organization or a particular service delivery location
+              should be handled by the recipient provider.
+            </p>
             <mat-form-field appearance="fill">
               <mat-label>Organization Name</mat-label>
               <input matInput formControlName="name">
@@ -59,53 +69,117 @@
               <mat-label>Organization Phone #</mat-label>
               <input matInput formControlName="phone">
             </mat-form-field>
-          </div>
-
-          <div style="border: 1px black solid">
-            <h2>Endpoint</h2>
+            <p>Note: Additional Fields Omitted for Testing</p>
+            <div>
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-button matStepperNext>Next</button>
+            </div>
+          </mat-step>
+          <mat-step formGroupName="location">
+            <ng-template matStepLabel>Service Delivery Location</ng-template>
+            <p>
+              For organizations which will handle assignment of location after the referral request is made,
+              the service delivery location fields should be left empty. This should be used only when registration
+              is being performed at the individual location level (e.g. the office of a specific practitioner).
+            </p>
+            <mat-form-field appearance="fill">
+              <mat-label>Location Name</mat-label>
+              <input matInput formControlName="name">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Location Phone #</mat-label>
+              <input matInput formControlName="phone">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Street Address Line 1</mat-label>
+              <input matInput formControlName="street1">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Street Address Line 2</mat-label>
+              <input matInput formControlName="street2">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>City</mat-label>
+              <input matInput formControlName="city">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>State</mat-label>
+              <input matInput formControlName="state">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Zip</mat-label>
+              <input matInput formControlName="zip">
+            </mat-form-field>
+            <p>Note: Additional Fields Omitted for Testing</p>
+            <div>
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-button matStepperNext>Next</button>
+            </div>
+          </mat-step>
+          <mat-step formGroupName="services">
+            <ng-template matStepLabel>Services</ng-template>
+            <div class="flex-row">
+              <div>
+                <h3>Service Types</h3>
+                <mat-selection-list>
+                  <mat-list-item (change)="onDaysOfWeekChanged($event)"
+                                 *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['serviceType']['controls'];
+                    let i=index;">
+                    <mat-checkbox [formControl]="control" [value]="fhirConstants.SERVICE_TYPES[i].code">
+                      <span style="font-size:14px">{{fhirConstants.SERVICE_TYPES[i].display}}</span>
+                    </mat-checkbox>
+                  </mat-list-item>
+                </mat-selection-list>
+              </div>
+              <div class="serviceDivider"></div>
+              <div>
+                <h3>Days Available</h3>
+                <mat-selection-list>
+                  <mat-list-item (change)="onDaysOfWeekChanged($event)"
+                                 *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['days']['controls'];
+                    let i=index;">
+                    <mat-checkbox [formControl]="control" [value]="fhirConstants.DAYS_OF_WEEK[i].code">
+                      <span style="font-size:14px">{{fhirConstants.DAYS_OF_WEEK[i].display}}</span>
+                    </mat-checkbox>
+                  </mat-list-item>
+                </mat-selection-list>
+              </div>
+              <div class="serviceDivider"></div>
+              <div formGroupName="services">
+                <div class="flex-col">
+                  <h3>Times Available</h3>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Start Time</mat-label>
+                    <input matInput formControlName="startTime" type="time">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill">
+                    <mat-label>End Time</mat-label>
+                    <input matInput formControlName="endTime" type="time">
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div>
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-button matStepperNext>Next</button>
+            </div>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>Endpoint</ng-template>
             <mat-form-field appearance="fill">
               <mat-label>Endpoint</mat-label>
               <input matInput formControlName="endpoint">
             </mat-form-field>
-          </div>
+            <div>
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-button (click)="stepper.reset()">Return to Top</button>
+            </div>
+          </mat-step>
+        </mat-stepper>
+
 
           <!-- Services-->
-          <div style="border: 1px black solid" class="flex-row">
-            <div style="border: 1px black solid">
-              <mat-selection-list>
-                <mat-list-item (change)="onDaysOfWeekChanged($event)"
-                               *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['serviceType']['controls'];
-                    let i=index;">
-                  <mat-checkbox [formControl]="control" [value]="fhirConstants.SERVICE_TYPES[i].code">
-                    <span style="font-size:14px">{{fhirConstants.SERVICE_TYPES[i].display}}</span>
-                  </mat-checkbox>
-                </mat-list-item>
-              </mat-selection-list>
-            </div>
-            <div>
-              <mat-selection-list>
-                <mat-list-item (change)="onDaysOfWeekChanged($event)"
-                               *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['days']['controls'];
-                    let i=index;">
-                  <mat-checkbox [formControl]="control" [value]="fhirConstants.DAYS_OF_WEEK[i].code">
-                    <span style="font-size:14px">{{fhirConstants.DAYS_OF_WEEK[i].display}}</span>
-                  </mat-checkbox>
-                </mat-list-item>
-              </mat-selection-list>
-            </div>
-            <div formGroupName="services">
-              <div class="flex-col">
-                <mat-form-field appearance="fill">
-                  <mat-label>Start Time</mat-label>
-                  <input matInput formControlName="startTime" type="time">
-                </mat-form-field>
-                <mat-form-field appearance="fill">
-                  <mat-label>End Time</mat-label>
-                  <input matInput formControlName="endTime" type="time">
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
+
           <div>
             <button mat-raised-button color=primary (click)="clear()">
               Clear Form
