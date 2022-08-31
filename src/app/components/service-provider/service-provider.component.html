@@ -28,8 +28,9 @@
       </div>
       <div class="col" style="padding-left: 2em">
         <div style="font-weight: bold; margin-bottom: 0.2em">Languages:</div>
-        <div>* English</div>
-        <div>* Spanish</div>
+        <div class="row" *ngFor="let language of serviceProvider.services?.languages">
+          {{language}}
+        </div>
       </div>
     </div>
     <div class="row" style="margin-top: 1em">

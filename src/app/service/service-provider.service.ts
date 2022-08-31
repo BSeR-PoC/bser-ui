@@ -60,7 +60,7 @@ export class ServiceProviderService {
             if ("healthcareService" in practitionerRole.resource) {
               serviceProvider.healthcareService = (results.entry.find(entry => entry.fullUrl.endsWith(practitionerRole.resource.healthcareService[0].reference)))?.resource;
             }
-            console.log(serviceProvider)
+            //console.log(serviceProvider)
             let serviceProviderObj = this.createServiceProviderObj(serviceProvider)
             serviceProviderList.push(serviceProviderObj);
           //  console.log(serviceProviderObj);
@@ -92,7 +92,8 @@ export class ServiceProviderService {
         "serviceType": this.getServiceTypes(serviceProvider.healthcareService) || null,
         "daysOfWeek": serviceProvider.healthcareService?.availableTime?.[0]?.daysOfWeek || null,
         "startTime": serviceProvider.healthcareService?.availableTime?.[0]?.availableStartTime || null,
-        "endTime": serviceProvider.healthcareService?.availableTime?.[0]?.availableEndTime || null
+        "endTime": serviceProvider.healthcareService?.availableTime?.[0]?.availableEndTime || null,
+        "languages": this.getLanguagesFromServiceProvider(serviceProvider)
       },
       "location": {
           "line": serviceProvider.location?.address?.line?.[0] || null,
@@ -118,5 +119,16 @@ export class ServiceProviderService {
   private getFullName(humanName: HumanName[]){
 
     return "Test Name"
+  }
+
+  private getLanguagesFromServiceProvider(serviceProvider: any): string[] {
+    if(!serviceProvider?.healthcareService?.communication?.length){
+      return null;
+    }
+    else {
+      return serviceProvider.healthcareService.communication
+        .map(entry => entry?.text)
+        .filter(entry => !!entry)
+    }
   }
 }
