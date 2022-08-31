@@ -34,4 +34,11 @@ export class PatientDemographicsComponent implements OnInit {
     );
     return languageList;
   }
+
+  stringToDate(date: string) {
+    if(!date){
+      return null
+    }
+    return new Date(date);
+  }
 }

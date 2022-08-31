@@ -17,7 +17,7 @@ TODO:
                           || '')
                         .toString() | titlecase
                       }} <br/>
-      Date of Birth: {{ patient?.birthDate }}<br/>
+      Date of Birth: {{ (stringToDate(patient?.birthDate?.toString()) | date ) || ''}}<br/>
     </div>
     <div class="col">
       Address:<br/>
