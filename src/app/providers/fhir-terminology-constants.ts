@@ -196,4 +196,12 @@ export class FhirTerminologyConstants{
     {"code": "tobacco-use-cessation", "display": "Tobacco Use Cessation", "system": this.bserSystem},
   ]
 
+  // Small Testing Slice from https://hl7.org/fhir/R4/valueset-languages.html
+  private languageSystem = "urn:ietf:bcp:47";
+  LANGUAGE = [
+    {"code": "en", "display": "English", "system": this.languageSystem},
+    {"code": "es", "display": "Spanish", "system": this.languageSystem},
+    {"code": "fr", "display": "French", "system": this.languageSystem},
+    {"code": "zh", "display": "Chinese", "system": this.languageSystem},
+  ]
 }
