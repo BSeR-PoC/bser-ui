@@ -14,7 +14,11 @@ export class ServiceProviderService {
 
   public getServiceProviders() {
     let profile = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ReferralRecipientPractitionerRole";
-    let include = "&_include=PractitionerRole:practitioner&_include=PractitionerRole:organization&_include=PractitionerRole:endpoint&_include=PractitionerRole:service&_include=PractitionerRole:location"
+    let include = "&_include=PractitionerRole:practitioner" +
+                  "&_include=PractitionerRole:organization" +
+                  "&_include=PractitionerRole:endpoint" +
+                  "&_include=PractitionerRole:service" +
+                  "&_include=PractitionerRole:location"
     let connectionUrl = environment.bserProviderServer + "PractitionerRole?_profile=" + profile + include;
     return this.http.get(connectionUrl).pipe(
       map(results => {
