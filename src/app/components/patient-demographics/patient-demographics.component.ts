@@ -13,7 +13,7 @@ export class PatientDemographicsComponent implements OnInit {
 
   ngOnInit(): void {
     this.fhirClient.getPatient().subscribe({
-      next: value => { this.patient = Object.assign(new Patient(), value); console.log(typeof this.patient); console.log(this.patient instanceof Patient)}
+      next: value => { this.patient = Object.assign(new Patient(), value);}
     });
   }
 
