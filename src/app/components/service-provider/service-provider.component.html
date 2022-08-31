@@ -35,7 +35,10 @@
     <div class="row" style="margin-top: 1em">
       <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em;">Service Delivery Location:</div>
-        <div>Online</div>
+        <div *ngIf="!utilsService.isEmpty(serviceProvider?.location)">
+          {{ serviceProvider?.location?.line }}<br/>
+          {{ serviceProvider?.location?.city }}, {{ serviceProvider?.location?.postalCode }}, {{ serviceProvider?.location?.state }}
+        </div>
       </div>
     </div>
 

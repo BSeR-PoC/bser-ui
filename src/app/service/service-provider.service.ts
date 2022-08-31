@@ -14,7 +14,7 @@ export class ServiceProviderService {
 
   public getServiceProviders() {
     let profile = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ReferralRecipientPractitionerRole";
-    let include = "&_include=PractitionerRole:practitioner&_include=PractitionerRole:organization&_include=PractitionerRole:endpoint&_include=PractitionerRole:service"
+    let include = "&_include=PractitionerRole:practitioner&_include=PractitionerRole:organization&_include=PractitionerRole:endpoint&_include=PractitionerRole:service&_include=PractitionerRole:location"
     let connectionUrl = environment.bserProviderServer + "PractitionerRole?_profile=" + profile + include;
     return this.http.get(connectionUrl).pipe(
       map(results => {
@@ -56,9 +56,10 @@ export class ServiceProviderService {
             if ("healthcareService" in practitionerRole.resource) {
               serviceProvider.healthcareService = (results.entry.find(entry => entry.fullUrl.endsWith(practitionerRole.resource.healthcareService[0].reference)))?.resource;
             }
+            console.log(serviceProvider)
             let serviceProviderObj = this.createServiceProviderObj(serviceProvider)
             serviceProviderList.push(serviceProviderObj);
-            console.log(serviceProviderObj);
+          //  console.log(serviceProviderObj);
           } else {
             console.log("Invalid PractitionerRole with id " + practitionerRole.resource.id + ". Requires Organization.")
           }
@@ -88,6 +89,12 @@ export class ServiceProviderService {
         "daysOfWeek": serviceProvider.healthcareService?.availableTime?.[0]?.daysOfWeek || null,
         "startTime": serviceProvider.healthcareService?.availableTime?.[0]?.availableStartTime || null,
         "endTime": serviceProvider.healthcareService?.availableTime?.[0]?.availableEndTime || null
+      },
+      "location": {
+          "line": serviceProvider.location?.address?.line?.[0] || null,
+          "city": serviceProvider.location?.address?.city || null,
+          "postalCode": serviceProvider.location?.address?.postalCode || null,
+          "state": serviceProvider.location?.address?.state || null
       },
       "endpoint": serviceProvider.endpoint?.address,
       "selected": false,

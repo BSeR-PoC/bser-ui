@@ -25,4 +25,18 @@ export class UtilsService {
     });
   }
 
+  /*
+  * Checks if an object is "empty"
+  * An empty object has no keys
+  * OR
+  * All values for the keys are falsy
+  * */
+  isEmpty(object: any) {
+    if(!object || Object.keys(object).length == 0){
+      return true;
+    }
+    const isEmpty = !Object.values(object).some(x => x !== null && x !== '');
+    return isEmpty
+  }
+
 }

@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ServiceProviderService} from "../../service/service-provider.service";
+import {UtilsService} from "../../service/utils.service";
 
 @Component({
   selector: 'app-service-provider',
@@ -12,7 +13,7 @@ export class ServiceProviderComponent {
   @Output() selectedProviderEvent = new EventEmitter();
   contactInfoExpanded = false;
 
-  constructor() { }
+  constructor(public utilsService: UtilsService) { }
 
   ngOnInit(): void {}
 
@@ -20,5 +21,4 @@ export class ServiceProviderComponent {
     serviceProvider.selected = !serviceProvider.selected;
     this.selectedProviderEvent.emit(serviceProvider);
   }
-
 }
