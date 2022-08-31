@@ -13,7 +13,15 @@ import {Meta} from "@fhir-typescript/r4-core/dist/fhir/Meta";
 import {ContactPoint} from "@fhir-typescript/r4-core/dist/fhir/ContactPoint";
 import {HumanName} from "@fhir-typescript/r4-core/dist/fhir/HumanName";
 import {v4 as uuidv4} from 'uuid';
-import {FhirCode, HealthcareService, Identifier, Reference, Resource} from "@fhir-typescript/r4-core/dist/fhir";
+import {
+  Address,
+  FhirCode,
+  HealthcareService,
+  Identifier,
+  Location,
+  Reference,
+  Resource
+} from "@fhir-typescript/r4-core/dist/fhir";
 import {environment} from "../../environments/environment";
 import {FhirTerminologyConstants} from "../providers/fhir-terminology-constants";
 import {DaysOfWeekCodes, DaysOfWeekCodeType} from "@fhir-typescript/r4-core/dist/fhirValueSets/DaysOfWeekCodes";
@@ -36,17 +44,32 @@ export class ServiceProviderRegistrationService {
 
   createNewServiceProvider(formData: any): Observable<any> {
     let practitioner: Practitioner = undefined;
+    let location: Location = undefined;
+    let resourceList = []
     if (!(Object.values(formData.practitioner).every(value => value === null))) {
-      practitioner = this.buildBserPractitionerResource(formData.practitioner);
+      practitioner = this.buildBserPractitionerResource(formData.practitioner); // Optional
+      resourceList.push(practitioner)
     }
-    let endpoint = this.buildEndpointResource(formData.endpoint);
-    let organization = this.buildBserOrganizationResource(formData.organization);
-    let healthcareService = this.buildHealthcareServiceResource(formData.services, organization);
-    let practitionerRole = this.buildBserRecipientPractitionerRole(practitioner, organization, endpoint, healthcareService);
+
+    let endpoint = this.buildEndpointResource(formData.endpoint); // Required
+    resourceList.push(endpoint);
+
+    let organization = this.buildBserOrganizationResource(formData.organization); // Required
+    resourceList.push(organization);
+
+    let healthcareService = this.buildHealthcareServiceResource(formData.services, organization); // Required
+    resourceList.push(healthcareService);
+
+    if (!(Object.values(formData.location).every(value => value === null))) {
+      location = this.buildBserServiceDeliveryLocation(formData.location, organization); // Optional
+      resourceList.push(location);
+    }
+
+    let practitionerRole = this.buildBserRecipientPractitionerRole(practitioner, organization, endpoint, healthcareService, location); // Required
+    resourceList.push(practitionerRole);
 
     let transBundle = new Bundle({type: "transaction"});
-
-    this.createBundlePostRequestEntries([practitionerRole, practitioner, organization, endpoint, healthcareService]).forEach(
+    this.createBundlePostRequestEntries(resourceList).forEach(
       bundleEntry => transBundle.entry.push(bundleEntry)
     );
     return this.http.post(environment.bserProviderServer, transBundle.toJSON());
@@ -105,7 +128,7 @@ export class ServiceProviderRegistrationService {
     return bundleEntries;
   }
 
-  buildBserRecipientPractitionerRole(practitioner, organization, endpoint, healthcareService): PractitionerRole {
+  buildBserRecipientPractitionerRole(practitioner, organization, endpoint, healthcareService, location): PractitionerRole {
     let profile = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ReferralRecipientPractitionerRole";
     let bserPractitionerRole = new PractitionerRole({
       meta: new Meta({profile: [profile]}),
@@ -116,6 +139,9 @@ export class ServiceProviderRegistrationService {
     });
     if (practitioner !== undefined) {
       bserPractitionerRole.practitioner = Reference.fromResource(practitioner);
+    }
+    if (location !== undefined) {
+      bserPractitionerRole.location = [Reference.fromResource(location)];
     }
     return bserPractitionerRole;
   }
@@ -223,5 +249,35 @@ export class ServiceProviderRegistrationService {
         }
       ]
     })
+  }
+
+  buildBserServiceDeliveryLocation(locationDetails: any, organization: Organization): Location {
+    let profile = "http://hl7.org/fhir/us/bser/StructureDefinition/BSeR-ServiceDeliveryLocation";
+
+    let phoneContactPoint = new ContactPoint({
+      system: "phone",
+      use: "work",
+      value: locationDetails.phone
+    });
+
+    let address = new Address({
+      line: [locationDetails.street1],
+      city: locationDetails.city,
+      state: locationDetails.state,
+      postalCode: locationDetails.zip
+    });
+
+    if (locationDetails.street2 !== undefined) {
+      address.line.push(locationDetails.street2); // Optional
+    }
+
+    return new Location({
+      meta: new Meta({profile: [profile]}),
+      id: uuidv4(),
+      name: locationDetails.name,
+      telecom: [phoneContactPoint],
+      address: address,
+      managingOrganization: Reference.fromResource(organization)
+    });
   }
 }
