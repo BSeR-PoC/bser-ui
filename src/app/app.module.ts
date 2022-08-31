@@ -47,6 +47,7 @@ import { ServiceTypePipe } from './pipes/service-type.pipe';
 import { LandingComponent } from './components/landing/landing.component';
 import { ServiceRequestListComponent } from './components/service-request-list/service-request-list.component';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import { TelecomComponent } from './components/fhir-widgets/telecom/telecom.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     ServiceTypePipe,
     LandingComponent,
     ServiceRequestListComponent,
+    TelecomComponent,
   ],
   imports: [
     BrowserModule,

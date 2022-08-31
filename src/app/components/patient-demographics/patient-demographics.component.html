@@ -25,10 +25,8 @@ TODO:
       {{ patient?.address[0]?.line[0] }}<br/>
       {{ patient?.address[0]?.city }}, {{ patient?.address[0]?.state }},  {{ patient?.address[0]?.postalCode }}
     </div>
-    <div class="col">Telecom:
-      <div *ngFor="let phone of patient?.telecom">
-      {{phone.use}}: {{phone.value}}<br/>
-      </div>
+    <div class="col">Contact Information:
+      <app-telecom [telecom]="patient?.telecom"></app-telecom>
     </div>
     <div class="col" *ngFor="let language of getLanguageList(patient)">Language(s):<br/>
       {{ language }}<br/>
