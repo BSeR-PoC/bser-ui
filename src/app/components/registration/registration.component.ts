@@ -33,7 +33,8 @@ export class RegistrationComponent implements OnInit {
         givenName: new FormControl(),
         familyName: new FormControl(),
         phone: new FormControl(),
-        npi: new FormControl()
+        npi: new FormControl(null,
+          [Validators.minLength(10), Validators.maxLength(10)])
       }),
       organization: new FormGroup({
         name: new FormControl(null, [Validators.required]),
@@ -52,8 +53,8 @@ export class RegistrationComponent implements OnInit {
         serviceType: this.createServiceTypeControls(this.fhirConstants.SERVICE_TYPES),
         days: this.createDayOfWeekControls(this.fhirConstants.DAYS_OF_WEEK),
         languages: this.createLanguageControls(this.fhirConstants.LANGUAGE),
-        startTime: new FormControl(),
-        endTime: new FormControl()
+        startTime: new FormControl(null, [Validators.required]),
+        endTime: new FormControl(null, [Validators.required])
       }),
       endpoint: new FormGroup({
         address: new FormControl(null, [Validators.required]),
