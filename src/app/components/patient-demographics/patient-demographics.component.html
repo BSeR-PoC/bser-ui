@@ -31,11 +31,15 @@ TODO:
     <div class="col" *ngFor="let language of getLanguageList(patient)">Language(s):<br/>
       {{ language }}<br/>
     </div>
-    <div class="col" style="border-style: solid; border-width: thin; padding: 0.5em">Insurance Coverage:
-      <br/>
-      Aetna<br/>
-      Group: ABCD<br>
-      Policy #: 12345-987-456
+    <div class="col" style="border-style: solid; border-width: thin; padding: 0.5em">
+      <div class="col">Insurance Coverage:</div>
+      <div class="col">{{ insuranceProvider?.name }}</div>
+      <div class="col">{{ insuranceProvider?.address?.[0]?.line?.[0] }}</div>
+      <div class="col">
+        {{ insuranceProvider?.address?.[0]?.city ?insuranceProvider?.address?.[0]?.city + ',' : '' }}
+        {{ insuranceProvider?.address?.[0]?.state ? insuranceProvider?.address?.[0]?.state + ',' : '' }}
+        {{ insuranceProvider?.address?.[0]?.postalCode || ''}}
+      </div>
     </div>
   </div>
 </div>
