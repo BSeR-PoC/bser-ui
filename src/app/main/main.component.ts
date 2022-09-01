@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FhirClientService} from "../fhir-client.service";
+import {FhirClientService} from "../service/fhir-client.service";
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 
 

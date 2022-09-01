@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Router} from "@angular/router";
-import {FhirClientService} from "../../fhir-client.service";
+import {FhirClientService} from "../../service/fhir-client.service";
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 import {USCorePatient} from "../../domain/USCorePatient";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";

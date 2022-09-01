@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FhirClientService} from "../../fhir-client.service";
+import {FhirClientService} from "../../service/fhir-client.service";
 
 @Component({
   selector: 'app-launch',
