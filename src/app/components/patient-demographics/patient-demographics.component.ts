@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 import {FhirClientService} from "../../service/fhir-client.service";
+import {Organization} from "@fhir-typescript/r4-core/dist/fhir/Organization";
 
 @Component({
   selector: 'app-patient-demographics',
@@ -9,11 +10,18 @@ import {FhirClientService} from "../../service/fhir-client.service";
 })
 export class PatientDemographicsComponent implements OnInit {
   patient: Patient;
+  insuranceProvider: Organization;
   constructor(private fhirClient: FhirClientService) { }
 
   ngOnInit(): void {
     this.fhirClient.getPatient().subscribe({
-      next: value => { this.patient = Object.assign(new Patient(), value);}
+      next: value => this.patient = Object.assign(new Patient(), value),
+      error: console.error
+    });
+
+    this.fhirClient.getCoverage().subscribe({
+      next: value => this.insuranceProvider = value?.entry?.find(entry => entry.resource.resourceType === "Organization")?.resource,
+      error: console.error
     });
   }
 

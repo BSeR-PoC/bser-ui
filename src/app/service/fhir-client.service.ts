@@ -124,7 +124,7 @@ export class FhirClientService {
   getCoverage(): Observable<any>{
     return this.getClient().pipe(
       switchMap(client => {
-        return from (client.search("Coverage?beneficiary=" + client.patient.id + "&_include=Coverage:payor"))
+        return from (client.request("Coverage?beneficiary=" + client.patient.id + "&_include=Coverage:payor"))
       })
     )
   }
