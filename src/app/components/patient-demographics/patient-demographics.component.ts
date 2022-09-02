@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
-import {FhirClientService} from "../../fhir-client.service";
+import {FhirClientService} from "../../service/fhir-client.service";
 
 @Component({
   selector: 'app-patient-demographics',

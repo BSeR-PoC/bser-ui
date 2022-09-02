@@ -36,6 +36,12 @@
   <button mat-raised-button (click)="this.serviceRequestHandler.deleteTestData()">
     <mat-icon>delete</mat-icon> Delete All
   </button>
+
+  <button mat-raised-button (click)="this.engineHandlerService.postToEngine(this.currentSnapshot, this.currentParameters)">
+    <mat-icon>save</mat-icon> Test Post
+  </button>
+
+
 </p>
 <hr>
 <div class="flex-row">

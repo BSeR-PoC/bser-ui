@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { oauth2 as SmartClient } from 'fhirclient';
-import { environment } from "../environments/environment";
+import { environment } from "../../environments/environment";
 import {from, Observable, of, switchMap, tap} from 'rxjs';
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
