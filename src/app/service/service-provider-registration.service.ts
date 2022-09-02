@@ -25,13 +25,14 @@ import {
 import {environment} from "../../environments/environment";
 import {FhirTerminologyConstants} from "../providers/fhir-terminology-constants";
 import {DaysOfWeekCodes, DaysOfWeekCodeType} from "@fhir-typescript/r4-core/dist/fhirValueSets/DaysOfWeekCodes";
+import {TransactionBundleHandlerService} from "./transaction-bundle-handler.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceProviderRegistrationService {
 
-  constructor(private fhirConstants: FhirTerminologyConstants, private http: HttpClient, private serviceProviderService: ServiceProviderService) { }
+  constructor(private transactionBundleHandler: TransactionBundleHandlerService, private fhirConstants: FhirTerminologyConstants, private http: HttpClient, private serviceProviderService: ServiceProviderService) { }
 
   getServiceProviders(): Observable<any> {
     return this.serviceProviderService.getServiceProviders().pipe(
@@ -68,44 +69,11 @@ export class ServiceProviderRegistrationService {
     let practitionerRole = this.buildBserRecipientPractitionerRole(practitioner, organization, endpoint, healthcareService, location); // Required
     resourceList.push(practitionerRole);
 
-    let transBundle = new Bundle({type: "transaction"});
-    this.createBundlePostRequestEntries(resourceList).forEach(
-      bundleEntry => transBundle.entry.push(bundleEntry)
-    );
-    return this.http.post(environment.bserProviderServer, transBundle.toJSON());
+    return this.transactionBundleHandler.sendTransactionBundle("POST", resourceList);
   }
 
   deleteServiceProvider(resources: any): Observable<any> {
-    console.log(resources);
-    // return new Observable<any>();
-    // let observables = []
-    // Object.entries()
-    // const response = forkJoin([
-    //   this.http.delete()
-    //
-    //   ]);
-    let transBundle = new Bundle({type: "transaction"});
-    this.createBundleDeleteRequestEntries(resources).forEach(
-      bundleEntry => transBundle.entry.push(bundleEntry)
-    );
-    console.log(transBundle);
-    return this.http.post(environment.bserProviderServer, transBundle.toJSON());
-  }
-
-  createBundlePostRequestEntries(resources: Resource[]): BundleEntry[] {
-    let bundleEntries = []
-    resources.forEach(resource => {
-      let bundleEntry = new BundleEntry({
-        fullUrl: resource.resourceType + "/" + resource.id,
-        resource: resource.toJSON(),
-        request: new BundleEntryRequest({
-          method: "POST",
-          url: resource.resourceType
-        })
-      });
-      bundleEntries.push(bundleEntry);
-    });
-    return bundleEntries;
+    return this.transactionBundleHandler.sendTransactionBundle("DELETE", resources);
   }
 
   createBundleDeleteRequestEntries(resources: any): BundleEntry[] {

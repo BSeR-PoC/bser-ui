@@ -1,5 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ReferralService} from "../../service/referral.service";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {MatStepper} from "@angular/material/stepper";
 import {ActivatedRoute} from "@angular/router";
@@ -17,8 +16,6 @@ import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcep
 export class ReferralManagerComponent implements OnInit {
   @ViewChild(MatStepper) stepper: MatStepper;
 
-  serviceRequest: ServiceRequest;
-
   currentSnapshot: ServiceRequest;
   lastSnapshot: ServiceRequest;
 
@@ -28,7 +25,6 @@ export class ReferralManagerComponent implements OnInit {
   selectedServiceProvider: any;
 
   constructor(
-    private referralService: ReferralService,
     private serviceRequestHandler: ServiceRequestHandlerService,
     private route: ActivatedRoute,
     private utilsService: UtilsService
@@ -40,6 +36,8 @@ export class ReferralManagerComponent implements OnInit {
       next: params => {
         if(params && params['id']){
           this.getServiceRequestById(params['id']);
+          // TODO: Make HTTP Call for ServiceRequest.supportingInfo[0].reference
+          // GET cqf-ruler/fhir/Parameters/09d02cfa-48ef-4a8d-9875-a2870a54f728
         }
         else {
           this.createNewServiceRequest();
@@ -87,6 +85,11 @@ export class ReferralManagerComponent implements OnInit {
       this.serviceRequestHandler.setServiceTypePlamen(this.currentSnapshot, codeableConcept);
       this.saveServiceRequest(this.currentSnapshot, advanceRequested);
     }
+    // if event?.data.education { parameters = this.parameterHandler.setCodeParameter(parameters, "educationLevel", value //ELEM//) }
+    //  {
+    //     "name": "educationLevel",
+    //     "valueCoding": "ELEM",
+    //  }
   }
 
   private getServiceRequestById(serviceRequestId: any) {
