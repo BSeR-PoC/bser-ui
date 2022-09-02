@@ -36,7 +36,7 @@ export class ConformationDialogComponent implements OnInit {
 
 
 export function openConformationDialog(dialog: MatDialog, dialogData: any) {
-  console.log("I am opened");
+
   const config = new MatDialogConfig();
 
   config.autoFocus = true;

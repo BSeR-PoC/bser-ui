@@ -58,9 +58,9 @@ export class ServiceRequestHandlerService {
         const smartServerUrl = client.getState("serverUrl");
 
         //TODO: delete the codeable concept code, it should come from the UI when the user selects the Recipient
-        let coding = new Coding({code: "diabetes-prevention", display : "Diabetes Prevention"});
-        let codeableConcept = new CodeableConcept({coding: [coding], text: "Diabetes Prevention"});
-        console.log(codeableConcept);
+        // let coding = new Coding({code: "diabetes-prevention", display : "Diabetes Prevention"});
+        // let codeableConcept = new CodeableConcept({coding: [coding], text: "Diabetes Prevention"});
+        // console.log(codeableConcept);
 
         this.practitioner = Object.assign(new Practitioner(), practitioner);
         let parameters = new Parameters( {id: uuidv4()});
@@ -74,7 +74,7 @@ export class ServiceRequestHandlerService {
           //supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
           supportingInfo: [Reference.fromResource(parameters)],
           subject: Reference.fromResource(patient, smartServerUrl),
-          orderDetail: [new CodeableConcept(codeableConcept)]
+    //      orderDetail: [new CodeableConcept(codeableConcept)]
           //subject: Reference.fromResource(patient),
         });
         this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
@@ -168,7 +168,7 @@ export class ServiceRequestHandlerService {
     // let parameter = new ParametersParameter({name: "test", valueCode: serviceType});
     // currentParameters.parameter.push(parameter);
     // this.currentParameters.next(currentParameters);
-    currentSnapshot.orderDetail.length = 0;
+    currentSnapshot.orderDetail= [];
     currentSnapshot.orderDetail.push(serviceType);
   }
 

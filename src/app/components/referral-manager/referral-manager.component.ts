@@ -8,6 +8,8 @@ import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {UtilsService} from "../../service/utils.service";
 import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
 import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
+import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-referral-manager',
@@ -31,7 +33,8 @@ export class ReferralManagerComponent implements OnInit {
     private referralService: ReferralService,
     private serviceRequestHandler: ServiceRequestHandlerService,
     private route: ActivatedRoute,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
+    private dialog: MatDialog,
 ) { }
 
   ngOnInit(): void {
@@ -64,12 +67,45 @@ export class ReferralManagerComponent implements OnInit {
 
   onSaveProvider(event: any) {
     let advanceRequested = false;
+    const selectedServiceProvider = event.data;
     if(event?.step){
       advanceRequested = true;
     }
-    if(event?.data.selected && event?.data.serviceProviderId){
-      this.serviceRequestHandler.setRecipient(this.currentSnapshot, event.data);
-      this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+    if(selectedServiceProvider.selected && selectedServiceProvider.serviceProviderId){
+      const serviceRequestService = this.currentSnapshot?.orderDetail?.[0]?.coding?.[0]?.code;
+      const selectedServiceProviderServices = selectedServiceProvider?.services?.serviceType;
+
+      if(!serviceRequestService
+          ||
+        selectedServiceProviderServices.indexOf(serviceRequestService) != -1
+      ){
+        this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
+        this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+      }
+      else {
+        // the selected service provider does not offer the service in the existing service request.
+          openConformationDialog(
+            this.dialog,
+            {
+              title: "Service not Performed by Provider",
+              content: `${selectedServiceProvider?.practitioner?.familyName} (${selectedServiceProvider?.organization?.name})
+                does not provide the previously selected service type, ${serviceRequestService}.
+                Proceeding with this selection will discard other referral information.`,
+              defaultActionBtnTitle: "Cancel",
+              secondaryActionBtnTitle: "Change Service Provider",
+              width: "38em",
+              height: "15em"
+            })
+            .subscribe(
+              action => {
+                if (action == 'secondaryAction') {
+                  this.currentSnapshot.orderDetail = null;
+                  this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
+                  this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+                }
+              }
+            )
+        }
     }
   }
 
@@ -78,8 +114,6 @@ export class ReferralManagerComponent implements OnInit {
     if(event?.step){
       advanceRequested = true;
     }
-    console.log(event);
-    console.log(event.data);
     if(event?.data?.serviceType){
       let coding = new Coding({code: event.data?.serviceType?.code, display : event.data?.serviceType?.display});
       let codeableConcept = new CodeableConcept({coding: [coding], text: event.data?.serviceType?.display});
