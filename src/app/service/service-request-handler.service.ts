@@ -118,6 +118,7 @@ export class ServiceRequestHandlerService {
     //   text: "Diabetes Prevention"
     // }];
 
+    // TODO: Add POST Parameters alongside ServiceRequest
     if (!("id" in currentSnapshot)) {
       let connectionUrl = environment.bserProviderServer + "ServiceRequest";
       this.lastSnapshot = this.deepCopy(currentSnapshot);
@@ -132,6 +133,7 @@ export class ServiceRequestHandlerService {
       return this.http.put(connectionUrl, currentSnapshot).pipe(
         map(result => {
           this.lastSnapshot = this.deepCopy(result);
+
           return result;
         }));
     }

@@ -8,6 +8,7 @@ import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {fhirclient} from "fhirclient/lib/types";
 import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ParameterHandlerService} from "./parameter-handler.service";
+import {Reference} from "@fhir-typescript/r4-core/dist/fhir";
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class EnginePostHandlerService {
       next: value => { this.patient = value;}
     });
     this.fhirClient.getCoverage().subscribe({
-      next: value => { this.coverage = value;}
+      next: value => { this.coverage = value?.entry?.find(entry => entry.resource.resourceType === "Coverage")?.resource;}
     });
     this.fhirClient.getPractitioner().subscribe({
       next: value => { this.requester = value;}
@@ -35,11 +36,15 @@ export class EnginePostHandlerService {
     serviceRequestCopy.supportingInfo.length = 0; // Remove Supporting Info
 
     // Package The Resources
-    parameters = this.parameterHandler.addResourceParameter(parameters, "referral", serviceRequestCopy);
-    parameters = this.parameterHandler.addResourceParameter(parameters, "patient", this.patient);
-    parameters = this.parameterHandler.addResourceParameter(parameters, "requester", this.requester);
-    parameters = this.parameterHandler.addResourceParameter(parameters, "coverage", this.coverage);
+    parameters = this.parameterHandler.setResourceParameter(parameters, "referral", serviceRequestCopy);
+    parameters = this.parameterHandler.setResourceParameter(parameters, "patient", this.patient);
+    parameters = this.parameterHandler.setResourceParameter(parameters, "requester", this.requester);
+    parameters = this.parameterHandler.setResourceParameter(parameters, "coverage", this.patient);
+    console.log(parameters.toJSON());
 
+    // TODO: Add ServerBase
+
+    //parameters = this.parameterHandler.setResourceParameter(parameters, "coverage", this.coverage);
     // TODO: Replace with HTTP Call, this is for demo purposes.
     console.log(parameters.toJSON());
   }
