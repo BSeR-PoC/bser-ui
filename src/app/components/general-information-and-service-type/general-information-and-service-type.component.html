@@ -132,14 +132,14 @@
 
   </form>
 
-  <pre>{{usCorePatient| json}}</pre>
+<!--  <pre>{{usCorePatient| json}}</pre>-->
 </div>
 
 <div class="row-button-wrapper">
   <button mat-raised-button (click)="onCancel()">Cancel</button>
   <span class="spacer"></span>
-  <button mat-raised-button (click)="onSave()">Save</button>
-  <button mat-raised-button (click)="onSaveAndContinue()"
+  <button mat-raised-button (click)="onSave(false)">Save</button>
+  <button mat-raised-button (click)="onSave(true)"
           style="margin-left: 1em">
     Save and Continue
   </button>

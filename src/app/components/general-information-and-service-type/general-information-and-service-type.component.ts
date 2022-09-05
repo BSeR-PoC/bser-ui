@@ -70,6 +70,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
   }
 
   private updateFormControls(usCorePatient) {
+    //TODO check if we are editing existing service request, if so load the parameters and populate the form data from the params.
 
     if(usCorePatient.ethnicity){
       const ethnicity = this.fhirConstants.ETHNICITY
@@ -185,23 +186,19 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
               this.generalInfoServiceTypeForm.reset();
             }
             else if (action == 'confirmed') {
-              this.onSaveAndContinue();
+              this.onSave(true);
             }
           }
         )
     }
   }
 
-  onSaveAndContinue() {
+  onSave(advanceRequested: boolean) {
     this.generalInfoServiceTypeForm.markAllAsTouched();
-    const serviceType = this.generalInfoServiceTypeForm.controls['serviceType'].value;
-    this.savedSuccessEvent.emit({step:2, data: {serviceType: serviceType}});
-  }
-
-  onSave() {
-    this.generalInfoServiceTypeForm.markAllAsTouched();
-    const serviceType = this.generalInfoServiceTypeForm.controls['serviceType'].value;
-    this.savedSuccessEvent.emit({data: {serviceType: serviceType}});
+    if(this.generalInfoServiceTypeForm.status === 'VALID') {
+      const formData = this.getFormData(this.generalInfoServiceTypeForm);
+      this.savedSuccessEvent.emit({ completedStep: 2, advanceRequested: advanceRequested, data: formData });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -217,4 +214,43 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
     );
     return result;
   }
+
+  private getRaceFromFormControls(form): any{
+
+    // First check if any of the race checkboxes are selected and map the selection to race categories
+    const raceCategories = this.fhirConstants.RACE_CATEGORIES.slice(0, 5)
+    const raceCheckBoxesResult = form.controls['raceCategoriesListCheckboxes']
+      .value
+      .map((controlSelected, index) => {if(controlSelected) return index})
+      .filter(element => !!element)
+      .map(index => raceCategories[index]);
+
+    if(raceCheckBoxesResult.length){
+      return raceCheckBoxesResult
+    }
+
+    //If no checkbox is selected return the results from the radio buttons selection
+    return form.controls['raceCategoriesListRadioBtns'].value;
+  }
+
+  private getFormData(generalInfoServiceTypeForm: FormGroup) {
+
+    this.generalInfoServiceTypeForm.markAllAsTouched();
+    const serviceType = this.generalInfoServiceTypeForm.controls['serviceType'].value;
+    const educationLevel = this.generalInfoServiceTypeForm.controls['educationLevel'].value;
+    const employmentStatus = this.generalInfoServiceTypeForm.controls['employmentStatus'].value;
+    const ethnicity = this.generalInfoServiceTypeForm.controls['ethnicity'].value;
+    const race = this.getRaceFromFormControls(this.generalInfoServiceTypeForm);
+
+    const emitterData = {
+      serviceType: serviceType,
+      educationLevel: educationLevel,
+      employmentStatus: employmentStatus,
+      ethnicity: ethnicity,
+      race: race
+    }
+
+    return emitterData;
+  }
+
 }

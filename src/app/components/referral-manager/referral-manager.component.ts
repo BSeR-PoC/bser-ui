@@ -3,7 +3,7 @@ import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest"
 import {MatStepper} from "@angular/material/stepper";
 import {ActivatedRoute} from "@angular/router";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
-import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
+import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {UtilsService} from "../../service/utils.service";
 import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
 import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
@@ -51,7 +51,7 @@ export class ReferralManagerComponent implements OnInit {
     this.serviceRequestHandler.currentParameters$.subscribe(
       {
         next: (data: any) => {
-          this.currentParameters = data;
+          this.currentParameters = data || new Parameters();
           console.log("DATA:", data)
         },
         error: console.error
@@ -107,23 +107,47 @@ export class ReferralManagerComponent implements OnInit {
     }
   }
 
+  //Saving the data from Step #2: General Information and Service Type in the stepper
   onSaveGeneralInfoAndServiceType(event: any){
-    let advanceRequested = false;
-    if(event?.step){
-      advanceRequested = true;
-    }
-    if(event?.data?.serviceType){
+    const advanceRequested = event.advanceRequested;
+
+    if(event.data?.serviceType){
       let coding = new Coding({code: event.data?.serviceType?.code, display : event.data?.serviceType?.display});
       let codeableConcept = new CodeableConcept({coding: [coding], text: event.data?.serviceType?.display});
 
       this.serviceRequestHandler.setServiceTypePlamen(this.currentSnapshot, codeableConcept);
       this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+
+      if (event.data?.serviceType){
+        const serviceTypeParam = new ParametersParameter({valueCode: event.data?.serviceType?.code, name: 'serviceType'});
+        this.currentParameters.parameter.push(serviceTypeParam);
+      }
     }
-    // if event?.data.education { parameters = this.parameterHandler.setCodeParameter(parameters, "educationLevel", value //ELEM//) }
-    //  {
-    //     "name": "educationLevel",
-    //     "valueCoding": "ELEM",
-    //  }
+
+    if(event.data?.educationLevel?.code) {
+      const educationLevelParam = new ParametersParameter({valueCode: event.data?.educationLevel?.code,  name: 'educationLevel'});
+      this.currentParameters.parameter.push(educationLevelParam);
+    }
+
+    if(event.data?.employmentStatus?.code) {
+      const employmentStatusParam = new ParametersParameter({valueCode: event.data?.employmentStatus?.code,  name: 'employmentStatus'});
+      this.currentParameters.parameter.push(employmentStatusParam);
+    }
+
+    if(event.data?.ethnicity) {
+      const valueCoding = {code: event.data?.ethnicity?.code, system: event.data?.ethnicity?.system, display: event.data?.ethnicity?.display}
+      const ethnicityParam = new ParametersParameter({valueCoding: valueCoding, name: 'ethnicity'});
+      this.currentParameters.parameter.push(ethnicityParam);
+    }
+
+    if(event.data?.race){
+      const raceStr = event.data?.race?.map(element => element.code).toString();
+      const raceParam = new ParametersParameter({valueCode: raceStr,  name: 'race'});
+      this.currentParameters.parameter.push(raceParam);
+    }
+
+    this.serviceRequestHandler.updateParams(this.currentParameters);
+
   }
 
   private getServiceRequestById(serviceRequestId: any) {
@@ -139,7 +163,7 @@ export class ReferralManagerComponent implements OnInit {
           }
         );
       }
-    })
+    });
   }
 
   private createNewServiceRequest() {

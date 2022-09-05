@@ -244,4 +244,8 @@ export class ServiceRequestHandlerService {
     let connectionUrl = environment.bserProviderServer + "ServiceRequest";
     return this.http.delete(connectionUrl + "/" + serviceRequestId)
   }
+
+  updateParams(params) {
+    this.currentParameters.next(params);
+  }
 }
