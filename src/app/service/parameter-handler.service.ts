@@ -55,4 +55,20 @@ export class ParameterHandlerService {
     }));
     return parametersResource;
   }
+
+  removeParameterByName(parametersResource: Parameters, name: string | string[]): Parameters{
+    if(!name || (Array.isArray(name) && name.length === 0) || parametersResource.parameter.length === 0){
+      //Nothing to filter, just return the parametersResource
+      return parametersResource
+    }
+
+    if(Array.isArray(name)){
+      parametersResource.parameter = parametersResource.parameter.filter(parameter => name.indexOf(parameter.name.toString()) != -1);
+    }
+    else {
+      parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+    }
+    return parametersResource;
+  }
+
 }

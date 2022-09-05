@@ -102,6 +102,9 @@ export class ReferralManagerComponent implements OnInit {
                   this.currentSnapshot.orderDetail = null;
                   this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
                   this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+
+                  //TODO remove other relevant parameters
+                  this.currentParameters = this.parameterHandlerService.removeParameterByName(this.currentParameters, 'serviceType');
                 }
               }
             )

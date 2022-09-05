@@ -97,7 +97,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
 
   submit(nextState: string) {
     this.generalInfoServiceTypeForm.markAllAsTouched();
-    console.log(this.generalInfoServiceTypeForm);
+
     if (this.generalInfoServiceTypeForm.valid) {
       if (nextState === this.SAVE_AND_EXIT) {
         this.router.navigate(['/'])
@@ -184,6 +184,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
             if (action == 'rejected') {
               this.router.navigate(['/']);
               this.generalInfoServiceTypeForm.reset();
+              // TODO we need to handle the parameters when user cancels the save operation , for example copy the original parameters back
             }
             else if (action == 'confirmed') {
               this.onSave(true);
