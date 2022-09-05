@@ -45,6 +45,10 @@ export class ParameterHandlerService {
 
   // Todo: Add handling to check if valid code from API design.
   setCodeParameter(parametersResource: Parameters, name: string, value: string): Parameters {
+    //If the parameter already exists, we need to filter it out. This way we know there are not duplicate parameters in the resource.
+    parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+
+    //add parameter
     parametersResource.parameter.push(new ParametersParameter({
       name: name,
       valueCode: value

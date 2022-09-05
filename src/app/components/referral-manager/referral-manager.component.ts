@@ -9,6 +9,7 @@ import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
 import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {ParameterHandlerService} from "../../service/parameter-handler.service";
 
 @Component({
   selector: 'app-referral-manager',
@@ -31,6 +32,7 @@ export class ReferralManagerComponent implements OnInit {
     private route: ActivatedRoute,
     private utilsService: UtilsService,
     private dialog: MatDialog,
+    private parameterHandlerService: ParameterHandlerService
 ) { }
 
   ngOnInit(): void {
@@ -119,35 +121,33 @@ export class ReferralManagerComponent implements OnInit {
       this.saveServiceRequest(this.currentSnapshot, advanceRequested);
 
       if (event.data?.serviceType){
-        const serviceTypeParam = new ParametersParameter({valueCode: event.data?.serviceType?.code, name: 'serviceType'});
-        this.currentParameters.parameter.push(serviceTypeParam);
+        this.currentParameters = this.parameterHandlerService
+          .setCodeParameter(this.currentParameters, 'serviceType', event.data?.serviceType?.code);
       }
     }
 
     if(event.data?.educationLevel?.code) {
-      const educationLevelParam = new ParametersParameter({valueCode: event.data?.educationLevel?.code,  name: 'educationLevel'});
-      this.currentParameters.parameter.push(educationLevelParam);
+      this.currentParameters = this.parameterHandlerService
+        .setCodeParameter(this.currentParameters, 'educationLevel', event.data?.educationLevel?.code);
     }
 
     if(event.data?.employmentStatus?.code) {
-      const employmentStatusParam = new ParametersParameter({valueCode: event.data?.employmentStatus?.code,  name: 'employmentStatus'});
-      this.currentParameters.parameter.push(employmentStatusParam);
+      this.currentParameters = this.parameterHandlerService
+        .setCodeParameter(this.currentParameters, 'employmentStatus', event.data?.employmentStatus?.code);
     }
 
     if(event.data?.ethnicity) {
-      const valueCoding = {code: event.data?.ethnicity?.code, system: event.data?.ethnicity?.system, display: event.data?.ethnicity?.display}
-      const ethnicityParam = new ParametersParameter({valueCoding: valueCoding, name: 'ethnicity'});
-      this.currentParameters.parameter.push(ethnicityParam);
+      this.currentParameters = this.parameterHandlerService
+        .setCodeParameter(this.currentParameters, 'ethnicity', event.data?.ethnicity?.code);
     }
 
     if(event.data?.race){
       const raceStr = event.data?.race?.map(element => element.code).toString();
-      const raceParam = new ParametersParameter({valueCode: raceStr,  name: 'race'});
-      this.currentParameters.parameter.push(raceParam);
+      this.currentParameters = this.parameterHandlerService
+        .setCodeParameter(this.currentParameters, 'race', raceStr);
     }
-
+    //TODO not sure if we need this method since we already have a parameterHandlerService
     this.serviceRequestHandler.updateParams(this.currentParameters);
-
   }
 
   private getServiceRequestById(serviceRequestId: any) {
@@ -198,7 +198,6 @@ export class ReferralManagerComponent implements OnInit {
       }
     );
   }
-
 
   onServiceProviderSelected(serviceProvider: any) {
     this.selectedServiceProvider = serviceProvider;

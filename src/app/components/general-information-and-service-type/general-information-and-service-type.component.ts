@@ -230,17 +230,17 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
     }
 
     //If no checkbox is selected return the results from the radio buttons selection
-    return form.controls['raceCategoriesListRadioBtns'].value;
+    return [form.controls['raceCategoriesListRadioBtns'].value];
   }
 
   private getFormData(generalInfoServiceTypeForm: FormGroup) {
 
-    this.generalInfoServiceTypeForm.markAllAsTouched();
-    const serviceType = this.generalInfoServiceTypeForm.controls['serviceType'].value;
-    const educationLevel = this.generalInfoServiceTypeForm.controls['educationLevel'].value;
-    const employmentStatus = this.generalInfoServiceTypeForm.controls['employmentStatus'].value;
-    const ethnicity = this.generalInfoServiceTypeForm.controls['ethnicity'].value;
-    const race = this.getRaceFromFormControls(this.generalInfoServiceTypeForm);
+    generalInfoServiceTypeForm.markAllAsTouched();
+    const serviceType = generalInfoServiceTypeForm.controls['serviceType'].value;
+    const educationLevel = generalInfoServiceTypeForm.controls['educationLevel'].value;
+    const employmentStatus = generalInfoServiceTypeForm.controls['employmentStatus'].value;
+    const ethnicity = generalInfoServiceTypeForm.controls['ethnicity'].value;
+    const race = this.getRaceFromFormControls(generalInfoServiceTypeForm);
 
     const emitterData = {
       serviceType: serviceType,
