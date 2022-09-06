@@ -4,9 +4,8 @@
 
     <mat-card-content>
       <mat-stepper linear #stepper>
-
         <!-- Select a Provider (for example YMCA) -->
-        <mat-step label="Select Recipient" [completed]='isStepCompleted(1)' >
+        <mat-step label="Select Recipient" [completed]='isStepCompleted(1)'>
           <div>
             <app-service-provider-list
               (savedSuccessEvent)="onSaveProvider($event)"

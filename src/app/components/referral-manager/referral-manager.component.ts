@@ -59,18 +59,31 @@ export class ReferralManagerComponent implements OnInit {
         error: console.error
       }
     );
+    //TODO We should keep track of the completed steps and initialize them after we get the parameters resource.
   }
 
   isStepCompleted(stepNumber: number): boolean {
-    return true;
+    if(stepNumber === 1){
+      return !!this.selectedServiceProvider
+    }
+    else if (stepNumber === 2) {
+      const collectedValues = ['race', 'ethnicity', 'educationLevel', 'employmentStatus', 'serviceType'];
+      const currentParamsNames = this.currentParameters.parameter.map(param => param.name.value.toString());
+      const result = collectedValues.map(element => currentParamsNames.indexOf(element) !== -1)
+        .filter(element => element == false)
+        .length === 0;
+      return result;
+    }
+    else {
+      return false;
+    }
   }
 
+  //Handles the first step of the form (Selecting a service provider).
   onSaveProvider(event: any) {
-    let advanceRequested = false;
+    const advanceRequested = event.advanceRequested;
     const selectedServiceProvider = event.data;
-    if(event?.step){
-      advanceRequested = true;
-    }
+
     if(selectedServiceProvider.selected && selectedServiceProvider.serviceProviderId){
       const serviceRequestService = this.currentSnapshot?.orderDetail?.[0]?.coding?.[0]?.code;
       const selectedServiceProviderServices = selectedServiceProvider?.services?.serviceType;
@@ -84,31 +97,31 @@ export class ReferralManagerComponent implements OnInit {
       }
       else {
         // the selected service provider does not offer the service in the existing service request.
-          openConformationDialog(
-            this.dialog,
-            {
-              title: "Service not Performed by Provider",
-              content: `${selectedServiceProvider?.practitioner?.familyName} (${selectedServiceProvider?.organization?.name})
+        openConformationDialog(
+          this.dialog,
+          {
+            title: "Service not Performed by Provider",
+            content: `${selectedServiceProvider?.practitioner?.familyName} (${selectedServiceProvider?.organization?.name})
                 does not provide the previously selected service type, ${serviceRequestService}.
                 Proceeding with this selection will discard other referral information.`,
-              defaultActionBtnTitle: "Cancel",
-              secondaryActionBtnTitle: "Change Service Provider",
-              width: "38em",
-              height: "15em"
-            })
-            .subscribe(
-              action => {
-                if (action == 'secondaryAction') {
-                  this.currentSnapshot.orderDetail = null;
-                  this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-                  this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+            defaultActionBtnTitle: "Cancel",
+            secondaryActionBtnTitle: "Change Service Provider",
+            width: "38em",
+            height: "15em"
+          })
+          .subscribe(
+            action => {
+              if (action == 'secondaryAction') {
+                this.currentSnapshot.orderDetail = null;
+                this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
+                this.saveServiceRequest(this.currentSnapshot, advanceRequested);
 
-                  //TODO remove other relevant parameters
-                  this.currentParameters = this.parameterHandlerService.removeParameterByName(this.currentParameters, 'serviceType');
-                }
+                //TODO remove other relevant parameters
+                this.currentParameters = this.parameterHandlerService.removeParameterByName(this.currentParameters, 'serviceType');
               }
-            )
-        }
+            }
+          )
+      }
     }
   }
 
@@ -151,6 +164,7 @@ export class ReferralManagerComponent implements OnInit {
     }
     //TODO not sure if we need this method since we already have a parameterHandlerService
     this.serviceRequestHandler.updateParams(this.currentParameters);
+
   }
 
   private getServiceRequestById(serviceRequestId: any) {
@@ -183,7 +197,7 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   saveServiceRequest(serviceRequest: ServiceRequest, advanceRequested: boolean) {
-    console.log(serviceRequest);
+
     this.serviceRequestHandler.saveServiceRequest(serviceRequest).subscribe(
       {
         next: (data: any) => {

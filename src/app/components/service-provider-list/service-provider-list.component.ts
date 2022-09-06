@@ -81,7 +81,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
               this.router.navigate(['/']);
             }
             else if (action == 'defaultAction') {
-              this.onSaveAndContinue();
+              this.onSave(true);
             }
           }
         )
@@ -89,12 +89,8 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
 
   }
 
-  onSaveAndContinue() {
-    this.savedSuccessEvent.emit({step: 1, data: this.selectedServiceProvider});
-  }
-
-  onSave() {
-    this.savedSuccessEvent.emit({data: this.selectedServiceProvider});
+  onSave(advanceRequested) {
+    this.savedSuccessEvent.emit({ advanceRequested: advanceRequested, data: this.selectedServiceProvider });
   }
 
   onSelectedServiceProvider(serviceProvider: any) {

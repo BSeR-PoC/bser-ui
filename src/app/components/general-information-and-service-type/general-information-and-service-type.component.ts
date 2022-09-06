@@ -198,7 +198,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
     this.generalInfoServiceTypeForm.markAllAsTouched();
     if(this.generalInfoServiceTypeForm.status === 'VALID') {
       const formData = this.getFormData(this.generalInfoServiceTypeForm);
-      this.savedSuccessEvent.emit({ completedStep: 2, advanceRequested: advanceRequested, data: formData });
+      this.savedSuccessEvent.emit({ advanceRequested: advanceRequested, data: formData });
     }
   }
 
