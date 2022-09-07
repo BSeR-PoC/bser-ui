@@ -10,6 +10,7 @@ import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcep
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
+import {EnginePostHandlerService} from "../../service/engine-post-handler.service";
 
 @Component({
   selector: 'app-referral-manager',
@@ -32,7 +33,8 @@ export class ReferralManagerComponent implements OnInit {
     private route: ActivatedRoute,
     private utilsService: UtilsService,
     private dialog: MatDialog,
-    private parameterHandlerService: ParameterHandlerService
+    private parameterHandlerService: ParameterHandlerService,
+    private enginePostHandlerService: EnginePostHandlerService
 ) { }
 
   ngOnInit(): void {
@@ -188,12 +190,12 @@ export class ReferralManagerComponent implements OnInit {
         event.data?.bmi?.unit, "http://unitsofmeasure.org", event.data?.bmi?.unit);
     }
 
-    if(event.data?.bd){
+    if(event.data?.bp){
       const partArray = [
         {
           name: "diastolic",
           valueQuantity: {
-            value: event.data?.bd?.bpDiastolic?.value,
+            value: event.data?.bp?.bpDiastolic?.value,
             unit: "mmHg",
             system: "http://unitsofmeasure.org",
             code: "mm[Hg]"
@@ -202,12 +204,15 @@ export class ReferralManagerComponent implements OnInit {
         {
           name: "systolic",
           valueQuantity: {
-            value: event.data?.bd?.bpSystolic?.value,
+            value: event.data?.bp?.bpSystolic?.value,
             unit: "mmHg",
             system: "http://unitsofmeasure.org",
             code: "mm[Hg]"
           }
-
+        },
+        {
+          name: "date",
+          valueDateTime: new Date()
         }
       ];
 
@@ -215,6 +220,7 @@ export class ReferralManagerComponent implements OnInit {
     }
 
     console.log(this.currentParameters);
+    this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
 
     //TODO need to add allergies and medication history
   }
