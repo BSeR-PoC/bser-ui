@@ -167,6 +167,31 @@ export class ReferralManagerComponent implements OnInit {
 
   }
 
+  //Saving the data from Step #3: Supporting Information
+  onSaveSupportingInfo(event: any) {
+
+    if(event.data?.height) {
+      this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
+        this.currentParameters, 'bodyHeight', event.data?.height?.value,
+        event.data?.height?.unit, "http://unitsofmeasure.org", event.data?.height?.unit);
+    }
+
+    if(event.data?.weight) {
+      this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
+        this.currentParameters, 'bodyWeight', event.data?.weight?.value,
+        event.data?.weight?.unit, "http://unitsofmeasure.org", event.data?.weight?.unit);
+    }
+
+    if(event.data?.bmi) {
+      this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
+        this.currentParameters, 'bmi', event.data?.bmi?.value,
+        event.data?.bmi?.unit, "http://unitsofmeasure.org", event.data?.bmi?.unit);
+    }
+    console.log(this.currentParameters);
+
+    //TODO need to add allergies and medication history
+  }
+
   private getServiceRequestById(serviceRequestId: any) {
     this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
       next: value => {
@@ -219,5 +244,6 @@ export class ReferralManagerComponent implements OnInit {
   onServiceProviderSelected(serviceProvider: any) {
     this.selectedServiceProvider = serviceProvider;
   }
+
 }
 

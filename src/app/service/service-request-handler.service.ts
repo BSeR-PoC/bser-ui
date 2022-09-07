@@ -150,7 +150,7 @@ export class ServiceRequestHandlerService {
       recipientTest = new PractitionerRole({id: uuidv4() }); //only for testing
     }
 
-    currentSnapshot.performer.length = 0;
+    currentSnapshot.performer = [];
     //currentSnapshot.performer.push(Reference.fromResource(recipientTest,  environment.bserProviderServer));
     currentSnapshot.performer.push(Reference.fromResource(recipientTest));
   }

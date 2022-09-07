@@ -4,6 +4,7 @@
 
     <mat-card-content>
       <mat-stepper linear #stepper>
+
         <!-- Select a Provider (for example YMCA) -->
         <mat-step label="Select Recipient" [completed]='isStepCompleted(1)'>
           <div>
@@ -19,7 +20,7 @@
         <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)' >
           <app-general-information-and-service-type
             (savedSuccessEvent)="onSaveGeneralInfoAndServiceType($event)"
-            [referral] = "currentSnapshot"
+            [serviceRequest] = "currentSnapshot"
             [selectedServiceProvider]="selectedServiceProvider"
           ></app-general-information-and-service-type>
         </mat-step>
@@ -27,8 +28,12 @@
         <!-- Add Patient general information -->
         <mat-step label="Supporting Information" [completed]='isStepCompleted(3)'>
           <div>
-            <app-request-supporting-information>
-            </app-request-supporting-information>
+            <app-supporting-information
+              (savedSuccessEvent)="onSaveSupportingInfo($event)"
+              [serviceRequest] = "currentSnapshot"
+              [selectedServiceProvider]="selectedServiceProvider"
+            >
+            </app-supporting-information>
           </div>
         </mat-step>
 

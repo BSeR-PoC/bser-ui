@@ -20,7 +20,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
   // Multiple checkbox reactive form solution inspired by:
   // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
 
-  @Input() referral: any;
+  @Input() serviceRequest: any;
   @Input() selectedServiceProvider: any;
   @Output() savedSuccessEvent = new EventEmitter();
 
@@ -236,7 +236,6 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
 
   private getFormData(generalInfoServiceTypeForm: FormGroup) {
 
-    generalInfoServiceTypeForm.markAllAsTouched();
     const serviceType = generalInfoServiceTypeForm.controls['serviceType'].value;
     const educationLevel = generalInfoServiceTypeForm.controls['educationLevel'].value;
     const employmentStatus = generalInfoServiceTypeForm.controls['employmentStatus'].value;

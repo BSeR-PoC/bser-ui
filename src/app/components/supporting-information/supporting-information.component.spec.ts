@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RequestSupportingInformationComponent } from './request-supporting-information.component';
+import { SupportingInformationComponent } from './supporting-information.component';
 
 describe('RequestSupportingInformationComponent', () => {
-  let component: RequestSupportingInformationComponent;
-  let fixture: ComponentFixture<RequestSupportingInformationComponent>;
+  let component: SupportingInformationComponent;
+  let fixture: ComponentFixture<SupportingInformationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RequestSupportingInformationComponent ]
+      declarations: [ SupportingInformationComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RequestSupportingInformationComponent);
+    fixture = TestBed.createComponent(SupportingInformationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

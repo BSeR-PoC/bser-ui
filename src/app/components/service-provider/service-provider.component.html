@@ -40,6 +40,9 @@
           {{ serviceProvider?.location?.line }}<br/>
           {{ serviceProvider?.location?.city }}, {{ serviceProvider?.location?.postalCode }}, {{ serviceProvider?.location?.state }}
         </div>
+        <div *ngIf="!serviceProvider?.location || utilsService.isEmpty(serviceProvider?.location)">
+          To be determined by the service provider.
+        </div>
       </div>
     </div>
 

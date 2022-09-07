@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
-import {FhirString} from "@fhir-typescript/r4-core/dist/fhir/FhirString";
+import {Quantity} from "@fhir-typescript/r4-core/dist/fhir/Quantity";
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +52,18 @@ export class ParameterHandlerService {
     parametersResource.parameter.push(new ParametersParameter({
       name: name,
       valueCode: value
+    }));
+    return parametersResource;
+  }
+
+  setValueQuantityParameter(parametersResource: Parameters, name: string, value: any, unit: string, system: string, code: string): Parameters {
+    //If the parameter already exists, we need to filter it out. This way we know there are not duplicate parameters in the resource.
+    parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+
+    const valueQuantity = new Quantity({value: value, unit: unit, system: system, code: code});
+    parametersResource.parameter.push(new ParametersParameter({
+      name: name,
+      valueQuantity: valueQuantity
     }));
     return parametersResource;
   }

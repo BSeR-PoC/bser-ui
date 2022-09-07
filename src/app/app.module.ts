@@ -28,8 +28,8 @@ import {
 } from './components/general-information-and-service-type/general-information-and-service-type.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {
-  RequestSupportingInformationComponent
-} from './components/request-supporting-information/request-supporting-information.component';
+  SupportingInformationComponent
+} from './components/supporting-information/supporting-information.component';
 import {MatSelectModule} from "@angular/material/select";
 import {AppConstants} from "./providers/app-constants";
 import {FhirTerminologyConstants} from "./providers/fhir-terminology-constants";
@@ -57,7 +57,7 @@ import { TelecomComponent } from './components/fhir-widgets/telecom/telecom.comp
     ServiceProviderComponent,
     ServiceProviderListComponent,
     GeneralInformationAndServiceTypeComponent,
-    RequestSupportingInformationComponent,
+    SupportingInformationComponent,
     ConformationDialogComponent,
     ServiceRequestTesterComponent,
     RegistrationComponent,
