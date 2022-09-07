@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { oauth2 as SmartClient } from 'fhirclient';
 import { environment } from "../../environments/environment";
-import {from, Observable, of, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, from, Observable, of, skipWhile, switchMap, tap} from 'rxjs';
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 
@@ -11,7 +11,7 @@ import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 })
 export class FhirClientService {
 
-  private fhirClient: any;
+  private fhirClient: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   private patient: any;
   private patientObj: Patient;
   private practitionerObj: Practitioner;
@@ -19,11 +19,12 @@ export class FhirClientService {
 
   constructor() {}
 
-  getFhirClient() {
-    return this.fhirClient;
+   getClient() {
+     return this.fhirClient.asObservable();
   }
 
   authorize() {
+    console.log("AUTHORIZING");
     SmartClient.authorize(
       {
         clientId: environment.fhirClientId,
@@ -34,49 +35,47 @@ export class FhirClientService {
     );
   }
 
-  readyClientNew(cbSuccess, cbError) {
-    SmartClient.ready()
-      .then(client => {
-        this.fhirClient = client;
-        client.patient.read()
-          .then((data) => {
-            this.patient = data;
-            console.log(data);
-            cbSuccess(data);
-          })
-          .catch((error: any) => {
-            console.log(error)
-            cbError(error);
-          });
-      })
-      .catch((error: any) => {
-        console.error(error);
-        cbError(error);
-      })
-  }
-
-
+  // readyClientNew(cbSuccess, cbError) {
+  //   SmartClient.ready()
+  //     .then(client => {
+  //       this.fhirClient = client;
+  //       client.patient.read()
+  //         .then((data) => {
+  //           this.patient = data;
+  //           console.log(data);
+  //           cbSuccess(data);
+  //         })
+  //         .catch((error: any) => {
+  //           console.log(error)
+  //           cbError(error);
+  //         });
+  //     })
+  //     .catch((error: any) => {
+  //       console.error(error);
+  //       cbError(error);
+  //     })
+  // }
   readyClient() {
     SmartClient.ready()
       .then(client => {
-        this.fhirClient = client;
-        client.patient.read()
-          .then((data) => {
-            this.patient = data;
-          })
-          .catch((error: any) => {
-            console.error(error)
-          });
+        this.fhirClient.next(client);
+        // client.patient.read()
+        //   .then((data) => {
+        //     this.patient = data;
+        //   })
+        //   .catch((error: any) => {
+        //     console.error(error)
+        //   });
       })
       .catch((error: any) => {
         console.error(error);
       })
   }
 
-
-  getClient(): Observable<any> {
-    return from (SmartClient.ready())
-  }
+  // getClient(): Observable<any> {
+  //   console.log("READYING")
+  //   return from (SmartClient.ready())
+  // }
 
 
   getPatient(): Observable<Patient> {
@@ -106,8 +105,10 @@ export class FhirClientService {
 
   getPatientClient(): Observable<any>{
     return this.getClient().pipe(
+      skipWhile((client) => client === null),
       switchMap(client => {
         console.log(client.getState("serverUrl"));
+        console.log(client.patient);
         return from (client.patient.read())
       })
     )
@@ -115,6 +116,7 @@ export class FhirClientService {
 
   getPractitionerClient(): Observable<any>{
     return this.getClient().pipe(
+      skipWhile((client) => client === null),
       switchMap(client => {
         return from (client.user.read())
       })
@@ -123,14 +125,11 @@ export class FhirClientService {
 
   getCoverage(): Observable<any>{
     return this.getClient().pipe(
+      skipWhile((client) => client === null),
       switchMap(client => {
         return from (client.request("Coverage?beneficiary=" + client.patient.id + "&_include=Coverage:payor"))
       })
     )
-  }
-
-  getClientState(): Observable<any> {
-    return this.getClient().pipe()
   }
 
   // getPractitionerClient(): Observable<any>{
