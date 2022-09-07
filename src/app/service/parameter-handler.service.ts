@@ -68,6 +68,59 @@ export class ParameterHandlerService {
     return parametersResource;
   }
 
+  //TODO currently handles only valueQuantity and valueDateTime
+  setPartParameter(parametersResource: Parameters, name: string, partList: any[]): Parameters {
+    //If the parameter already exists, we need to filter it out. This way we know there are not duplicate parameters in the resource.
+    parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+
+    function getValue(part: any): any {
+      if(part.valueQuantity) {
+        return {value: part.valueQuantity.value, unit: part.valueQuantity.unit, system: part.valueQuantity.system, code: part.valueQuantity.code};
+      }
+      if(part.valueDateTime) {
+        return new Date(part.valueDateTime)
+      }
+    }
+
+    // TODO: make this function safer
+    // Helper function to extract the type of the entity (valueCode, valueDate, valueQuantity)
+    // Note that this function returns any key different from "name". This is brittle, because it may return a key "foo",
+    // if such key exist
+    function getKey(part) {
+      return Object.keys(part).find(key => key !== 'name');
+    }
+
+    // We are just mapping the data to a
+    const mapped: any = partList
+      .map(part => {
+        let obj: any = {};
+        obj[getKey(part)] = getValue(part);
+        obj.name = part.name;
+      return obj
+      })
+      .map(obj =>{
+        if(obj.valueQuantity){
+          const valueQuantity =  new Quantity(obj.valueQuantity);
+          return new ParametersParameter({name: obj.name, valueQuantity: valueQuantity});
+        }
+        else if (obj.valueDateTime){
+          return new ParametersParameter({name: obj.name, valueDateTime: obj.valueDateTime});
+        }
+        //We only handle valueDateTime and valueQuantity for now.
+        console.error("Unable to determine object type")
+        return null;
+      });
+
+    const result = new ParametersParameter({
+      name: name,
+      part: mapped
+    });
+
+    parametersResource.parameter.push(result);
+
+    return parametersResource;
+  }
+
   removeParameterByName(parametersResource: Parameters, name: string | string[]): Parameters{
     if(!name || (Array.isArray(name) && name.length === 0) || parametersResource.parameter.length === 0){
       //Nothing to filter, just return the parametersResource

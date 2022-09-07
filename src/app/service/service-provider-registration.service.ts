@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {forkJoin, map, Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {ServiceProviderService} from "./service-provider.service";
-import {Bundle, BundleEntry, BundleEntryRequest} from "@fhir-typescript/r4-core/dist/fhir/Bundle";
+import {BundleEntry, BundleEntryRequest} from "@fhir-typescript/r4-core/dist/fhir/Bundle";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {Organization} from "@fhir-typescript/r4-core/dist/fhir/Organization";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -15,16 +15,12 @@ import {HumanName} from "@fhir-typescript/r4-core/dist/fhir/HumanName";
 import {v4 as uuidv4} from 'uuid';
 import {
   Address,
-  FhirCode,
   HealthcareService,
   Identifier,
   Location,
   Reference,
-  Resource
 } from "@fhir-typescript/r4-core/dist/fhir";
-import {environment} from "../../environments/environment";
 import {FhirTerminologyConstants} from "../providers/fhir-terminology-constants";
-import {DaysOfWeekCodes, DaysOfWeekCodeType} from "@fhir-typescript/r4-core/dist/fhirValueSets/DaysOfWeekCodes";
 import {TransactionBundleHandlerService} from "./transaction-bundle-handler.service";
 
 @Injectable({

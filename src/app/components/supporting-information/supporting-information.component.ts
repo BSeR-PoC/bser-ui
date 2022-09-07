@@ -36,7 +36,7 @@ export class SupportingInformationComponent implements OnInit {
     const bmi =  new  FormControl(null, [Validators.required]);
     const bpDiastolic =  new  FormControl(null, [Validators.required]);
     const bpSystolic =  new  FormControl(null, [Validators.required]);
-  //  const smokingStatus =  new  FormControl(null, [Validators.required]);
+    // const smokingStatus =  new  FormControl(null, [Validators.required]);
     // const allergies =  new  FormControl(null);
     // const medicalHistory =  new  FormControl(null);
 
@@ -67,7 +67,7 @@ export class SupportingInformationComponent implements OnInit {
     const bmi = form.controls['bmi'].value;
     const bpDiastolic = form.controls['bpDiastolic'].value;
     const bpSystolic = form.controls['bpSystolic'].value;
-    //const smokingStatus = form.controls['smokingStatus'].value;
+    // const smokingStatus = form.controls['smokingStatus'].value;
     // const allergies = form.controls['allergies'].value;
     // const medicalHistory = form.controls['medicalHistory'].value;
 
@@ -76,11 +76,13 @@ export class SupportingInformationComponent implements OnInit {
       weight: {value: weightValue, unit: weightUnit},
       bmi: {value: bmi, unit: "kg/m^2"},
       bp: { bpDiastolic: { name: 'diastolic', value: bpDiastolic }, bpSystolic : { name: 'systolic', value: bpSystolic }}
-     // smokingStatus: smokingStatus,
+      // smokingStatus: smokingStatus,
       // allergies: allergies,
       // medicalHistory: medicalHistory,
     }
 
     return emitterData;
   }
+
+
 }

@@ -187,6 +187,33 @@ export class ReferralManagerComponent implements OnInit {
         this.currentParameters, 'bmi', event.data?.bmi?.value,
         event.data?.bmi?.unit, "http://unitsofmeasure.org", event.data?.bmi?.unit);
     }
+
+    if(event.data?.bd){
+      const partArray = [
+        {
+          name: "diastolic",
+          valueQuantity: {
+            value: event.data?.bd?.bpDiastolic?.value,
+            unit: "mmHg",
+            system: "http://unitsofmeasure.org",
+            code: "mm[Hg]"
+          }
+        },
+        {
+          name: "systolic",
+          valueQuantity: {
+            value: event.data?.bd?.bpSystolic?.value,
+            unit: "mmHg",
+            system: "http://unitsofmeasure.org",
+            code: "mm[Hg]"
+          }
+
+        }
+      ];
+
+      this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
+    }
+
     console.log(this.currentParameters);
 
     //TODO need to add allergies and medication history
