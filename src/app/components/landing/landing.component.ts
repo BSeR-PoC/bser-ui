@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
@@ -74,10 +74,18 @@ export class LandingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-   this.getServiceRequests();
+   this.fhirClient.patient$.subscribe({
+     //TODO there should be a better way to to this, we need to refactor the code and handle this in the service
+     next: value => { if(value) this.getServiceRequests();}
+   })
   }
 
   onEdit(element) {
     this.router.navigate(['referral-manager', element.serviceRequestId])
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    console.log(this.fhirClient);
   }
 }

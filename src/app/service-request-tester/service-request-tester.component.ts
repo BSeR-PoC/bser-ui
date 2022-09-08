@@ -17,7 +17,8 @@ export class ServiceRequestTesterComponent implements OnInit {
   currentParameters: Parameters;
   lastParameters: Parameters;
 
-  constructor(public serviceRequestHandler: ServiceRequestHandlerService, private serviceProviderService: ServiceProviderService,
+  constructor(public serviceRequestHandler: ServiceRequestHandlerService,
+              private serviceProviderService: ServiceProviderService,
               public engineHandlerService: EnginePostHandlerService) { }
 
   ngOnInit(): void {
@@ -52,7 +53,7 @@ export class ServiceRequestTesterComponent implements OnInit {
   }
 
   saveServiceRequest(serviceRequest: ServiceRequest) {
-    this.serviceRequestHandler.saveServiceRequest(serviceRequest).subscribe(
+    this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe(
       {
         next: (data: any) => {
           this.lastSnapshot = this.serviceRequestHandler.deepCopy(data);

@@ -3,7 +3,7 @@ import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest"
 import {MatStepper} from "@angular/material/stepper";
 import {ActivatedRoute} from "@angular/router";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
-import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
+import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {UtilsService} from "../../service/utils.service";
 import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
 import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
@@ -70,8 +70,8 @@ export class ReferralManagerComponent implements OnInit {
     }
     else if (stepNumber === 2) {
       const collectedValues = ['race', 'ethnicity', 'educationLevel', 'employmentStatus', 'serviceType'];
-      const currentParamsNames = this.currentParameters.parameter.map(param => param.name.value.toString());
-      const result = collectedValues.map(element => currentParamsNames.indexOf(element) !== -1)
+      const currentParamsNames = this.currentParameters?.parameter?.map(param => param.name?.value?.toString());
+      const result = collectedValues?.map(element => currentParamsNames?.indexOf(element) !== -1)
         .filter(element => element == false)
         .length === 0;
       return result;
@@ -129,6 +129,7 @@ export class ReferralManagerComponent implements OnInit {
 
   //Saving the data from Step #2: General Information and Service Type in the stepper
   onSaveGeneralInfoAndServiceType(event: any){
+
     const advanceRequested = event.advanceRequested;
 
     if(event.data?.serviceType){
@@ -136,7 +137,7 @@ export class ReferralManagerComponent implements OnInit {
       let codeableConcept = new CodeableConcept({coding: [coding], text: event.data?.serviceType?.display});
 
       this.serviceRequestHandler.setServiceTypePlamen(this.currentSnapshot, codeableConcept);
-      this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+     // this.saveServiceRequest(this.currentSnapshot, advanceRequested);
 
       if (event.data?.serviceType){
         this.currentParameters = this.parameterHandlerService
@@ -165,7 +166,8 @@ export class ReferralManagerComponent implements OnInit {
         .setCodeParameter(this.currentParameters, 'race', raceStr);
     }
     //TODO not sure if we need this method since we already have a parameterHandlerService
-    this.serviceRequestHandler.updateParams(this.currentParameters);
+    //this.serviceRequestHandler.updateParams(this.currentParameters);
+    this.saveServiceRequest(this.currentSnapshot, false);
 
   }
 
@@ -218,10 +220,8 @@ export class ReferralManagerComponent implements OnInit {
 
       this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
     }
-
-    console.log(this.currentParameters);
     this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
-
+    this.saveServiceRequest(this.currentSnapshot, false);
     //TODO need to add allergies and medication history
   }
 
@@ -232,7 +232,16 @@ export class ReferralManagerComponent implements OnInit {
           {
             next: (data: any) => {
               this.currentSnapshot = data;
-              console.log("DATA:", data)
+              const params = data.supportingInfo.find(element => element.type ==="Parameters");
+              if(params){
+                const paramsId = params.reference.substring(params.reference.indexOf('/') + 1);
+                if (paramsId){
+                  this.serviceRequestHandler.getParametersById(paramsId).subscribe({
+                    next: data => this.currentParameters = data,
+                    error: err => console.error
+                  })
+                }
+              }
             },
             error: console.error
           }
@@ -256,20 +265,31 @@ export class ReferralManagerComponent implements OnInit {
 
   saveServiceRequest(serviceRequest: ServiceRequest, advanceRequested: boolean) {
 
-    this.serviceRequestHandler.saveServiceRequest(serviceRequest).subscribe(
+    this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe(
       {
         next: (data: any) => {
-          this.lastSnapshot = this.serviceRequestHandler.deepCopy(data);
-          this.currentSnapshot = this.serviceRequestHandler.deepCopy(data);
+          const serviceRequestLocation = data.entry.find(element => element?.response?.location.indexOf('ServiceRequest') !== -1).response.location;
+          const serviceRequestId = serviceRequestLocation.substring(serviceRequestLocation.indexOf('/') + 1, serviceRequestLocation.lastIndexOf('/_'));
+
+          const parametersLocation = data.entry.find(element => element?.response?.location.indexOf('Parameters') !== -1).response.location;
+          const paramsId = parametersLocation.substring(parametersLocation.indexOf('/') + 1, parametersLocation.lastIndexOf('/_'));
+
+          this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
+            next: data => this.lastSnapshot = this.serviceRequestHandler.deepCopy(data),
+            error: err => console.error
+          });
+
+          this.serviceRequestHandler.getParametersById(paramsId).subscribe({
+            next: data => this.lastParameters = this.serviceRequestHandler.deepCopy(data),
+            error: err => console.error
+          });
+
           if(advanceRequested) {
             this.stepper.next();
           }
           this.utilsService.showSuccessNotification("The referral was saved successfully.");
         },
-        error: (data => {
-          console.error(data);
-          // TODO we need to render the error in an error message widget.
-        })
+        error: err=> console.error
       }
     );
   }

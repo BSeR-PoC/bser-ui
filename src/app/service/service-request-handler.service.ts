@@ -206,7 +206,6 @@ export class ServiceRequestHandlerService {
     return JSON.stringify(object1) === JSON.stringify(object2);
   }
 
-
   // TODO: Delete later, testing only.
   deleteTestData() {
     let connectionUrl = environment.bserProviderServer + "ServiceRequest";
@@ -220,12 +219,6 @@ export class ServiceRequestHandlerService {
   }
 
   getServiceRequestList() : Observable<any> {
-
-    console.log(this.patient)
-
-    // const patient$ = this.fhirClient.getPatient();
-    // const client$ = this.fhirClient.getClient();
-
     const subject = "subject=" + this.serverUrl;
     const patient = "/Patient/" + this.patient.id;
     const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
@@ -236,31 +229,10 @@ export class ServiceRequestHandlerService {
       patient +
       include;
     return this.http.get(requestUrl)
-
-
-    // return forkJoin([patient$, client$])
-    //   .pipe(
-    //     switchMap(results => {
-    //         const patientId = results[0].id;
-    //         const serverUrl = results[1].getState("serverUrl");
-    //         const subject = "subject=" + this.serverUrl;
-    //         const patient = "/Patient/" + this.patient.id;
-    //         const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
-    //
-    //         const requestUrl = environment.bserProviderServer +
-    //           "ServiceRequest?" +
-    //           subject +
-    //           patient +
-    //           include;
-    //         return this.http.get(requestUrl)
-    //       }
-    //     )
-    //   );
   }
 
-
   getServiceRequestById(serviceRequestId: string) : Observable<ServiceRequest> {
-    const requestUrl = environment.bserProviderServer + "/ServiceRequest/" + serviceRequestId;
+    const requestUrl = environment.bserProviderServer + "ServiceRequest/" + serviceRequestId;
 
     return this.http.get(requestUrl).pipe(map(result => {
         this.currentSnapshot.next(result);
@@ -276,5 +248,15 @@ export class ServiceRequestHandlerService {
 
   updateParams(params) {
     this.currentParameters.next(params);
+  }
+
+  getParametersById(paramsId: string) {
+    const requestUrl = environment.bserProviderServer + "Parameters/" + paramsId;
+
+    return this.http.get(requestUrl).pipe(map(result => {
+        this.currentParameters.next(result);
+        return  result as Parameters;
+      }
+    ))
   }
 }
