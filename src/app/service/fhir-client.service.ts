@@ -116,16 +116,23 @@ export class FhirClientService {
     ))
   }
 
-  getRequestFromClient(requestString: string): Observable<any>{
-    return this.getClient().pipe(
-      skipWhile((client) => client === null),
-      switchMap(client => {
+  // getRequestFromClient(requestString: string): Observable<any>{
+  //   return this.getClient().pipe(
+  //     skipWhile((client) => client === null),
+  //     switchMap(client => {
+  //       return from (client.request(requestString))
+  //     })
+  //   )
+  // }
+
+  public getRequestFromClient(requestString: string): Observable<any>{
+    return this.getClient().pipe(switchMap(
+      (client) => {
         requestString = requestString.replace("${patient.id}", client.patient.id)
         return from (client.request(requestString))
       })
     )
   }
-
 
   getCoverage(): Observable<any>{
     return this.getRequestFromClient("Coverage?beneficiary=${patient.id}&_include=Coverage:payor")
