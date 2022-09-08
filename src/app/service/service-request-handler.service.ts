@@ -11,6 +11,7 @@ import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
 import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
+import {TransactionBundleHandlerService} from "./transaction-bundle-handler.service";
 
 @Injectable({
   providedIn: 'root'
@@ -24,10 +25,18 @@ export class ServiceRequestHandlerService {
   public currentParameters$ = this.currentParameters.asObservable();
   private lastSnapshot: ServiceRequest = null;
   private lastParameters: Parameters = null;
+  private patient: any;
+  private serverUrl: string;
 
   private practitioner: Practitioner;
 
-  constructor(private http: HttpClient, private fhirClient: FhirClientService) {}
+  constructor(private http: HttpClient, private fhirClient: FhirClientService,
+              private transBundleHandler: TransactionBundleHandlerService) {
+    this.fhirClient.patient$.subscribe(
+      data => this.patient = data
+    )
+    this.fhirClient.serverUrl$.subscribe(data=> this.serverUrl = data);
+  }
 
   // STEP 0
 
@@ -109,7 +118,7 @@ export class ServiceRequestHandlerService {
     }
   }
 
-  saveServiceRequest(currentSnapshot: ServiceRequest) {
+  saveServiceRequest(currentSnapshot: ServiceRequest, currentParameters: Parameters) {
     // const orderDetail =  [{
     //   coding:  {
     //     code: "diabetes-prevention",
@@ -120,22 +129,28 @@ export class ServiceRequestHandlerService {
 
     // TODO: Add POST Parameters alongside ServiceRequest
     if (!("id" in currentSnapshot)) {
-      let connectionUrl = environment.bserProviderServer + "ServiceRequest";
-      this.lastSnapshot = this.deepCopy(currentSnapshot);
-      return this.http.post(connectionUrl, currentSnapshot).pipe(
-        map(result => {
-          this.lastSnapshot = this.deepCopy(result);
-          return result;
-        }));
+      // let connectionUrl = environment.bserProviderServer + "ServiceRequest";
+      // this.lastSnapshot = this.deepCopy(currentSnapshot);
+      // return this.http.post(connectionUrl, currentSnapshot).pipe(
+      //   map(result => {
+      //     this.lastSnapshot = this.deepCopy(result);
+      //     return result;
+      //   }));
+      //
+      // filter the response from trans bundle to just the service request ID,
+      // query the service request, set the current snapshot AND get the serviceRequest.supportingInfo[0]
+      return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters])
     }
     else {
-      let connectionUrl = environment.bserProviderServer + "ServiceRequest/" + currentSnapshot.id;
-      return this.http.put(connectionUrl, currentSnapshot).pipe(
-        map(result => {
-          this.lastSnapshot = this.deepCopy(result);
+      // let connectionUrl = environment.bserProviderServer + "ServiceRequest/" + currentSnapshot.id;
+      // return this.http.put(connectionUrl, currentSnapshot).pipe(
+      //   map(result => {
+      //     this.lastSnapshot = this.deepCopy(result);
+      //
+      //     return result;
+      //   }));
+      return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters])
 
-          return result;
-        }));
     }
   }
 
@@ -206,27 +221,41 @@ export class ServiceRequestHandlerService {
 
   getServiceRequestList() : Observable<any> {
 
-    const patient$ = this.fhirClient.getPatient();
-    const client$ = this.fhirClient.getClient();
+    console.log(this.patient)
 
-    return forkJoin([patient$, client$])
-      .pipe(
-        switchMap(results => {
-            const patientId = results[0].id;
-            const serverUrl = results[1].getState("serverUrl");
-            const subject = "subject=" + serverUrl;
-            const patient = "/Patient/" + patientId;
-            const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
+    // const patient$ = this.fhirClient.getPatient();
+    // const client$ = this.fhirClient.getClient();
 
-            const requestUrl = environment.bserProviderServer +
-              "ServiceRequest?" +
-              subject +
-              patient +
-              include;
-            return this.http.get(requestUrl)
-          }
-        )
-      );
+    const subject = "subject=" + this.serverUrl;
+    const patient = "/Patient/" + this.patient.id;
+    const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
+
+    const requestUrl = environment.bserProviderServer +
+      "ServiceRequest?" +
+      subject +
+      patient +
+      include;
+    return this.http.get(requestUrl)
+
+
+    // return forkJoin([patient$, client$])
+    //   .pipe(
+    //     switchMap(results => {
+    //         const patientId = results[0].id;
+    //         const serverUrl = results[1].getState("serverUrl");
+    //         const subject = "subject=" + this.serverUrl;
+    //         const patient = "/Patient/" + this.patient.id;
+    //         const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
+    //
+    //         const requestUrl = environment.bserProviderServer +
+    //           "ServiceRequest?" +
+    //           subject +
+    //           patient +
+    //           include;
+    //         return this.http.get(requestUrl)
+    //       }
+    //     )
+    //   );
   }
 
 

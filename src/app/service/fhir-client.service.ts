@@ -12,10 +12,12 @@ import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 export class FhirClientService {
 
   private fhirClient: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-  private patient: any;
+  private patient: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  public patient$ = this.patient.asObservable();
   private patientObj: Patient;
   private practitionerObj: Practitioner;
-  private serverUrl: string;
+  private serverUrl: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  public serverUrl$ = this.serverUrl.asObservable();
 
   constructor() {}
 
@@ -59,13 +61,21 @@ export class FhirClientService {
     SmartClient.ready()
       .then(client => {
         this.fhirClient.next(client);
-        // client.patient.read()
-        //   .then((data) => {
-        //     this.patient = data;
-        //   })
-        //   .catch((error: any) => {
-        //     console.error(error)
-        //   });
+        this.serverUrl.next(client.getState("serverUrl"));
+        client.patient.read()
+           .then((data) => {
+             this.patient.next(data);
+          })
+          .catch((error: any) => {
+            console.error(error)
+          });
+        client.patient.read()
+          .then((data) => {
+            this.patient.next(data);
+          })
+          .catch((error: any) => {
+            console.error(error)
+          });
       })
       .catch((error: any) => {
         console.error(error);
@@ -104,17 +114,17 @@ export class FhirClientService {
   }
 
   getPatientClient(): Observable<any>{
+    console.log("getPatientClient called")
     return this.getClient().pipe(
       skipWhile((client) => client === null),
       switchMap(client => {
-        console.log(client.getState("serverUrl"));
-        console.log(client.patient);
         return from (client.patient.read())
       })
     )
   }
 
   getPractitionerClient(): Observable<any>{
+    console.log("getPractitionerClient called")
     return this.getClient().pipe(
       skipWhile((client) => client === null),
       switchMap(client => {
@@ -123,13 +133,26 @@ export class FhirClientService {
     )
   }
 
-  getCoverage(): Observable<any>{
+
+  getRequestFromClient(requestString: string): Observable<any>{
     return this.getClient().pipe(
       skipWhile((client) => client === null),
       switchMap(client => {
-        return from (client.request("Coverage?beneficiary=" + client.patient.id + "&_include=Coverage:payor"))
+        requestString = requestString.replace("${patient.id}", client.patient.id)
+        return from (client.request(requestString))
       })
     )
+  }
+
+
+  getCoverage(): Observable<any>{
+    return this.getRequestFromClient("Coverage?beneficiary=${patient.id}&_include=Coverage:payor")
+    // return this.getClient().pipe(
+    //   skipWhile((client) => client === null),
+    //   switchMap(client => {
+    //     return from (client.request("Coverage?beneficiary=" + client.patient.id + "&_include=Coverage:payor"))
+    //   })
+    //)
   }
 
   // getPractitionerClient(): Observable<any>{
