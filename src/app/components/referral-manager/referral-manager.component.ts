@@ -263,7 +263,7 @@ export class ReferralManagerComponent implements OnInit {
     );
   }
 
-  saveServiceRequest(serviceRequest: ServiceRequest, advanceRequested: boolean) {
+  saveServiceRequest(serviceRequest: any, advanceRequested: boolean) {
 
     this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe(
       {

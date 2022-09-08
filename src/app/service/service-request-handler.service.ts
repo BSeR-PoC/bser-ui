@@ -118,39 +118,15 @@ export class ServiceRequestHandlerService {
     }
   }
 
-  saveServiceRequest(currentSnapshot: ServiceRequest, currentParameters: Parameters) {
-    // const orderDetail =  [{
-    //   coding:  {
-    //     code: "diabetes-prevention",
-    //     display: "Diabetes Prevention"
-    //   } ,
-    //   text: "Diabetes Prevention"
-    // }];
-
+  saveServiceRequest(currentSnapshot: any, currentParameters: any) {
+    currentSnapshot = new ServiceRequest(currentSnapshot);
+    currentParameters = new Parameters(currentParameters);
     // TODO: Add POST Parameters alongside ServiceRequest
     if (!("id" in currentSnapshot)) {
-      // let connectionUrl = environment.bserProviderServer + "ServiceRequest";
-      // this.lastSnapshot = this.deepCopy(currentSnapshot);
-      // return this.http.post(connectionUrl, currentSnapshot).pipe(
-      //   map(result => {
-      //     this.lastSnapshot = this.deepCopy(result);
-      //     return result;
-      //   }));
-      //
-      // filter the response from trans bundle to just the service request ID,
-      // query the service request, set the current snapshot AND get the serviceRequest.supportingInfo[0]
       return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters])
     }
     else {
-      // let connectionUrl = environment.bserProviderServer + "ServiceRequest/" + currentSnapshot.id;
-      // return this.http.put(connectionUrl, currentSnapshot).pipe(
-      //   map(result => {
-      //     this.lastSnapshot = this.deepCopy(result);
-      //
-      //     return result;
-      //   }));
       return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters])
-
     }
   }
 
