@@ -20,7 +20,9 @@ export class PatientDemographicsComponent implements OnInit {
     });
 
     this.fhirClient.getCoverage().subscribe({
-      next: value => this.insuranceProvider = value?.entry?.find(entry => entry.resource.resourceType === "Organization")?.resource,
+      next: value => {
+        this.insuranceProvider = value?.entry?.find(entry => entry.resource.resourceType === "Organization")?.resource
+      },
       error: console.error
     });
   }
