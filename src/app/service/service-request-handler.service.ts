@@ -25,67 +25,95 @@ export class ServiceRequestHandlerService {
   public currentParameters$ = this.currentParameters.asObservable();
   private lastSnapshot: ServiceRequest = null;
   private lastParameters: Parameters = null;
+  private practitioner: any;
   private patient: any;
   private serverUrl: string;
 
-  private practitioner: Practitioner;
-
   constructor(private http: HttpClient, private fhirClient: FhirClientService,
               private transBundleHandler: TransactionBundleHandlerService) {
-    this.fhirClient.getPatient().subscribe(
-      data => this.patient = data
-    )
-    this.fhirClient.serverUrl$.subscribe(data=> this.serverUrl = data);
+    this.fhirClient.getPractitioner().subscribe({next: (data)=>this.practitioner = data});
+    this.fhirClient.getPatient().subscribe({next: (data)=>this.patient = data});
+    this.fhirClient.serverUrl$.subscribe({next: (data)=>this.serverUrl = data});
   }
 
   // STEP 0
-
   createNewServiceRequest() {
-    console.log("In Create New")
-    this.fhirClient.getPractitioner().subscribe({next: (data)=>console.log(data)});
-    this.fhirClient.getPatient().subscribe({next: (data)=>console.log(data)});
-    this.fhirClient.serverUrl$.subscribe({next: (data)=>console.log(data)});
-    const practitioner = this.fhirClient.getPractitioner();
-    const patient = this.fhirClient.getPatient();
-    const serverUrl = this.fhirClient.serverUrl$;
 
-    forkJoin([practitioner, patient, serverUrl]).subscribe(
-      results => {
-        console.log("Fork Joining")
-        const practitioner = results[0];
-        const patient = results[1];
-        const smartServerUrl = serverUrl[2];
+    //TODO: delete the codeable concept code, it should come from the UI when the user selects the Recipient
+    // let coding = new Coding({code: "diabetes-prevention", display : "Diabetes Prevention"});
+    // let codeableConcept = new CodeableConcept({coding: [coding], text: "Diabetes Prevention"});
+    // console.log(codeableConcept);
 
-        //TODO: delete the codeable concept code, it should come from the UI when the user selects the Recipient
-        // let coding = new Coding({code: "diabetes-prevention", display : "Diabetes Prevention"});
-        // let codeableConcept = new CodeableConcept({coding: [coding], text: "Diabetes Prevention"});
-        // console.log(codeableConcept);
-
-        this.practitioner = Object.assign(new Practitioner(), practitioner);
-        let parameters = new Parameters( {id: uuidv4()});
-        let serviceRequest = new ServiceRequest({
-          code: this.createServiceRequestCoding(),
-          requester: Reference.fromResource(practitioner, smartServerUrl),
-         // requester: Reference.fromResource(practitioner),
-          status: "draft",
-          intent: "order",
-          authoredOn: new Date().toISOString(),
-          //supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
-          supportingInfo: [Reference.fromResource(parameters)],
-          subject: Reference.fromResource(patient, smartServerUrl),
-    //      orderDetail: [new CodeableConcept(codeableConcept)]
-          //subject: Reference.fromResource(patient),
-        });
-        this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
-        this.lastParameters = new Parameters(this.deepCopy(parameters));
-        console.log(serviceRequest)
-        console.log(this.lastSnapshot)
-        this.currentSnapshot.next(serviceRequest);
-        this.currentParameters.next(parameters);
-        console.log("SERVICE REQUEST CREATED");
-      }
-    )
+    this.practitioner = Object.assign(new Practitioner(), this.practitioner);
+    let parameters = new Parameters( {id: uuidv4()});
+    let serviceRequest = new ServiceRequest({
+      code: this.createServiceRequestCoding(),
+      requester: Reference.fromResource(this.practitioner, this.serverUrl),
+      // requester: Reference.fromResource(practitioner),
+      status: "draft",
+      intent: "order",
+      authoredOn: new Date().toISOString(),
+      //supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
+      supportingInfo: [Reference.fromResource(parameters)],
+      subject: Reference.fromResource(this.patient, this.serverUrl),
+      //      orderDetail: [new CodeableConcept(codeableConcept)]
+      //subject: Reference.fromResource(patient),
+    });
+    this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
+    this.lastParameters = new Parameters(this.deepCopy(parameters));
+    console.log(serviceRequest)
+    console.log(this.lastSnapshot)
+    this.currentSnapshot.next(serviceRequest);
+    this.currentParameters.next(parameters);
+    console.log("SERVICE REQUEST CREATED");
   }
+
+  // createNewServiceRequest() {
+  //   console.log("In Create New")
+  //   this.fhirClient.getPractitioner().subscribe({next: (data)=>console.log(data)});
+  //   this.fhirClient.getPatient().subscribe({next: (data)=>console.log(data)});
+  //   this.fhirClient.serverUrl$.subscribe({next: (data)=>console.log(data)});
+  //   const practitioner = this.fhirClient.getPractitioner();
+  //   const patient = this.fhirClient.getPatient();
+  //   const serverUrl = this.fhirClient.serverUrl$;
+  //
+  //   forkJoin([practitioner, patient, serverUrl]).subscribe(
+  //     results => {
+  //       console.log("Fork Joining")
+  //       const practitioner = results[0];
+  //       const patient = results[1];
+  //       const smartServerUrl = serverUrl[2];
+  //
+  //       //TODO: delete the codeable concept code, it should come from the UI when the user selects the Recipient
+  //       // let coding = new Coding({code: "diabetes-prevention", display : "Diabetes Prevention"});
+  //       // let codeableConcept = new CodeableConcept({coding: [coding], text: "Diabetes Prevention"});
+  //       // console.log(codeableConcept);
+  //
+  //       this.practitioner = Object.assign(new Practitioner(), practitioner);
+  //       let parameters = new Parameters( {id: uuidv4()});
+  //       let serviceRequest = new ServiceRequest({
+  //         code: this.createServiceRequestCoding(),
+  //         requester: Reference.fromResource(practitioner, smartServerUrl),
+  //        // requester: Reference.fromResource(practitioner),
+  //         status: "draft",
+  //         intent: "order",
+  //         authoredOn: new Date().toISOString(),
+  //         //supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
+  //         supportingInfo: [Reference.fromResource(parameters)],
+  //         subject: Reference.fromResource(patient, smartServerUrl),
+  //   //      orderDetail: [new CodeableConcept(codeableConcept)]
+  //         //subject: Reference.fromResource(patient),
+  //       });
+  //       this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
+  //       this.lastParameters = new Parameters(this.deepCopy(parameters));
+  //       console.log(serviceRequest)
+  //       console.log(this.lastSnapshot)
+  //       this.currentSnapshot.next(serviceRequest);
+  //       this.currentParameters.next(parameters);
+  //       console.log("SERVICE REQUEST CREATED");
+  //     }
+  //   )
+  // }
 
   private createServiceRequestCoding(): CodeableConcept {
     let coding = new Coding({system: "http://snomed.info/sct", code: "3457005", display: "Patient referral (procedure)"})
