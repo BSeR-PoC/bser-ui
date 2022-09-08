@@ -3,6 +3,7 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Router} from "@angular/router";
+import {FhirClientService} from "../../service/fhir-client.service";
 
 @Component({
   selector: 'app-landing',
@@ -21,7 +22,11 @@ export class LandingComponent implements OnInit {
   constructor(
     private mockDataRetrievalService: MockDataRetrievalService,
     private serviceRequestHandlerService: ServiceRequestHandlerService,
-    private router: Router) { }
+    private router: Router,
+    private fhirClient: FhirClientService) {
+
+    this.fhirClient.readyClient();
+  }
 
   findResourceById(bundle, resourceId){
     if(!bundle.entry || bundle.entry.length === 0 || !resourceId){
