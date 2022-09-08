@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
-import {BehaviorSubject, forkJoin, map, Observable, switchMap} from 'rxjs';
+import {BehaviorSubject, forkJoin, map, Observable, of, switchMap, timer} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -32,7 +32,7 @@ export class ServiceRequestHandlerService {
 
   constructor(private http: HttpClient, private fhirClient: FhirClientService,
               private transBundleHandler: TransactionBundleHandlerService) {
-    this.fhirClient.patient$.subscribe(
+    this.fhirClient.getPatient().subscribe(
       data => this.patient = data
     )
     this.fhirClient.serverUrl$.subscribe(data=> this.serverUrl = data);
@@ -40,31 +40,21 @@ export class ServiceRequestHandlerService {
 
   // STEP 0
 
-  getDraftServiceRequests() {
-    // TODO: Implement
-    // Function for the front page to pull the list of Drafts.
+  createNewServiceRequest() {
+    console.log("In Create New")
+    this.fhirClient.getPractitioner().subscribe({next: (data)=>console.log(data)});
+    this.fhirClient.getPatient().subscribe({next: (data)=>console.log(data)});
+    this.fhirClient.serverUrl$.subscribe({next: (data)=>console.log(data)});
+    const practitioner = this.fhirClient.getPractitioner();
+    const patient = this.fhirClient.getPatient();
+    const serverUrl = this.fhirClient.serverUrl$;
 
-  }
-
-  // Resume or Create
-  resumeServiceRequest(serviceRequest: ServiceRequest) {
-    // TODO: Implement
-    // Front page can pass ID on load.
-  }
-
-  createNewServiceRequest(){
-
-    const client$ = this.fhirClient.getClient();
-    const practitioner$ = this.fhirClient.getPractitioner();
-    const patient$ = this.fhirClient.getPatient()
-
-    forkJoin([client$, practitioner$, patient$]).subscribe(
+    forkJoin([practitioner, patient, serverUrl]).subscribe(
       results => {
-        const client = results[0];
-        const practitioner = results[1];
-        const patient = results[2];
-
-        const smartServerUrl = client.getState("serverUrl");
+        console.log("Fork Joining")
+        const practitioner = results[0];
+        const patient = results[1];
+        const smartServerUrl = serverUrl[2];
 
         //TODO: delete the codeable concept code, it should come from the UI when the user selects the Recipient
         // let coding = new Coding({code: "diabetes-prevention", display : "Diabetes Prevention"});

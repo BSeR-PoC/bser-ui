@@ -50,7 +50,6 @@ export class ServiceRequestListComponent implements OnInit, OnChanges {
   deleteServiceRequest(serviceRequest){
     this.serviceRequestHandlerService.deleteServiceRequest(serviceRequest.serviceRequestId).subscribe({
       next: value => {
-        this.serviceRequestHandlerService.getDraftServiceRequests();
         this.serviceRequestDeletedEvent.emit();
         this.utilsService.showSuccessNotification("Referral deleted successfully.");
       },

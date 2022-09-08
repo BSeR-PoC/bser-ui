@@ -74,7 +74,7 @@ export class LandingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-   this.fhirClient.patient$.subscribe({
+   this.fhirClient.getPatient().subscribe({
      //TODO there should be a better way to to this, we need to refactor the code and handle this in the service
      next: value => { if(value) this.getServiceRequests();}
    })
