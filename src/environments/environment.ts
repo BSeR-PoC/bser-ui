@@ -9,7 +9,7 @@ export const environment = {
   fhirScope: 'profile launch openid fhirUser online_access patient/Patient.read', // App Smart FHIR Scope.
   //fhirIss: 'https://apps.hdap.gatech.edu/omopv53onfhir4/fhir', // App Smart FHIR ISS. (Server)
   //fhirIss: 'https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4',
-  fhirRedirectUri: 'http://localhost/bser-ui/',
+  fhirRedirectUri: 'https://localhost:4200/',
   bserProviderServer: 'https://apps.hdap.gatech.edu/cqf-ruler-r4/fhir/' // Server base to manage BSeR workflow resources, Service Providers, etc.
 };
 

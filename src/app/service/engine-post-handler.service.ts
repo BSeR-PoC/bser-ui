@@ -18,6 +18,7 @@ export class EnginePostHandlerService {
   patient: Patient;
   coverage: Coverage;
   requester: Practitioner;
+  serverUrl: string;
 
   constructor(private fhirClient: FhirClientService, private parameterHandler: ParameterHandlerService) {
     this.fhirClient.getPatient().subscribe({
@@ -28,6 +29,9 @@ export class EnginePostHandlerService {
     });
     this.fhirClient.getPractitioner().subscribe({
       next: value => { this.requester = value;}
+    });
+    this.fhirClient.serverUrl$.subscribe({
+      next: value => { this.serverUrl = value;}
     });
   }
 
@@ -40,11 +44,8 @@ export class EnginePostHandlerService {
     parameters = this.parameterHandler.setResourceParameter(parameters, "patient", this.patient);
     parameters = this.parameterHandler.setResourceParameter(parameters, "requester", this.requester);
     parameters = this.parameterHandler.setResourceParameter(parameters, "coverage", this.patient);
-    console.log(parameters.toJSON());
+    parameters = this.parameterHandler.setStringParameter(parameters, "bserProviderBaseUrl", this.serverUrl);
 
-    // TODO: Add ServerBase
-
-    //parameters = this.parameterHandler.setResourceParameter(parameters, "coverage", this.coverage);
     // TODO: Replace with HTTP Call, this is for demo purposes.
     console.log(parameters.toJSON());
   }
