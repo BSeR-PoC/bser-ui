@@ -1,18 +1,21 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AppConstants} from "../../providers/app-constants";
 import {Router} from "@angular/router";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
+import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 
 @Component({
   selector: 'app-supporting-information',
   templateUrl: './supporting-information.component.html',
   styleUrls: ['./supporting-information.component.scss']
 })
-export class SupportingInformationComponent implements OnInit {
+export class SupportingInformationComponent implements OnInit, OnChanges {
 
   @Input() serviceRequest: any;
   @Input() selectedServiceProvider: any;
+  @Input() params: Parameters;
+
   @Output() savedSuccessEvent = new EventEmitter();
 
   supportingInformationForm: FormGroup;
@@ -82,6 +85,13 @@ export class SupportingInformationComponent implements OnInit {
     }
 
     return emitterData;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes?.['params']?.currentValue?.parameter){
+
+    }
+    console.log(changes?.['params']?.currentValue?.parameter);
   }
 
 
