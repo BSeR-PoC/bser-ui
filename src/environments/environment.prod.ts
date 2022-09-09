@@ -8,7 +8,8 @@ export const environment = {
   fhirClientId: '52636c0a-17c3-4536-827e-bf83d57e469a', // EPIC Id
   fhirScope: 'launch openid fhirUser online_access patient/Patient.read', // App Smart FHIR Scope.
   fhirIss: 'https://apps.hdap.gatech.edu/omopv53onfhir4/fhir', // App Smart FHIR ISS. (Server)
-  fhirRedirectUri: 'https://localhost:4200/', // App Smart Redirect URL.
+  //fhirRedirectUri: 'https://localhost:4200/', // App Smart Redirect URL.
+  fhirRedirectUri: ' https://apps.hdap.gatech.edu/bser-ui/',
   bserProviderServer: 'https://apps.hdap.gatech.edu/cqf-ruler-r4/fhir/' // Server base to manage BSeR workflow resources, Service Providers, etc.
 };
 
