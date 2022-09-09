@@ -54,7 +54,7 @@ export class ReferralManagerComponent implements OnInit {
 
     this.serviceRequestHandler.currentParameters$.subscribe(
       {
-        next: (data: any) => {
+        next: (data: Parameters) => {
           this.currentParameters = data || new Parameters();
           console.log("DATA:", data)
         },
@@ -167,7 +167,7 @@ export class ReferralManagerComponent implements OnInit {
     }
     //TODO not sure if we need this method since we already have a parameterHandlerService
     //this.serviceRequestHandler.updateParams(this.currentParameters);
-    this.saveServiceRequest(this.currentSnapshot, false);
+    this.saveServiceRequest(this.currentSnapshot, advanceRequested);
 
   }
 
@@ -220,7 +220,8 @@ export class ReferralManagerComponent implements OnInit {
 
       this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
     }
-    this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
+    // this.currentParameters = new Parameters(this.currentParameters);
+    // this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
     this.saveServiceRequest(this.currentSnapshot, false);
     //TODO need to add allergies and medication history
   }
@@ -280,7 +281,9 @@ export class ReferralManagerComponent implements OnInit {
           });
 
           this.serviceRequestHandler.getParametersById(paramsId).subscribe({
-            next: data => this.lastParameters = this.serviceRequestHandler.deepCopy(data),
+            next: data => {
+              this.lastParameters = this.serviceRequestHandler.deepCopy(data)
+            },
             error: err => console.error
           });
 
