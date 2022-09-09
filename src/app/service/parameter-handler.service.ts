@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {Quantity} from "@fhir-typescript/r4-core/dist/fhir/Quantity";
+import {patientParams} from "fhirclient/lib/settings";
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +47,12 @@ export class ParameterHandlerService {
   // Todo: Add handling to check if valid code from API design.
   setCodeParameter(parametersResource: Parameters, name: string, value: string): Parameters {
     //If the parameter already exists, we need to filter it out. This way we know there are not duplicate parameters in the resource.
-    parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+    if(parametersResource.parameter){
+      parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+    }
+    else {
+      parametersResource.parameter = [];
+    }
 
     //add parameter
     parametersResource.parameter.push(new ParametersParameter({
@@ -58,7 +64,12 @@ export class ParameterHandlerService {
 
   setValueQuantityParameter(parametersResource: Parameters, name: string, value: any, unit: string, system: string, code: string): Parameters {
     //If the parameter already exists, we need to filter it out. This way we know there are not duplicate parameters in the resource.
-    parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+    if(parametersResource.parameter){
+      parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+    }
+    else {
+      parametersResource.parameter = [];
+    }
 
     const valueQuantity = new Quantity({value: value, unit: unit, system: system, code: code});
     parametersResource.parameter.push(new ParametersParameter({
@@ -71,7 +82,12 @@ export class ParameterHandlerService {
   //TODO currently handles only valueQuantity and valueDateTime
   setPartParameter(parametersResource: Parameters, name: string, partList: any[]): Parameters {
     //If the parameter already exists, we need to filter it out. This way we know there are not duplicate parameters in the resource.
-    parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+    if(parametersResource.parameter){
+      parametersResource.parameter = parametersResource.parameter.filter(parameter => parameter.name.toString() !== name);
+    }
+    else {
+      parametersResource.parameter = [];
+    }
 
     function getValue(part: any): any {
       if(part.valueQuantity) {
