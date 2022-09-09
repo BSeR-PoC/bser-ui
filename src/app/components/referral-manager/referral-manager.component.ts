@@ -220,8 +220,8 @@ export class ReferralManagerComponent implements OnInit {
 
       this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
     }
-    // this.currentParameters = new Parameters(this.currentParameters);
-    // this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
+    this.currentParameters = new Parameters(this.currentParameters);
+    this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
     this.saveServiceRequest(this.currentSnapshot, false);
     //TODO need to add allergies and medication history
   }
