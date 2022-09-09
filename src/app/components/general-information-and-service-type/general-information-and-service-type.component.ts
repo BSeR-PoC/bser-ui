@@ -8,6 +8,7 @@ import {USCorePatient} from "../../domain/USCorePatient";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
+import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 
 @Component({
   selector: 'app-general-information-and-service-type',
@@ -22,6 +23,8 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
 
   @Input() serviceRequest: any;
   @Input() selectedServiceProvider: any;
+  @Input() params: Parameters;
+
   @Output() savedSuccessEvent = new EventEmitter();
 
   SAVE_AND_EXIT = 'saveAndExit';
@@ -203,7 +206,46 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if(changes?.['params']?.currentValue?.parameter){
 
+      // Set Education Level
+      const educationLevelParam = changes?.['params']?.currentValue?.parameter.find(param => param.name == 'educationLevel');
+      const educationLevel = this.fhirConstants.EDUCATION_LEVEL.find( element => element.code === educationLevelParam?.valueCode);
+      if (educationLevel && this.generalInfoServiceTypeForm) {
+        this.generalInfoServiceTypeForm.controls['educationLevel'].patchValue(educationLevel);
+      }
+
+      // Set Employment Status
+      const employmentStatusParam = changes?.['params']?.currentValue?.parameter.find(param => param.name == 'employmentStatus');
+      const employmentStatus = this.fhirConstants.EMPLOYMENT_STATUS.find(element => element.code === employmentStatusParam?.valueCode);
+      if (employmentStatus && this.generalInfoServiceTypeForm) {
+        this.generalInfoServiceTypeForm.controls['employmentStatus'].patchValue(employmentStatus);
+      }
+
+      // Set Service Type
+      const serviceTypeParam = changes?.['params']?.currentValue?.parameter.find(param => param.name == 'serviceType');
+      const serviceType = this.fhirConstants.SERVICE_TYPES.find(element => element.code === serviceTypeParam?.valueCode);
+      if (serviceType && this.generalInfoServiceTypeForm) {
+        this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceType);
+      }
+
+      // Set Service Type
+      const ethnicityParam = changes?.['params']?.currentValue?.parameter.find(param => param.name == 'ethnicity');
+      const ethnicity = this.fhirConstants.ETHNICITY.find(element => element.code === ethnicityParam?.valueCode);
+      if (ethnicity && this.generalInfoServiceTypeForm) {
+        this.generalInfoServiceTypeForm.controls['ethnicity'].patchValue(ethnicity);
+      }
+
+      // Set Service Type
+      const raceParam = changes?.['params']?.currentValue?.parameter.find(param => param.name == 'race');
+      const race = this.fhirConstants.RACE_CATEGORIES.find(element => element.code === raceParam?.valueCode);
+      console.log(race);
+      // if (serviceType && this.generalInfoServiceTypeForm) {
+      //   this.generalInfoServiceTypeForm.controls['ethnicity'].patchValue(ethnicity);
+      // }
+
+      console.log(this.generalInfoServiceTypeForm);
+    }
   }
 
   getServices(selectedServiceProvider: any) {

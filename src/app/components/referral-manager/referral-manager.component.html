@@ -22,6 +22,7 @@
             (savedSuccessEvent)="onSaveGeneralInfoAndServiceType($event)"
             [serviceRequest] = "currentSnapshot"
             [selectedServiceProvider]="selectedServiceProvider"
+            [params]="currentParameters"
           ></app-general-information-and-service-type>
         </mat-step>
 
@@ -32,6 +33,7 @@
               (savedSuccessEvent)="onSaveSupportingInfo($event)"
               [serviceRequest] = "currentSnapshot"
               [selectedServiceProvider]="selectedServiceProvider"
+              [params]="currentParameters"
             >
             </app-supporting-information>
           </div>
