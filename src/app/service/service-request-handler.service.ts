@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
-import {BehaviorSubject, forkJoin, map, Observable, of, switchMap, timer} from 'rxjs';
+import {BehaviorSubject, forkJoin, map, mergeMap, Observable, of, switchMap, timer} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -61,11 +61,8 @@ export class ServiceRequestHandlerService {
     });
     this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
     this.lastParameters = new Parameters(this.deepCopy(parameters));
-    console.log(serviceRequest)
-    console.log(this.lastSnapshot)
     this.currentSnapshot.next(serviceRequest);
     this.currentParameters.next(parameters);
-    console.log("SERVICE REQUEST CREATED");
   }
 
   // createNewServiceRequest() {
@@ -136,16 +133,48 @@ export class ServiceRequestHandlerService {
     }
   }
 
-  saveServiceRequest(currentSnapshot: any, currentParameters: any) {
+  saveServiceRequest(currentSnapshot: any, currentParameters: any) : Observable<any> {
     currentSnapshot = new ServiceRequest(currentSnapshot);
     currentParameters = new Parameters(currentParameters);
-    // TODO: Add POST Parameters alongside ServiceRequest
+    // TODO: Add POST Parameters alongside ServiceRequeste
     if (!("id" in currentSnapshot)) {
-      return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters])
+      return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters]).pipe(
+        switchMap((data: any) => this.getServiceRequestAndParamsHelper(data)))
     }
     else {
-      return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters])
+      return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters]).pipe(
+        switchMap((data: any) => this.getServiceRequestAndParamsHelper(data)))
     }
+  }
+
+  // saveServiceRequest(currentSnapshot: any, currentParameters: any) {
+  //   currentSnapshot = new ServiceRequest(currentSnapshot);
+  //   currentParameters = new Parameters(currentParameters);
+  //   // TODO: Add POST Parameters alongside ServiceRequest
+  //   if (!("id" in currentSnapshot)) {
+  //     return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters])
+  //   }
+  //   else {
+  //     return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters])
+  //   }
+  // }
+
+  private getServiceRequestAndParamsHelper(data) : Observable<any> {
+
+    const serviceRequestLocation = data.entry.find(element => element?.response?.location.indexOf('ServiceRequest') !== -1).response.location;
+    const serviceRequestId = serviceRequestLocation.substring(serviceRequestLocation.indexOf('/') + 1, serviceRequestLocation.lastIndexOf('/_'));
+
+    const parametersLocation = data.entry.find(element => element?.response?.location.indexOf('Parameters') !== -1).response.location;
+    const paramsId = parametersLocation.substring(parametersLocation.indexOf('/') + 1, parametersLocation.lastIndexOf('/_'));
+
+    return forkJoin([this.getServiceRequestById(serviceRequestId), this.getParametersById(paramsId)]).pipe(map(value=> {
+      this.lastSnapshot = value[0];
+      this.lastParameters = value[1];
+      this.currentSnapshot.next(value[0]);
+      this.currentParameters.next(value[1]);
+
+      return value;
+    }))
   }
 
   // First Screen User Input
