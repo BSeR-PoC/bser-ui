@@ -61,6 +61,17 @@ export class ReferralManagerComponent implements OnInit {
         error: console.error
       }
     );
+
+    this.serviceRequestHandler.currentSnapshot$.subscribe(
+      {
+        next: (data: ServiceRequest) => {
+          this.currentSnapshot = data
+        },
+        error: console.error
+      }
+    );
+
+
     //TODO We should keep track of the completed steps and initialize them after we get the parameters resource.
   }
 
@@ -265,36 +276,15 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   saveServiceRequest(serviceRequest: any, advanceRequested: boolean) {
-
-    this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe(
-      {
-        next: (data: any) => {
-          const serviceRequestLocation = data.entry.find(element => element?.response?.location.indexOf('ServiceRequest') !== -1).response.location;
-          const serviceRequestId = serviceRequestLocation.substring(serviceRequestLocation.indexOf('/') + 1, serviceRequestLocation.lastIndexOf('/_'));
-
-          const parametersLocation = data.entry.find(element => element?.response?.location.indexOf('Parameters') !== -1).response.location;
-          const paramsId = parametersLocation.substring(parametersLocation.indexOf('/') + 1, parametersLocation.lastIndexOf('/_'));
-
-          this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
-            next: data => this.lastSnapshot = this.serviceRequestHandler.deepCopy(data),
-            error: err => console.error
-          });
-
-          this.serviceRequestHandler.getParametersById(paramsId).subscribe({
-            next: data => {
-              this.lastParameters = this.serviceRequestHandler.deepCopy(data)
-            },
-            error: err => console.error
-          });
-
-          if(advanceRequested) {
-            this.stepper.next();
-          }
-          this.utilsService.showSuccessNotification("The referral was saved successfully.");
-        },
-        error: err=> console.error
-      }
-    );
+    this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe({
+      next: value => {
+        if (advanceRequested) {
+          this.stepper.next();
+        }
+        this.utilsService.showSuccessNotification("The referral was saved successfully.");
+      },
+      error: err => console.error
+    });
   }
 
   onServiceProviderSelected(serviceProvider: any) {

@@ -67,6 +67,13 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
         }
       }
     )
+
+    this.serviceRequestHandlerService.currentParameters$.subscribe({
+        next: value => {
+          console.log(value);
+        }
+      }
+    )
   }
 
   /**
