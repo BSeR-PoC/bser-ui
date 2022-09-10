@@ -27,9 +27,6 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
 
   @Output() savedSuccessEvent = new EventEmitter();
 
-  SAVE_AND_EXIT = 'saveAndExit';
-  SAVE_AND_CONTINUE = 'saveAndContinue';
-
   generalInfoServiceTypeForm: FormGroup;
   usCorePatient: USCorePatient;
 
@@ -72,40 +69,38 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
     )
   }
 
+  /**
+  * 1. We only load data from the Patient if the data is not populated by the params.
+  * This will be in the case we are creating a new service request.
+  * 2. We only load data for race and ethnicity.
+   */
   private updateFormControls(usCorePatient) {
-    //TODO check if we are editing existing service request, if so load the parameters and populate the form data from the params.
 
-    if(usCorePatient.ethnicity){
+    if(usCorePatient.ethnicity && !this.params?.parameter?.find( param=> param.name.toString() === "ethnicity")){
+
       const ethnicity = this.fhirConstants.ETHNICITY
         .find((element) => element.code === usCorePatient.ethnicity[0]?.valueCoding?.code);
 
       this.generalInfoServiceTypeForm.controls['ethnicity'].patchValue(ethnicity);
     }
 
-    if(usCorePatient.race){
-      //The race section of the form has two parts: checkboxes and radio buttons.
+    if(usCorePatient.race && !this.params?.parameter?.find( param=> param.name.toString() === "race")){
 
       // Populating the checkboxes first.
       const raceCodes = usCorePatient.race.map(element => element.valueCoding?.code);
       const raceCheckboxesSelectedList = this.fhirConstants.RACE_CATEGORIES
         .slice(0, 5)
         .map(element => element.code)
-        .map((element) => raceCodes.indexOf(element) != -1);
+        .map((element) => raceCodes?.indexOf(element) != -1);
 
       this.generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes'].patchValue(raceCheckboxesSelectedList);
 
-      //Populating the radio buttons second.
-    }
-  }
-
-  submit(nextState: string) {
-    this.generalInfoServiceTypeForm.markAllAsTouched();
-
-    if (this.generalInfoServiceTypeForm.valid) {
-      if (nextState === this.SAVE_AND_EXIT) {
-        this.router.navigate(['/'])
-      } else if (nextState === this.SAVE_AND_CONTINUE) {
-        this.savedSuccessEvent.emit();
+      //Populating the radio buttons second (Only populated if there is no checkboxes selected)
+      if(!raceCheckboxesSelectedList.find(element => element === true)){
+        const raceRadioBtnValue = this.fhirConstants.RACE_CATEGORIES
+          .slice(5)
+          .find(element => element.code === raceCodes[0]);
+        this.generalInfoServiceTypeForm.controls['raceCategoriesListRadioBtns'].patchValue(raceRadioBtnValue);
       }
     }
   }
@@ -206,26 +201,26 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes?.['params']?.currentValue?.parameter){
+    if(changes?.['params']?.currentValue?.parameter && this.generalInfoServiceTypeForm){
 
       // Set Education Level
       const educationLevelParam = changes?.['params']?.currentValue?.parameter.find(param => param.name == 'educationLevel');
       const educationLevel = this.fhirConstants.EDUCATION_LEVEL.find( element => element.code === educationLevelParam?.valueCode);
-      if (educationLevel && this.generalInfoServiceTypeForm) {
+      if(educationLevel) {
         this.generalInfoServiceTypeForm.controls['educationLevel'].patchValue(educationLevel);
       }
 
       // Set Employment Status
       const employmentStatusParam = changes?.['params']?.currentValue?.parameter.find(param => param.name == 'employmentStatus');
       const employmentStatus = this.fhirConstants.EMPLOYMENT_STATUS.find(element => element.code === employmentStatusParam?.valueCode);
-      if (employmentStatus && this.generalInfoServiceTypeForm) {
+      if (employmentStatus) {
         this.generalInfoServiceTypeForm.controls['employmentStatus'].patchValue(employmentStatus);
       }
 
       // Set Service Type
       const serviceTypeParam = changes?.['params']?.currentValue?.parameter.find(param => param.name == 'serviceType');
       const serviceType = this.fhirConstants.SERVICE_TYPES.find(element => element.code === serviceTypeParam?.valueCode);
-      if (serviceType && this.generalInfoServiceTypeForm) {
+      if (serviceType) {
         this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceType);
       }
 
@@ -238,13 +233,19 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
 
       // Set Service Type
       const raceParam = changes?.['params']?.currentValue?.parameter.find(param => param.name == 'race');
-      const race = this.fhirConstants.RACE_CATEGORIES.find(element => element.code === raceParam?.valueCode);
-      console.log(race);
-      // if (serviceType && this.generalInfoServiceTypeForm) {
-      //   this.generalInfoServiceTypeForm.controls['ethnicity'].patchValue(ethnicity);
-      // }
+      const raceCodes = raceParam?.valueCode?.split(',');
+      const raceCheckboxesSelectedList = this.fhirConstants.RACE_CATEGORIES
+        .slice(0, 5)
+        .map(element => element.code)
+        .map((element) => raceCodes.indexOf(element) != -1);
 
-      console.log(this.generalInfoServiceTypeForm);
+      this.generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes'].patchValue(raceCheckboxesSelectedList);
+
+      //When populating the radio buttons we assume that the array of values contains 1 element with value UNK ASKU
+      if(raceCodes?.length === 1){
+        const race = this.fhirConstants.RACE_CATEGORIES.find(category => category.code === raceCodes[0]);
+        this.generalInfoServiceTypeForm.controls['raceCategoriesListRadioBtns'].patchValue(race);
+      }
     }
   }
 
