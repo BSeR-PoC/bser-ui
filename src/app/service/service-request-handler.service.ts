@@ -134,7 +134,7 @@ export class ServiceRequestHandlerService {
   }
 
   saveServiceRequest(currentSnapshot: any, currentParameters: any) : Observable<any> {
-    if (!("id" in currentSnapshot)) {
+    if (!(currentSnapshot.id)) {
       return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters]).pipe(
         switchMap((data: any) => this.getServiceRequestAndParamsHelper(data)))
     }
