@@ -258,6 +258,7 @@ export class ServiceRequestHandlerService {
     const requestUrl = environment.bserProviderServer + "ServiceRequest/" + serviceRequestId;
 
     return this.http.get(requestUrl).pipe(map(result => {
+        this.lastSnapshot = new ServiceRequest(this.deepCopy(result));
         this.currentSnapshot.next(result);
         return  result as ServiceRequest;
       }
@@ -277,9 +278,23 @@ export class ServiceRequestHandlerService {
     const requestUrl = environment.bserProviderServer + "Parameters/" + paramsId;
 
     return this.http.get(requestUrl).pipe(map(result => {
+        this.lastParameters = new Parameters(this.deepCopy(result));
         this.currentParameters.next(result);
         return  result as Parameters;
       }
     ))
+  }
+
+  hasSnapshotChanged(serviceRequest: ServiceRequest): boolean {
+    return !this.deepCompare(serviceRequest, this.lastSnapshot);
+  }
+
+  hasParametersChanged(parameters: Parameters): boolean {
+    return !this.deepCompare(parameters, this.lastParameters);
+  }
+
+  restoreState(){
+    this.currentParameters = this.deepCopy(this.lastParameters);
+    this.currentSnapshot = this.deepCopy(this.lastParameters);
   }
 }

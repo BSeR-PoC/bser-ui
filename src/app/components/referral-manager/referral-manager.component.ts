@@ -56,7 +56,7 @@ export class ReferralManagerComponent implements OnInit {
       {
         next: (data: Parameters) => {
           this.currentParameters = data || new Parameters();
-          console.log("DATA:", data)
+          //console.log("DATA:", data)
         },
         error: console.error
       }
