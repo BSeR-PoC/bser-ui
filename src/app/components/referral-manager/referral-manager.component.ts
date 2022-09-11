@@ -97,7 +97,7 @@ export class ReferralManagerComponent implements OnInit {
     const selectedServiceProvider = event.data;
 
     if(selectedServiceProvider.selected && selectedServiceProvider.serviceProviderId){
-      const serviceRequestService = this.currentSnapshot?.orderDetail?.[0]?.coding?.[0]?.code;
+      const serviceRequestService = this.currentSnapshot?.orderDetail?.[0]?.coding?.[0]?.code?.value;
       const selectedServiceProviderServices = selectedServiceProvider?.services?.serviceType;
 
       if(!serviceRequestService
@@ -105,7 +105,7 @@ export class ReferralManagerComponent implements OnInit {
         selectedServiceProviderServices.indexOf(serviceRequestService) != -1
       ){
         this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-        this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+        this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
       }
       else {
         // the selected service provider does not offer the service in the existing service request.
@@ -126,10 +126,9 @@ export class ReferralManagerComponent implements OnInit {
               if (action == 'secondaryAction') {
                 this.currentSnapshot.orderDetail = null;
                 this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-                this.saveServiceRequest(this.currentSnapshot, advanceRequested);
-
-                //TODO remove other relevant parameters
-                this.currentParameters = this.parameterHandlerService.removeParameterByName(this.currentParameters, 'serviceType');
+                // We need to erase all parameters in this case.
+                this.currentParameters.parameter = [];
+                this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
               }
             }
           )
@@ -177,7 +176,7 @@ export class ReferralManagerComponent implements OnInit {
     }
     //TODO not sure if we need this method since we already have a parameterHandlerService
     //this.serviceRequestHandler.updateParams(this.currentParameters);
-    this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
 
   }
 
@@ -230,7 +229,7 @@ export class ReferralManagerComponent implements OnInit {
 
       this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
     }
-    this.saveServiceRequest(this.currentSnapshot, false);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, false);
     this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
     //TODO need to add allergies and medication history
   }
@@ -269,7 +268,7 @@ export class ReferralManagerComponent implements OnInit {
     );
   }
 
-  saveServiceRequest(serviceRequest: ServiceRequest, advanceRequested: boolean) {
+  saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, advanceRequested: boolean) {
     this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe({
       next: value => {
         if (advanceRequested) {
