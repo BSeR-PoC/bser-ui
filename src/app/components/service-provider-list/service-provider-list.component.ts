@@ -58,7 +58,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.getServiceProviders();
     this.serviceRequestHandlerService.currentSnapshot$.subscribe({
-      next: (value: ServiceRequest)  => this.serviceRequest = value
+      next: (value: ServiceRequest)  => {console.log(value); this.serviceRequest = value}
     })
   }
 
@@ -67,7 +67,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
     if (
       !this.selectedServiceProvider
       ||
-      this.serviceRequest?.serviceProvider == this.selectedServiceProvider
+      this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.id)
     ){
       this.router.navigate(['/']);
     }
