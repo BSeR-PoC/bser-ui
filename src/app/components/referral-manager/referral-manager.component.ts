@@ -234,6 +234,7 @@ export class ReferralManagerComponent implements OnInit {
     //TODO need to add allergies and medication history
   }
 
+  // TODO refactor nested subscriptions
   private getServiceRequestById(serviceRequestId: any) {
     this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
       next: value => {
