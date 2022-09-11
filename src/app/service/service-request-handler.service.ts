@@ -19,9 +19,9 @@ import {TransactionBundleHandlerService} from "./transaction-bundle-handler.serv
 export class ServiceRequestHandlerService {
 
   // TODO: Why is only working as a BehaviorSubject and not just Subject?
-  private currentSnapshot = new BehaviorSubject<any>(null);
+  private currentSnapshot = new BehaviorSubject<ServiceRequest>(null);
   public currentSnapshot$ = this.currentSnapshot.asObservable();
-  private currentParameters = new BehaviorSubject<any>(null);
+  private currentParameters = new BehaviorSubject<Parameters>(null);
   public currentParameters$ = this.currentParameters.asObservable();
   private lastSnapshot: ServiceRequest = null;
   private lastParameters: Parameters = null;
@@ -134,11 +134,8 @@ export class ServiceRequestHandlerService {
   }
 
   saveServiceRequest(currentSnapshot: any, currentParameters: any) : Observable<any> {
-    currentSnapshot = new ServiceRequest(currentSnapshot);
-    currentParameters = new Parameters(currentParameters);
-    // TODO: Add POST Parameters alongside ServiceRequeste
     if (!("id" in currentSnapshot)) {
-      return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters]).pipe(
+      return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters]).pipe(
         switchMap((data: any) => this.getServiceRequestAndParamsHelper(data)))
     }
     else {
@@ -168,10 +165,10 @@ export class ServiceRequestHandlerService {
     const paramsId = parametersLocation.substring(parametersLocation.indexOf('/') + 1, parametersLocation.lastIndexOf('/_'));
 
     return forkJoin([this.getServiceRequestById(serviceRequestId), this.getParametersById(paramsId)]).pipe(map(value=> {
-      this.lastSnapshot = value[0];
-      this.lastParameters = value[1];
-      this.currentSnapshot.next(value[0]);
-      this.currentParameters.next(value[1]);
+      this.lastSnapshot = new ServiceRequest(value[0]);
+      this.lastParameters = new Parameters (value[1]);
+      this.currentSnapshot.next(new ServiceRequest (value[0]));
+      this.currentParameters.next(new Parameters(value[1]));
 
       return value;
     }))
@@ -259,7 +256,7 @@ export class ServiceRequestHandlerService {
 
     return this.http.get(requestUrl).pipe(map(result => {
         this.lastSnapshot = new ServiceRequest(this.deepCopy(result));
-        this.currentSnapshot.next(result);
+        this.currentSnapshot.next(new ServiceRequest(result));
         return  result as ServiceRequest;
       }
     ))
@@ -279,7 +276,7 @@ export class ServiceRequestHandlerService {
 
     return this.http.get(requestUrl).pipe(map(result => {
         this.lastParameters = new Parameters(this.deepCopy(result));
-        this.currentParameters.next(result);
+        this.currentParameters.next(new Parameters(result));
         return  result as Parameters;
       }
     ))

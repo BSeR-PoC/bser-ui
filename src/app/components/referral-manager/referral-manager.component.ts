@@ -11,6 +11,7 @@ import {openConformationDialog} from "../conformation-dialog/conformation-dialog
 import {MatDialog} from "@angular/material/dialog";
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {EnginePostHandlerService} from "../../service/engine-post-handler.service";
+import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 
 @Component({
   selector: 'app-referral-manager',
@@ -21,12 +22,10 @@ export class ReferralManagerComponent implements OnInit {
   @ViewChild(MatStepper) stepper: MatStepper;
 
   currentSnapshot: ServiceRequest;
-  lastSnapshot: ServiceRequest;
 
   currentParameters: Parameters;
-  lastParameters: Parameters;
 
-  selectedServiceProvider: any;
+  selectedServiceProvider: Practitioner;
 
   constructor(
     private serviceRequestHandler: ServiceRequestHandlerService,
@@ -231,7 +230,6 @@ export class ReferralManagerComponent implements OnInit {
 
       this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
     }
-    this.currentParameters = new Parameters(this.currentParameters);
     this.saveServiceRequest(this.currentSnapshot, false);
     this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
     //TODO need to add allergies and medication history
@@ -242,16 +240,12 @@ export class ReferralManagerComponent implements OnInit {
       next: value => {
         this.serviceRequestHandler.currentSnapshot$.subscribe(
           {
-            next: (data: any) => {
-              this.currentSnapshot = data;
-              const params = data.supportingInfo.find(element => element.type ==="Parameters");
+            next: (data: ServiceRequest) => {
+              const params = data.supportingInfo.find(element => element.type.value === "Parameters");
               if(params){
-                const paramsId = params.reference.substring(params.reference.indexOf('/') + 1);
+                const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
                 if (paramsId){
-                  this.serviceRequestHandler.getParametersById(paramsId).subscribe({
-                    next: data => this.currentParameters = data,
-                    error: err => console.error
-                  })
+                  this.serviceRequestHandler.getParametersById(paramsId).subscribe()
                 }
               }
             },
@@ -266,7 +260,7 @@ export class ReferralManagerComponent implements OnInit {
     this.serviceRequestHandler.createNewServiceRequest();
     this.serviceRequestHandler.currentSnapshot$.subscribe(
       {
-        next: (data: any) => {
+        next: (data: ServiceRequest) => {
           this.currentSnapshot = data;
           console.log("DATA:", data)
         },
@@ -275,7 +269,7 @@ export class ReferralManagerComponent implements OnInit {
     );
   }
 
-  saveServiceRequest(serviceRequest: any, advanceRequested: boolean) {
+  saveServiceRequest(serviceRequest: ServiceRequest, advanceRequested: boolean) {
     this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe({
       next: value => {
         if (advanceRequested) {
