@@ -3,8 +3,16 @@
   <mat-card-content>
     <!--If a service provider is selected, render the provider information-->
     <div *ngIf="selectedServiceProvider" style="color: #0d47a1">
-      {{selectedServiceProvider.practitioner?.familyName}}, {{selectedServiceProvider.practitioner?.givenName}}
-      ({{selectedServiceProvider.organization?.name}})
+      <span *ngIf="selectedServiceProvider.practitioner?.familyName; then practitionerFound else noPractitionerFound"></span>
+      <ng-template #practitionerFound>
+        {{selectedServiceProvider.practitioner?.familyName}}, {{selectedServiceProvider.practitioner?.givenName}} ({{selectedServiceProvider.organization?.name}})
+      </ng-template>
+      <ng-template #noPractitionerFound>
+        {{selectedServiceProvider.organization?.name}}
+      </ng-template>
+
+
+
     </div>
     <!--If no service provider is selected prompt the user to select one-->
     <div *ngIf="!selectedServiceProvider">Please select a service provider from the list below.</div>
