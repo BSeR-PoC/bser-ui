@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Router} from "@angular/router";
@@ -8,7 +8,7 @@ import {USCorePatient} from "../../domain/USCorePatient";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
-import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
+import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 
 @Component({
@@ -30,6 +30,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   usCorePatient: USCorePatient;
   serviceRequest: ServiceRequest;
   parameters: Parameters;
+  initialFormValue: any;
 
   constructor(
     public fhirConstants: FhirTerminologyConstants,
@@ -55,6 +56,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         const patient = Object.assign(new Patient(), result);
         this.usCorePatient = new USCorePatient(patient);
         this.updateFormControlsWithPatientValues(this.usCorePatient);
+        this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
       }
     });
 
@@ -73,7 +75,10 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
     this.serviceRequestHandlerService.currentParameters$.subscribe({
         next: (value: Parameters)=> {
           this.parameters = value;
-          this.updateFormControlsWithParamsValues(this.parameters);
+          if(this.parameters?.parameter?.length > 0){
+            this.updateFormControlsWithParamsValues(this.parameters);
+            this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
+          }
         }
       }
     )
@@ -174,7 +179,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
 
 
   onCancel() {
-    if(!this.generalInfoServiceTypeForm.dirty){
+    if(!this.serviceRequestHandlerService.deepCompare(this.generalInfoServiceTypeForm.value, this.initialFormValue)){
       this.router.navigate(['/']);
     }
     else {
@@ -259,51 +264,48 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   }
 
   private updateFormControlsWithParamsValues(parameters: Parameters) {
-    if(parameters?.parameter?.length > 0) {
+    let educationLevelParam = parameters.parameter.find(param => param.name.value == 'educationLevel');
+    const educationLevel = this.fhirConstants.EDUCATION_LEVEL.find(element => element.code === educationLevelParam?.value?.toString());
+    if (educationLevel) {
+      this.generalInfoServiceTypeForm.controls['educationLevel'].patchValue(educationLevel);
+    }
 
-      let educationLevelParam = parameters.parameter.find(param => param.name.value == 'educationLevel');
-      const educationLevel = this.fhirConstants.EDUCATION_LEVEL.find(element => element.code === educationLevelParam?.value?.toString());
-      if (educationLevel) {
-        this.generalInfoServiceTypeForm.controls['educationLevel'].patchValue(educationLevel);
-      }
+    // Set Employment Status
+    const employmentStatusParam = parameters.parameter?.find(param => param.name.value == 'employmentStatus');
+    const employmentStatus = this.fhirConstants.EMPLOYMENT_STATUS.find(element => element.code === employmentStatusParam?.value?.toString());
+    if (employmentStatus) {
+      this.generalInfoServiceTypeForm.controls['employmentStatus'].patchValue(employmentStatus);
+    }
 
-      // Set Employment Status
-      const employmentStatusParam = parameters.parameter?.find(param => param.name.value == 'employmentStatus');
-      const employmentStatus = this.fhirConstants.EMPLOYMENT_STATUS.find(element => element.code === employmentStatusParam?.value?.toString());
-      if (employmentStatus) {
-        this.generalInfoServiceTypeForm.controls['employmentStatus'].patchValue(employmentStatus);
-      }
+    // Set Service Type
+    const serviceTypeParam = parameters.parameter?.find(param => param.name.value == 'serviceType');
+    const serviceType = this.fhirConstants.SERVICE_TYPES.find(element => element.code === serviceTypeParam?.value?.toString());
+    if (serviceType) {
+      this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceType);
+    }
 
-      // Set Service Type
-      const serviceTypeParam = parameters.parameter?.find(param => param.name.value == 'serviceType');
-      const serviceType = this.fhirConstants.SERVICE_TYPES.find(element => element.code === serviceTypeParam?.value?.toString());
-      if (serviceType) {
-        this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceType);
-      }
+    // Set Service Type
+    const ethnicityParam = parameters.parameter?.find(param => param.name.value == 'ethnicity');
+    const ethnicity = this.fhirConstants.ETHNICITY.find(element => element.code === ethnicityParam?.value?.toString());
+    if (ethnicity && this.generalInfoServiceTypeForm) {
+      this.generalInfoServiceTypeForm.controls['ethnicity'].patchValue(ethnicity);
+    }
 
-      // Set Service Type
-      const ethnicityParam = parameters.parameter?.find(param => param.name.value == 'ethnicity');
-      const ethnicity = this.fhirConstants.ETHNICITY.find(element => element.code === ethnicityParam?.value?.toString());
-      if (ethnicity && this.generalInfoServiceTypeForm) {
-        this.generalInfoServiceTypeForm.controls['ethnicity'].patchValue(ethnicity);
-      }
+    // Set Service Type
+    const raceParam = parameters.parameter?.find(param => param.name.value == 'race');
+    const raceCodes = raceParam?.value?.toString()?.split(',');
+    if (raceCodes) {
+      const raceCheckboxesSelectedList = this.fhirConstants.RACE_CATEGORIES
+        .slice(0, 5)
+        .map(element => element.code)
+        .map((element) => raceCodes.indexOf(element) != -1);
+      this.generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes'].patchValue(raceCheckboxesSelectedList);
+    }
 
-      // Set Service Type
-      const raceParam = parameters.parameter?.find(param => param.name.value == 'race');
-      const raceCodes = raceParam?.value?.toString()?.split(',');
-      if(raceCodes) {
-        const raceCheckboxesSelectedList = this.fhirConstants.RACE_CATEGORIES
-          .slice(0, 5)
-          .map(element => element.code)
-          .map((element) => raceCodes.indexOf(element) != -1);
-        this.generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes'].patchValue(raceCheckboxesSelectedList);
-      }
-
-      //When populating the radio buttons we assume that the array of values contains 1 element with value UNK ASKU
-      if(raceCodes?.length === 1){
-        const race = this.fhirConstants.RACE_CATEGORIES.find(category => category.code === raceCodes[0]);
-        this.generalInfoServiceTypeForm.controls['raceCategoriesListRadioBtns'].patchValue(race);
-      }
+    //When populating the radio buttons we assume that the array of values contains 1 element with value UNK ASKU
+    if (raceCodes?.length === 1) {
+      const race = this.fhirConstants.RACE_CATEGORIES.find(category => category.code === raceCodes[0]);
+      this.generalInfoServiceTypeForm.controls['raceCategoriesListRadioBtns'].patchValue(race);
     }
   }
 }

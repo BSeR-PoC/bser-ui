@@ -126,8 +126,7 @@ export class ReferralManagerComponent implements OnInit {
               if (action == 'secondaryAction') {
                 this.currentSnapshot.orderDetail = null;
                 this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-                // We need to erase all parameters in this case.
-                this.currentParameters.parameter = [];
+                this.currentParameters.parameter.length = 0;
                 this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
               }
             }
