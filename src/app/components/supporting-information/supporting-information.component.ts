@@ -91,7 +91,7 @@ export class SupportingInformationComponent implements OnInit, OnChanges {
     if(changes?.['params']?.currentValue?.parameter){
 
     }
-    console.log(changes?.['params']?.currentValue?.parameter);
+    // console.log(changes?.['params']?.currentValue?.parameter);
   }
 
 

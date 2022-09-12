@@ -3,6 +3,8 @@ import {ServiceProviderService} from "../../service/service-provider.service";
 import {Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
+import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
+import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 
 @Component({
   selector: 'app-service-provider-list',
@@ -15,14 +17,15 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
   selectedServiceProvider: any = null;
   isLoading: boolean = false
 
-  @Input() serviceRequest: any;
+  serviceRequest: any;
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() serviceProviderSelectedEvent = new EventEmitter();
 
   constructor(
     private serviceProviderService: ServiceProviderService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private serviceRequestHandlerService: ServiceRequestHandlerService
   ) { }
 
 
@@ -35,11 +38,12 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
           this.isLoading = false;
           //We need to set the selected service provider if we are updating existing service request.
           if (
-            this.serviceRequest?.id && this.serviceRequest?.performer?.[0]?.reference?.replace('PractitionerRole/', '')
+            //this.serviceRequest?.id && this.serviceRequest?.performer?.[0]?.reference?.replace('PractitionerRole/', '')
+            this.serviceRequest?.performer?.[0]?.reference?.value.replace(this.serviceProviders,'PractitionerRole/', '')
           ){
             const selectedServiceProvider = this.getSelectedServiceRequestProvider(
               this.serviceProviders,
-              this.serviceRequest?.performer?.[0]?.reference?.replace('PractitionerRole/', '')
+              this.serviceRequest?.performer?.[0]?.reference.value?.replace('PractitionerRole/', '')
             );
             this.onSelectedServiceProvider(selectedServiceProvider);
           }
@@ -53,14 +57,16 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.getServiceProviders();
+    this.serviceRequestHandlerService.currentSnapshot$.subscribe({
+      next: (value: ServiceRequest)  => {console.log(value); this.serviceRequest = value}
+    })
   }
 
   onCancel() {
-    //TODO I think this should compare lastSnapshot with the current snapshot.
     if (
       !this.selectedServiceProvider
       ||
-      this.serviceRequest?.serviceProvider == this.selectedServiceProvider
+      this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
     ){
       this.router.navigate(['/']);
     }

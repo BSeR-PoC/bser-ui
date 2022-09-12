@@ -11,6 +11,7 @@ import {openConformationDialog} from "../conformation-dialog/conformation-dialog
 import {MatDialog} from "@angular/material/dialog";
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {EnginePostHandlerService} from "../../service/engine-post-handler.service";
+import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 
 @Component({
   selector: 'app-referral-manager',
@@ -21,12 +22,10 @@ export class ReferralManagerComponent implements OnInit {
   @ViewChild(MatStepper) stepper: MatStepper;
 
   currentSnapshot: ServiceRequest;
-  lastSnapshot: ServiceRequest;
 
   currentParameters: Parameters;
-  lastParameters: Parameters;
 
-  selectedServiceProvider: any;
+  selectedServiceProvider: Practitioner;
 
   constructor(
     private serviceRequestHandler: ServiceRequestHandlerService,
@@ -56,11 +55,22 @@ export class ReferralManagerComponent implements OnInit {
       {
         next: (data: Parameters) => {
           this.currentParameters = data || new Parameters();
-          console.log("DATA:", data)
+          //console.log("DATA:", data)
         },
         error: console.error
       }
     );
+
+    this.serviceRequestHandler.currentSnapshot$.subscribe(
+      {
+        next: (data: ServiceRequest) => {
+          this.currentSnapshot = data
+        },
+        error: console.error
+      }
+    );
+
+
     //TODO We should keep track of the completed steps and initialize them after we get the parameters resource.
   }
 
@@ -87,7 +97,7 @@ export class ReferralManagerComponent implements OnInit {
     const selectedServiceProvider = event.data;
 
     if(selectedServiceProvider.selected && selectedServiceProvider.serviceProviderId){
-      const serviceRequestService = this.currentSnapshot?.orderDetail?.[0]?.coding?.[0]?.code;
+      const serviceRequestService = this.currentSnapshot?.orderDetail?.[0]?.coding?.[0]?.code?.value;
       const selectedServiceProviderServices = selectedServiceProvider?.services?.serviceType;
 
       if(!serviceRequestService
@@ -95,7 +105,7 @@ export class ReferralManagerComponent implements OnInit {
         selectedServiceProviderServices.indexOf(serviceRequestService) != -1
       ){
         this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-        this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+        this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
       }
       else {
         // the selected service provider does not offer the service in the existing service request.
@@ -116,10 +126,9 @@ export class ReferralManagerComponent implements OnInit {
               if (action == 'secondaryAction') {
                 this.currentSnapshot.orderDetail = null;
                 this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-                this.saveServiceRequest(this.currentSnapshot, advanceRequested);
-
-                //TODO remove other relevant parameters
-                this.currentParameters = this.parameterHandlerService.removeParameterByName(this.currentParameters, 'serviceType');
+                // We need to erase all parameters in this case.
+                this.currentParameters.parameter = [];
+                this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
               }
             }
           )
@@ -167,7 +176,7 @@ export class ReferralManagerComponent implements OnInit {
     }
     //TODO not sure if we need this method since we already have a parameterHandlerService
     //this.serviceRequestHandler.updateParams(this.currentParameters);
-    this.saveServiceRequest(this.currentSnapshot, advanceRequested);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
 
   }
 
@@ -220,27 +229,23 @@ export class ReferralManagerComponent implements OnInit {
 
       this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
     }
-    this.currentParameters = new Parameters(this.currentParameters);
-    this.saveServiceRequest(this.currentSnapshot, false);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, false);
     this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
     //TODO need to add allergies and medication history
   }
 
+  // TODO refactor nested subscriptions
   private getServiceRequestById(serviceRequestId: any) {
     this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
       next: value => {
         this.serviceRequestHandler.currentSnapshot$.subscribe(
           {
-            next: (data: any) => {
-              this.currentSnapshot = data;
-              const params = data.supportingInfo.find(element => element.type ==="Parameters");
+            next: (data: ServiceRequest) => {
+              const params = data.supportingInfo.find(element => element.type.value === "Parameters");
               if(params){
-                const paramsId = params.reference.substring(params.reference.indexOf('/') + 1);
+                const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
                 if (paramsId){
-                  this.serviceRequestHandler.getParametersById(paramsId).subscribe({
-                    next: data => this.currentParameters = data,
-                    error: err => console.error
-                  })
+                  this.serviceRequestHandler.getParametersById(paramsId).subscribe()
                 }
               }
             },
@@ -255,7 +260,7 @@ export class ReferralManagerComponent implements OnInit {
     this.serviceRequestHandler.createNewServiceRequest();
     this.serviceRequestHandler.currentSnapshot$.subscribe(
       {
-        next: (data: any) => {
+        next: (data: ServiceRequest) => {
           this.currentSnapshot = data;
           console.log("DATA:", data)
         },
@@ -264,37 +269,16 @@ export class ReferralManagerComponent implements OnInit {
     );
   }
 
-  saveServiceRequest(serviceRequest: any, advanceRequested: boolean) {
-
-    this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe(
-      {
-        next: (data: any) => {
-          const serviceRequestLocation = data.entry.find(element => element?.response?.location.indexOf('ServiceRequest') !== -1).response.location;
-          const serviceRequestId = serviceRequestLocation.substring(serviceRequestLocation.indexOf('/') + 1, serviceRequestLocation.lastIndexOf('/_'));
-
-          const parametersLocation = data.entry.find(element => element?.response?.location.indexOf('Parameters') !== -1).response.location;
-          const paramsId = parametersLocation.substring(parametersLocation.indexOf('/') + 1, parametersLocation.lastIndexOf('/_'));
-
-          this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
-            next: data => this.lastSnapshot = this.serviceRequestHandler.deepCopy(data),
-            error: err => console.error
-          });
-
-          this.serviceRequestHandler.getParametersById(paramsId).subscribe({
-            next: data => {
-              this.lastParameters = this.serviceRequestHandler.deepCopy(data)
-            },
-            error: err => console.error
-          });
-
-          if(advanceRequested) {
-            this.stepper.next();
-          }
-          this.utilsService.showSuccessNotification("The referral was saved successfully.");
-        },
-        error: err=> console.error
-      }
-    );
+  saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, advanceRequested: boolean) {
+    this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe({
+      next: value => {
+        if (advanceRequested) {
+          this.stepper.next();
+        }
+        this.utilsService.showSuccessNotification("The referral was saved successfully.");
+      },
+      error: err => console.error
+    });
   }
 
   onServiceProviderSelected(serviceProvider: any) {
