@@ -21,7 +21,10 @@ TODO:
         </span>
         <span class="horizontal-divider"></span>
         <span class="patient-header-label">Date of Birth:</span>
-        <span class="patient-header-value">{{ (stringToDate(patient?.birthDate?.toString()) | date ) || ''}}</span>
+        <span class="patient-header-value">
+          {{ (stringToDate(patient?.birthDate?.toString()) | date ) || ''}}
+          ({{calculateAgeFromDob(patient?.birthDate?.toString()) || '?'}})
+        </span>
     </div>
   </div>
   <div class="row container" style="padding-top: 1em; padding-bottom: 1em">
