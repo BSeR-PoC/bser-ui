@@ -100,12 +100,12 @@ export class SupportingInformationComponent implements OnInit {
               if(this.parameters){
                 this.updateFormControlsWithParamsValues(this.parameters)
               }
+              this.router.navigate(['/']);
             }
             else if (action == 'confirmed') {
               this.onSave(true);
             }
             this.supportingInformationForm.reset();
-            this.router.navigate(['/']);
           }
         )
     }

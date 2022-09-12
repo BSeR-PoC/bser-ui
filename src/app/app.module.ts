@@ -48,6 +48,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { TelecomComponent } from './components/fhir-widgets/telecom/telecom.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatDividerModule} from '@angular/material/divider';
+import { ReviewAndSendComponent } from './components/review-and-send/review-and-send.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import {MatDividerModule} from '@angular/material/divider';
     LandingComponent,
     ServiceRequestListComponent,
     TelecomComponent,
+    ReviewAndSendComponent,
   ],
   imports: [
     BrowserModule,

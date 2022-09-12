@@ -1,0 +1,35 @@
+<div class="scrollable-container">
+  <mat-card>
+    <mat-card-title>Review and Submit</mat-card-title>
+    <mat-card-content>
+
+      <div>
+        <h2> Selected Service Provider </h2>
+        <pre>{{ selectedServiceProvider | json}}</pre>
+      </div>
+
+      <hr/>
+
+      <div class="top-spacer">
+        <h2> Service Request </h2>
+        <pre>{{ currentSnapshot | json }}</pre>
+      </div>
+
+      <hr/>
+
+      <div class="top-spacer">
+        <h2> Params Data </h2>
+        <pre>{{ currentParameters | json }}</pre>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+
+</div>
+
+  <div class="row-button-wrapper">
+    <button mat-raised-button (click)="onCancel()">Cancel</button>
+    <span class="spacer"></span>
+    <button mat-raised-button (click)="onSendReferral()">Send Referral</button>
+  </div>
+

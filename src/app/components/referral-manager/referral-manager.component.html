@@ -34,6 +34,15 @@
           </div>
         </mat-step>
 
+        <mat-step label="Review and Send" [completed]=true>
+          <div>
+            <app-review-and-send
+              [selectedServiceProvider]="selectedServiceProvider"
+            >
+            </app-review-and-send>
+          </div>
+        </mat-step>
+
       </mat-stepper>
 
     </mat-card-content>

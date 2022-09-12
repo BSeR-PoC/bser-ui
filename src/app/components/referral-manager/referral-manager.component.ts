@@ -86,8 +86,16 @@ export class ReferralManagerComponent implements OnInit {
         .length === 0;
       return result;
     }
+    else if (stepNumber === 3) {
+      //TODO add code
+      return true;
+    }
+    else if (stepNumber === 4) {
+      //TODO add code
+      return true;
+    }
     else {
-      return false;
+      return true;
     }
   }
 
