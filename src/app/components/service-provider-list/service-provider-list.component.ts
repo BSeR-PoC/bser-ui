@@ -63,11 +63,10 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
   }
 
   onCancel() {
-    //TODO I think this should compare lastSnapshot with the current snapshot.
     if (
       !this.selectedServiceProvider
       ||
-      this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.id)
+      this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
     ){
       this.router.navigate(['/']);
     }

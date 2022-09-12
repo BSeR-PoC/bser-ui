@@ -174,12 +174,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
 
 
   onCancel() {
-    console.log(this.serviceRequestHandlerService.hasSnapshotChanged(this.serviceRequest));
-    console.log(this.serviceRequestHandlerService.hasParametersChanged(this.parameters));
-    if(!this.serviceRequestHandlerService.hasSnapshotChanged(this.serviceRequest)
-      &&
-      !this.serviceRequestHandlerService.hasParametersChanged(this.parameters)
-    ){
+    if(!this.generalInfoServiceTypeForm.dirty){
       this.router.navigate(['/']);
     }
     else {
@@ -188,8 +183,8 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         {
           title: "Save Changes",
           content: "Save your current changes?",
-          confirmBtnTitle: "Save",
-          rejectBtnTitle: "Cancel",
+          defaultActionBtnTitle: "Save",
+          secondaryActionBtnTitle: "Cancel",
           width: "20em",
           height: "12em"
         })
