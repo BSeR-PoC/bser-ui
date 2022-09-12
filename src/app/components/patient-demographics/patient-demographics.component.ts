@@ -51,4 +51,12 @@ export class PatientDemographicsComponent implements OnInit {
     }
     return new Date(date);
   }
+
+  // NOTE: This is not a reliable function. It is provided for demonstration purposes only.
+  calculateAgeFromDob(dob: string): number {
+    let dob_date = this.stringToDate(dob);
+    let diff_ms = Date.now() - dob_date.getTime();
+    let age_dt = new Date(diff_ms);
+    return Math.abs(age_dt.getUTCFullYear() - 1970);
+  }
 }
