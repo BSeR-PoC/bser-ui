@@ -176,8 +176,6 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
       && this.generalInfoServiceTypeForm.get(controlName).touched;
   };
 
-
-
   onCancel() {
     if(!this.serviceRequestHandlerService.deepCompare(this.generalInfoServiceTypeForm.value, this.initialFormValue)){
       this.router.navigate(['/']);
@@ -196,9 +194,14 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         .subscribe(
           action => {
             if (action == 'rejected') {
-              this.router.navigate(['/']);
               this.generalInfoServiceTypeForm.reset();
-              // TODO we need to handle the parameters when user cancels the save operation , for example copy the original parameters back
+              if(this.parameters?.parameter?.length > 0){
+                this.updateFormControlsWithParamsValues(this.parameters);
+              }
+              else if(this.usCorePatient) {
+                this.updateFormControlsWithPatientValues(this.usCorePatient);
+              }
+              this.router.navigate(['/']);
             }
             else if (action == 'confirmed') {
               this.onSave(true);

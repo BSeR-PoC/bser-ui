@@ -4,38 +4,67 @@ import {AppConstants} from "../../providers/app-constants";
 import {Router} from "@angular/router";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
+import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
+import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
+import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-supporting-information',
   templateUrl: './supporting-information.component.html',
   styleUrls: ['./supporting-information.component.scss']
 })
-export class SupportingInformationComponent implements OnInit, OnChanges {
+export class SupportingInformationComponent implements OnInit {
 
-  @Input() serviceRequest: any;
   @Input() selectedServiceProvider: any;
-  @Input() params: Parameters;
 
   @Output() savedSuccessEvent = new EventEmitter();
 
   supportingInformationForm: FormGroup;
+  parameters: Parameters;
+
+  private serviceRequest: ServiceRequest;
+  private initialFormValue: any;
 
   constructor(
     public appConstants: AppConstants,
     private router: Router,
     public fhirConstants: FhirTerminologyConstants,
+    private serviceRequestHandlerService: ServiceRequestHandlerService,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
-    this.initForm(this.serviceRequest);
+
+    //TODO remove nested subscriptions
+    this.serviceRequestHandlerService.currentSnapshot$.subscribe({
+        next: (value: ServiceRequest) => {
+
+          this.serviceRequest = value;
+          this.initForm(this.serviceRequest);
+
+          this.serviceRequestHandlerService.currentParameters$.subscribe({
+
+            next: value => {
+              this.parameters = value;
+              if (this.parameters) {
+                this.updateFormControlsWithParamsValues(this.parameters);
+              }
+              this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.supportingInformationForm.value);
+            }
+
+          });
+        }
+      }
+    );
   }
 
-  private initForm(serviceRequest) {
+  private initForm(serviceRequest: ServiceRequest) {
     // TODO the content of this form will change based on the service request. We need to be able to track the changes somehow.
     const heightValue = new FormControl(null, [Validators.required]);
-    const heightUnit = new FormControl(null, [Validators.required]);
+    const heightUnit = new FormControl(this.appConstants.HEIGHT_UNITS[1], [Validators.required]);
     const weightValue =  new  FormControl(null, [Validators.required]);
-    const weightUnit =  new  FormControl(null, [Validators.required]);
+    const weightUnit =  new  FormControl(this.appConstants.WEIGHT_UNITS[1], [Validators.required]);
     const bmi =  new  FormControl(null, [Validators.required]);
     const bpDiastolic =  new  FormControl(null, [Validators.required]);
     const bpSystolic =  new  FormControl(null, [Validators.required]);
@@ -50,9 +79,36 @@ export class SupportingInformationComponent implements OnInit, OnChanges {
   }
 
   onCancel() {
-    //TODO check for changes and execute cancel.
+    if(!this.serviceRequestHandlerService.deepCompare(this.supportingInformationForm.value, this.initialFormValue)){
+      this.router.navigate(['/']);
+    }
+    else {
+      openConformationDialog(
+        this.dialog,
+        {
+          title: "Save Changes",
+          content: "Save your current changes?",
+          defaultActionBtnTitle: "Save",
+          secondaryActionBtnTitle: "Cancel",
+          width: "20em",
+          height: "12em"
+        })
+        .subscribe(
+          action => {
+            if (action == 'rejected') {
+              this.supportingInformationForm.reset();
+              if(this.parameters){
+                this.updateFormControlsWithParamsValues(this.parameters)
+              }
+            }
+            else if (action == 'confirmed') {
+              this.onSave(true);
+            }
+            this.router.navigate(['/']);
+          }
+        )
+    }
   }
-
   onSave(advanceRequested: boolean) {
     this.supportingInformationForm.markAllAsTouched();
     if(this.supportingInformationForm.status === 'VALID') {
@@ -77,7 +133,7 @@ export class SupportingInformationComponent implements OnInit, OnChanges {
     const emitterData = {
       height: {value: heightValue, unit: heightUnit},
       weight: {value: weightValue, unit: weightUnit},
-      bmi: {value: bmi, unit: "kg/m^2"},
+      bmi: {value: bmi, unit: "kg/m2"},
       bp: { bpDiastolic: { name: 'diastolic', value: bpDiastolic }, bpSystolic : { name: 'systolic', value: bpSystolic }}
       // smokingStatus: smokingStatus,
       // allergies: allergies,
@@ -87,12 +143,46 @@ export class SupportingInformationComponent implements OnInit, OnChanges {
     return emitterData;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if(changes?.['params']?.currentValue?.parameter){
 
+  private updateFormControlsWithParamsValues(parameters: Parameters) {
+
+    const bmiParam = parameters.parameter.find(param => param.name.value == 'bmi');
+    if (bmiParam) {
+      const bmi = bmiParam.value.toJSON()?.value;
+      this.supportingInformationForm.controls['bmi'].patchValue(bmi);
     }
-    // console.log(changes?.['params']?.currentValue?.parameter);
+
+    const bloodPressureParam = parameters.parameter.find(param => param.name.value == 'bloodPressure');
+    if(bloodPressureParam){
+      const bpDiastolic = bloodPressureParam.part.find(param => param.name.value == 'diastolic');
+      if(bpDiastolic){
+        const bpDiastolicValue = bpDiastolic.value.toJSON()?.value;
+        this.supportingInformationForm.controls['bpDiastolic'].patchValue(bpDiastolicValue);
+      }
+
+      const bpSystolic = bloodPressureParam.part.find(param => param.name.value == 'systolic');
+      if(bpSystolic){
+        const bpSystolicValue = bpSystolic.value.toJSON()?.value;
+        this.supportingInformationForm.controls['bpSystolic'].patchValue(bpSystolicValue);
+      }
+    }
+
+    const bodyWeightParam = parameters.parameter.find(param => param.name.value == 'bodyWeight');
+    if (bodyWeightParam) {
+      const bodyWeightValue = bodyWeightParam.value.toJSON()?.value;
+      this.supportingInformationForm.controls['weightValue'].patchValue(bodyWeightValue);
+
+      const bodyWeightUnit = bodyWeightParam.value.toJSON()?.unit;
+      this.supportingInformationForm.controls['weightUnit'].patchValue(bodyWeightUnit);
+    }
+
+    const bodyHeightParam = parameters.parameter.find(param => param.name.value == 'bodyHeight');
+    if (bodyHeightParam) {
+      const bodyHeightValue = bodyHeightParam.value.toJSON()?.value;
+      this.supportingInformationForm.controls['heightValue'].patchValue(bodyHeightValue);
+
+      const bodyHeightUnit = bodyHeightParam.value.toJSON()?.unit;
+      this.supportingInformationForm.controls['heightUnit'].patchValue(bodyHeightUnit);
+    }
   }
-
-
 }
