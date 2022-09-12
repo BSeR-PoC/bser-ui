@@ -46,6 +46,8 @@ import { LandingComponent } from './components/landing/landing.component';
 import { ServiceRequestListComponent } from './components/service-request-list/service-request-list.component';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { TelecomComponent } from './components/fhir-widgets/telecom/telecom.component';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -91,7 +93,9 @@ import { TelecomComponent } from './components/fhir-widgets/telecom/telecom.comp
     MatCheckboxModule,
     MatDialogModule,
     MatTabsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatMenuModule,
+    MatDividerModule
   ],
   providers: [AppConstants, FhirTerminologyConstants],
   bootstrap: [AppComponent]
