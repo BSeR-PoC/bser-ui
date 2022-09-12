@@ -5,3 +5,42 @@
 .col {
   flex: 1;        /* distributes space on the line equally among items */
 }
+.col-2 {
+  flex: 2;
+}
+
+.patient-header {
+  background-color: var(--primary50);
+  color: black;
+}
+
+.horizontal-divider {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-weight: bolder;
+  font-size: larger;
+  padding: 5px;
+}
+
+.patient-header-break {
+  margin-right: 20%;
+}
+
+.patient-name {
+  font-size: larger;
+}
+
+.patient-header-label {
+  padding: 5px;
+  font-size: small;
+}
+
+.patient-header-label-no-padding {
+  font-size: small;
+}
+
+.patient-header-value {
+  padding: 5px;
+  font-size: small;
+  font-weight: bold;
+}
