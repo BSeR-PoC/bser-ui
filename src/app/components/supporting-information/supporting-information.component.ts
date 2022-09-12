@@ -86,9 +86,9 @@ export class SupportingInformationComponent implements OnInit {
       openConformationDialog(
         this.dialog,
         {
-          title: "Save Changes",
-          content: "Save your current changes?",
-          defaultActionBtnTitle: "Save",
+          title: "Submit",
+          content: "Save your changes and submit the referral?",
+          defaultActionBtnTitle: "Submit",
           secondaryActionBtnTitle: "Cancel",
           width: "20em",
           height: "12em"
@@ -104,6 +104,7 @@ export class SupportingInformationComponent implements OnInit {
             else if (action == 'confirmed') {
               this.onSave(true);
             }
+            this.supportingInformationForm.reset();
             this.router.navigate(['/']);
           }
         )

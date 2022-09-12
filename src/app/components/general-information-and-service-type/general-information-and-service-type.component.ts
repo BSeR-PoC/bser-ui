@@ -194,13 +194,6 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         .subscribe(
           action => {
             if (action == 'rejected') {
-              this.generalInfoServiceTypeForm.reset();
-              if(this.parameters?.parameter?.length > 0){
-                this.updateFormControlsWithParamsValues(this.parameters);
-              }
-              else if(this.usCorePatient) {
-                this.updateFormControlsWithPatientValues(this.usCorePatient);
-              }
               this.router.navigate(['/']);
             }
             else if (action == 'confirmed') {
