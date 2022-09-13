@@ -27,6 +27,8 @@ export class ReferralManagerComponent implements OnInit {
 
   selectedServiceProvider: Practitioner;
 
+  isLoading: boolean = false;
+
   constructor(
     private serviceRequestHandler: ServiceRequestHandlerService,
     private route: ActivatedRoute,
@@ -75,27 +77,42 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   isStepCompleted(stepNumber: number): boolean {
+    const  paramNames = this.currentParameters?.parameter?.map(param => param.name.toJSON().value);
+    let completedSteps = new Set<number>();
     if(stepNumber === 1){
-      return !!this.selectedServiceProvider
+      const result = !!this.selectedServiceProvider;
+      if(result){
+        completedSteps.add(1);
+      }
+      return result;
     }
     else if (stepNumber === 2) {
-      const collectedValues = ['race', 'ethnicity', 'educationLevel', 'employmentStatus', 'serviceType'];
-      const currentParamsNames = this.currentParameters?.parameter?.map(param => param.name?.value?.toString());
-      const result = collectedValues?.map(element => currentParamsNames?.indexOf(element) !== -1)
-        .filter(element => element == false)
-        .length === 0;
+      const requiredParamsStep2 = ['race', 'ethnicity', 'educationLevel', 'employmentStatus', 'serviceType'];
+      if(!paramNames ||  paramNames.length < requiredParamsStep2.length){
+        return false;
+      }
+      const result = paramNames.filter(element => requiredParamsStep2.indexOf(element) != -1).length == requiredParamsStep2.length;
+      if(result){
+        completedSteps.add(2);
+      }
       return result;
     }
     else if (stepNumber === 3) {
-      //TODO add code
-      return true;
+      const requiredParamsStep3 = ['bodyHeight', 'bodyWeight', 'bmi', 'bloodPressure'];
+      if(!paramNames ||  paramNames.length < requiredParamsStep3.length){
+        return false;
+      }
+      const result =  paramNames.filter(element => requiredParamsStep3.indexOf(element) != -1).length == requiredParamsStep3.length;
+      if(result){
+        completedSteps.add(3);
+      }
+      return result;
     }
-    else if (stepNumber === 4) {
-      //TODO add code
-      return true;
+    else if (stepNumber === 3) {
+      return completedSteps.size === 3;
     }
     else {
-      return true;
+      return false;
     }
   }
 
@@ -236,18 +253,20 @@ export class ReferralManagerComponent implements OnInit {
 
       this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
     }
-    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, false);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, true);
     this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
     //TODO need to add allergies and medication history
   }
 
   // TODO refactor nested subscriptions
   private getServiceRequestById(serviceRequestId: any) {
+    this.isLoading = true;
     this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
       next: value => {
         this.serviceRequestHandler.currentSnapshot$.subscribe(
           {
             next: (data: ServiceRequest) => {
+              this.isLoading = false;
               const params = data.supportingInfo.find(element => element.type.value === "Parameters");
               if(params){
                 const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
@@ -277,14 +296,19 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, advanceRequested: boolean) {
+    this.isLoading = true;
     this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe({
       next: value => {
+        this.isLoading = false;
         if (advanceRequested) {
           this.stepper.next();
         }
         this.utilsService.showSuccessNotification("The referral was saved successfully.");
       },
-      error: err => console.error
+      error: err => {
+        this.isLoading = false;
+        console.error;
+      }
     });
   }
 

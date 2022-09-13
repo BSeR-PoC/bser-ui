@@ -58,7 +58,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.getServiceProviders();
     this.serviceRequestHandlerService.currentSnapshot$.subscribe({
-      next: (value: ServiceRequest)  => {console.log(value); this.serviceRequest = value}
+      next: (value: ServiceRequest) => this.serviceRequest = value
     })
   }
 

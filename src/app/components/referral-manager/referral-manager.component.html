@@ -34,7 +34,7 @@
           </div>
         </mat-step>
 
-        <mat-step label="Review and Send" [completed]=true>
+        <mat-step label="Review and Send" [completed]='isStepCompleted(4)'>
           <div>
             <app-review-and-send
               [selectedServiceProvider]="selectedServiceProvider"
@@ -50,3 +50,8 @@
   </mat-card>
 
 </div>
+
+<div class="overlay" *ngIf="isLoading">
+  <div class="spinner-container"><mat-spinner [diameter]="70"></mat-spinner></div>
+</div>
+
