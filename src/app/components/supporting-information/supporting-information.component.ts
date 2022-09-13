@@ -62,9 +62,9 @@ export class SupportingInformationComponent implements OnInit {
   private initForm(serviceRequest: ServiceRequest) {
     // TODO the content of this form will change based on the service request. We need to be able to track the changes somehow.
     const heightValue = new FormControl(null, [Validators.required]);
-    const heightUnit = new FormControl(this.appConstants.HEIGHT_UNITS[1], [Validators.required]);
+    const heightUnit = new FormControl(this.fhirConstants.HEIGHT_UNITS[1], [Validators.required]);
     const weightValue =  new  FormControl(null, [Validators.required]);
-    const weightUnit =  new  FormControl(this.appConstants.WEIGHT_UNITS[1], [Validators.required]);
+    const weightUnit =  new  FormControl(this.fhirConstants.WEIGHT_UNITS[1], [Validators.required]);
     const bmi =  new  FormControl(null, [Validators.required]);
     const bpDiastolic =  new  FormControl(null, [Validators.required]);
     const bpSystolic =  new  FormControl(null, [Validators.required]);
@@ -111,6 +111,7 @@ export class SupportingInformationComponent implements OnInit {
     }
   }
   onSave(advanceRequested: boolean) {
+    console.log(this.supportingInformationForm.value)
     this.supportingInformationForm.markAllAsTouched();
     if(this.supportingInformationForm.status === 'VALID') {
       const formData = this.getFormData(this.supportingInformationForm);
@@ -121,9 +122,9 @@ export class SupportingInformationComponent implements OnInit {
   private getFormData(form: FormGroup) {
     //TODO the data we gather will depend on the selected service.
     const heightValue = form.controls['heightValue'].value;
-    const heightUnit = form.controls['heightUnit'].value;
+    const heightUnit = form.controls['heightUnit'].value.code;
     const weightValue = form.controls['weightValue'].value;
-    const weightUnit = form.controls['weightUnit'].value;
+    const weightUnit = form.controls['weightUnit'].value.code;
     const bmi = form.controls['bmi'].value;
     const bpDiastolic = form.controls['bpDiastolic'].value;
     const bpSystolic = form.controls['bpSystolic'].value;
@@ -173,8 +174,9 @@ export class SupportingInformationComponent implements OnInit {
       const bodyWeightValue = bodyWeightParam.value.toJSON()?.value;
       this.supportingInformationForm.controls['weightValue'].patchValue(bodyWeightValue);
 
-      const bodyWeightUnit = bodyWeightParam.value.toJSON()?.unit;
-      this.supportingInformationForm.controls['weightUnit'].patchValue(bodyWeightUnit);
+      const bodyWeightUnitCode = bodyWeightParam.value.toJSON()?.unit;
+      const bodyWeight = this.fhirConstants.WEIGHT_UNITS.find(unit => unit.code === bodyWeightUnitCode)
+      this.supportingInformationForm.controls['weightUnit'].patchValue(bodyWeight);
     }
 
     const bodyHeightParam = parameters.parameter.find(param => param.name.value == 'bodyHeight');
@@ -182,7 +184,8 @@ export class SupportingInformationComponent implements OnInit {
       const bodyHeightValue = bodyHeightParam.value.toJSON()?.value;
       this.supportingInformationForm.controls['heightValue'].patchValue(bodyHeightValue);
 
-      const bodyHeightUnit = bodyHeightParam.value.toJSON()?.unit;
+      const bodyHeightUnitCode = bodyHeightParam.value.toJSON()?.unit;
+      const bodyHeightUnit = this.fhirConstants.HEIGHT_UNITS.find(unit => unit.code === bodyHeightUnitCode)
       this.supportingInformationForm.controls['heightUnit'].patchValue(bodyHeightUnit);
     }
   }

@@ -206,6 +206,7 @@ export class ReferralManagerComponent implements OnInit {
 
   //Saving the data from Step #3: Supporting Information
   onSaveSupportingInfo(event: any) {
+    const advanceRequested = event.advanceRequested;
 
     if(event.data?.height) {
       this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
@@ -253,7 +254,7 @@ export class ReferralManagerComponent implements OnInit {
 
       this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
     }
-    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, true);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
     this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
     //TODO need to add allergies and medication history
   }

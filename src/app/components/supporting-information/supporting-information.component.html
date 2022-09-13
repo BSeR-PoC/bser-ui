@@ -1,5 +1,5 @@
 <!-- TODO In addition to the form functionality we need to extract all the css into classes-->
-<div class="scrollable-container">
+<div class="scrollable-container top-bottom-spacer">
   <form [formGroup]="supportingInformationForm">
 
     <div class="row">
@@ -12,8 +12,8 @@
       <mat-form-field appearance="outline" style="width: 7%; margin-right: 2em">
         <mat-label>Unit</mat-label>
         <mat-select formControlName="heightUnit">
-          <mat-option *ngFor="let unit of appConstants.HEIGHT_UNITS" [value]="unit">
-            {{unit}}
+          <mat-option *ngFor="let unit of fhirConstants.HEIGHT_UNITS" [value]="unit">
+            {{unit.display}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -26,8 +26,8 @@
       <mat-form-field appearance="outline" style="width: 7%; margin-right: 2em;">
         <mat-label>Unit</mat-label>
         <mat-select formControlName="weightUnit">
-          <mat-option *ngFor="let unit of appConstants.WEIGHT_UNITS" [value]="unit">
-            {{unit}}
+          <mat-option *ngFor="let unit of fhirConstants.WEIGHT_UNITS" [value]="unit">
+            {{unit.display}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -65,9 +65,10 @@
 <div class="row-button-wrapper">
   <button mat-raised-button (click)="onCancel()">Cancel</button>
   <span class="spacer"></span>
-  <button mat-raised-button (click)="onSave(true)"
+  <button mat-raised-button (click)="onSave(false)">Save</button>
+  <button mat-raised-button  color="primary" (click)="onSave(true)"
           style="margin-left: 1em">
-    Submit
+    Save and Continue
   </button>
 </div>
 
