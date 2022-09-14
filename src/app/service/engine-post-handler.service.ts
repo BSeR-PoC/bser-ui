@@ -7,6 +7,7 @@ import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {environment} from "../../environments/environment";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ParameterHandlerService} from "./parameter-handler.service";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class EnginePostHandlerService {
   requester: Practitioner;
   serverUrl: string;
 
-  constructor(private fhirClient: FhirClientService, private parameterHandler: ParameterHandlerService) {
+  constructor(private fhirClient: FhirClientService, private http: HttpClient, private parameterHandler: ParameterHandlerService) {
     this.fhirClient.getPatient().subscribe({
       next: value => { this.patient = value;}
     });
@@ -34,18 +35,24 @@ export class EnginePostHandlerService {
   }
 
   postToEngine(serviceRequest: ServiceRequest, parameters: Parameters) {
-    let serviceRequestCopy: ServiceRequest = Object.assign(new ServiceRequest(), serviceRequest)
+    let parametersCopy: Parameters = Object.assign(new Parameters(), parameters);
+    let serviceRequestCopy: ServiceRequest = Object.assign(new ServiceRequest(), serviceRequest);
     serviceRequestCopy.supportingInfo.length = 0; // Remove Supporting Info
 
     // Package The Resources
-    parameters = this.parameterHandler.setResourceParameter(parameters, "referral", serviceRequestCopy.toJSON());
-    parameters = this.parameterHandler.setResourceParameter(parameters, "patient", this.patient);
-    parameters = this.parameterHandler.setResourceParameter(parameters, "requester", this.requester);
-    parameters = this.parameterHandler.setResourceParameter(parameters, "coverage", this.coverage);
-    parameters = this.parameterHandler.setStringParameter(parameters, "bserProviderBaseUrl", environment.bserProviderServer);
+    parametersCopy = this.parameterHandler.setResourceParameter(parametersCopy, "referral", serviceRequestCopy.toJSON());
+    parametersCopy = this.parameterHandler.setResourceParameter(parametersCopy, "patient", this.patient);
+    parametersCopy = this.parameterHandler.setResourceParameter(parametersCopy, "requester", this.requester);
+    parametersCopy = this.parameterHandler.setResourceParameter(parametersCopy, "coverage", this.coverage);
+    parametersCopy = this.parameterHandler.setStringParameter(parametersCopy, "bserProviderBaseUrl", environment.bserProviderServer);
 
     // TODO: Replace with HTTP Call, this is for demo purposes.
-    console.log(parameters.toJSON());
+    console.log(parametersCopy.toJSON());
+    let headers = new HttpHeaders()
+      .set('content-type', 'application/json')
+      .set("Authorization", "Basic " + btoa(environment.bserEngineBasicAuthUser + ":" + environment.bserEngineBasicAuthPass));
+    console.log(headers);
+    return this.http.post(environment.bserEngineEndpoint, parametersCopy.toJSON(), {headers: headers});
   }
 
 
