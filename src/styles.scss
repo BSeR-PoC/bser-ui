@@ -49,7 +49,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .scrollable-container {
-  height: 50vh;
+  height: 55vh;
   max-width: 100%;
   overflow: scroll;
   padding-left: 1em;
@@ -57,7 +57,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-top: 1em;
   border-style: solid;
   border-width: 1px;
-  border-color: #eceff1
+  border-color: #eceff1;
 }
 
 .row-button-wrapper {
@@ -127,4 +127,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   top:        0;
   left:       0;
   position:   fixed;
+}
+
+.top-bottom-spacer{
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.error-message{
+  background-color: #F44336;
+}
+.mat-simple-snackbar-action {
+  color: white;
 }

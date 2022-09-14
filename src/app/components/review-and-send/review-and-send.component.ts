@@ -5,8 +5,8 @@ import {ServiceRequestHandlerService} from "../../service/service-request-handle
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {UtilsService} from "../../service/utils.service";
-import {ActivatedRoute, Router} from "@angular/router";
 import {EnginePostHandlerService} from "../../service/engine-post-handler.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-review-and-send',
@@ -24,7 +24,7 @@ export class ReviewAndSendComponent implements OnInit {
   constructor(
     private serviceRequestHandlerService: ServiceRequestHandlerService,
     private parameterHandlerService: ParameterHandlerService,
-    private fhirTerminologyConstants: FhirTerminologyConstants,
+    private fhirConstants: FhirTerminologyConstants,
     public utilsService: UtilsService,
     private router: Router,
     public enginePostHandler: EnginePostHandlerService
@@ -55,21 +55,21 @@ export class ReviewAndSendComponent implements OnInit {
       const param = parameters.parameter?.find(param => param.name.value == name);
       if (param){
         if(name === 'educationLevel'){
-          return this.fhirTerminologyConstants.EDUCATION_LEVEL.find(element => element.code === param?.value?.toJSON().value);
+          return this.fhirConstants.EDUCATION_LEVEL.find(element => element.code === param?.value?.toJSON().value);
         }
         else if (name === 'serviceType'){
-          return this.fhirTerminologyConstants.SERVICE_TYPES.find(element => element.code === param?.value?.toJSON().value);
+          return this.fhirConstants.SERVICE_TYPES.find(element => element.code === param?.value?.toJSON().value);
         }
         else if (name === 'employmentStatus'){
-          return this.fhirTerminologyConstants.EMPLOYMENT_STATUS.find(element => element.code === param?.value?.toJSON().value);
+          return this.fhirConstants.EMPLOYMENT_STATUS.find(element => element.code === param?.value?.toJSON().value);
         }
         else if (name === 'ethnicity'){
-          return this.fhirTerminologyConstants.ETHNICITY.find(element => element.code === param?.value?.toJSON().value);
+          return this.fhirConstants.ETHNICITY.find(element => element.code === param?.value?.toJSON().value);
         }
         else if (name === 'race'){
           const raceCodes = param?.value?.toJSON().value?.split(',');
           if (raceCodes) {
-            const stringList = this.fhirTerminologyConstants.RACE_CATEGORIES
+            const stringList = this.fhirConstants.RACE_CATEGORIES
               .filter(element => raceCodes.indexOf(element.code) != -1)
               .map(element => element.display);
             const completeString = stringList.join(", ")
@@ -79,12 +79,14 @@ export class ReviewAndSendComponent implements OnInit {
         }
         else if (name === 'bodyHeight') {
           const value = param.value.toJSON()?.value;
-          const unit = param.value.toJSON()?.unit;
+          const bodyHeightUnitCode = param.value.toJSON()?.unit;
+          const unit = this.fhirConstants.HEIGHT_UNITS.find(unit => unit.code === bodyHeightUnitCode)?.display;
           return value + ' ' + unit;
         }
         else if (name === 'bodyWeight') {
           const value = param.value.toJSON()?.value;
-          const unit = param.value.toJSON()?.unit;
+          const bodyWeightUnitCode = param.value.toJSON()?.unit;
+          const unit = this.fhirConstants.WEIGHT_UNITS.find(unit => unit.code === bodyWeightUnitCode)?.display;
           return value + ' ' + unit;
         }
         else if (name === 'bmi') {

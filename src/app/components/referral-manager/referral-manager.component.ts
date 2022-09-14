@@ -50,7 +50,8 @@ export class ReferralManagerComponent implements OnInit {
         else {
           this.createNewServiceRequest();
         }
-      }
+      },
+      error: err => this.utilsService.showErrorNotification(err.toString())
     });
 
     this.serviceRequestHandler.currentParameters$.subscribe(
@@ -59,7 +60,7 @@ export class ReferralManagerComponent implements OnInit {
           this.currentParameters = data || new Parameters();
           //console.log("DATA:", data)
         },
-        error: console.error
+        error: err => this.utilsService.showErrorNotification(err.toString())
       }
     );
 
@@ -206,17 +207,18 @@ export class ReferralManagerComponent implements OnInit {
 
   //Saving the data from Step #3: Supporting Information
   onSaveSupportingInfo(event: any) {
+    const advanceRequested = event.advanceRequested;
 
     if(event.data?.height) {
       this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
         this.currentParameters, 'bodyHeight', event.data?.height?.value,
-        event.data?.height?.unit, "http://unitsofmeasure.org", event.data?.height?.unit);
+        event.data?.height?.unit?.display, "http://unitsofmeasure.org", event.data?.height?.unit?.code);
     }
 
     if(event.data?.weight) {
       this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
         this.currentParameters, 'bodyWeight', event.data?.weight?.value,
-        event.data?.weight?.unit, "http://unitsofmeasure.org", event.data?.weight?.unit);
+        event.data?.weight?.unit?.display, "http://unitsofmeasure.org", event.data?.weight?.unit?.code);
     }
 
     if(event.data?.bmi) {
@@ -253,7 +255,7 @@ export class ReferralManagerComponent implements OnInit {
 
       this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
     }
-    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, true);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
     this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
     //TODO need to add allergies and medication history
   }
@@ -275,7 +277,7 @@ export class ReferralManagerComponent implements OnInit {
                 }
               }
             },
-            error: console.error
+            error: err=> this.utilsService.showErrorNotification(err.toString())
           }
         );
       }
@@ -290,7 +292,7 @@ export class ReferralManagerComponent implements OnInit {
           this.currentSnapshot = data;
           console.log("DATA:", data)
         },
-        error: console.error
+        error: err => this.utilsService.showErrorNotification(err.toString())
       }
     );
   }
@@ -307,7 +309,7 @@ export class ReferralManagerComponent implements OnInit {
       },
       error: err => {
         this.isLoading = false;
-        console.error;
+        this.utilsService.showErrorNotification(err.toString());
       }
     });
   }

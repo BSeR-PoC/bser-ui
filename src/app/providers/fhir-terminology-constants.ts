@@ -182,7 +182,7 @@ export class FhirTerminologyConstants{
     {"code": "fri", "display": "Friday"},
     {"code": "sat", "display": "Saturday"},
     {"code": "sun", "display": "Sunday"},
-  ]
+  ];
 
   // https://confluence.icl.gtri.org/display/T17BPC/API+Design
   // Not a real FHIR valueset, but defined FHIR like.
@@ -194,7 +194,7 @@ export class FhirTerminologyConstants{
     {"code": "hypertension", "display": "Hypertension", "system": this.bserSystem},
     {"code": "obesity", "display": "Obesity", "system": this.bserSystem},
     {"code": "tobacco-use-cessation", "display": "Tobacco Use Cessation", "system": this.bserSystem},
-  ]
+  ];
 
   // Small Testing Slice from https://hl7.org/fhir/R4/valueset-languages.html
   private languageSystem = "urn:ietf:bcp:47";
@@ -203,5 +203,16 @@ export class FhirTerminologyConstants{
     {"code": "es", "display": "Spanish", "system": this.languageSystem},
     {"code": "fr", "display": "French", "system": this.languageSystem},
     {"code": "zh", "display": "Chinese", "system": this.languageSystem},
-  ]
+  ];
+
+  WEIGHT_UNITS = [
+    {"code": "kg", "display": "kg"},
+    {"code": "[lb_av]", "display": "lb"},
+  ];
+
+  HEIGHT_UNITS = [
+    {"code": "cm", "display": "cm"},
+    {"code": "[in_i]", "display": "in"},
+  ];
+
 }

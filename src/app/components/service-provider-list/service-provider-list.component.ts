@@ -5,6 +5,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
+import {UtilsService} from "../../service/utils.service";
 
 @Component({
   selector: 'app-service-provider-list',
@@ -25,7 +26,8 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
     private serviceProviderService: ServiceProviderService,
     private router: Router,
     private dialog: MatDialog,
-    private serviceRequestHandlerService: ServiceRequestHandlerService
+    private serviceRequestHandlerService: ServiceRequestHandlerService,
+    private utilsService: UtilsService
   ) { }
 
 
@@ -50,6 +52,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
         },
         error: (err)=> {
           console.error(err);
+          this.utilsService.showErrorNotification(err.toString());
           this.isLoading = false;
         }
       });

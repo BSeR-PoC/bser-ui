@@ -4,12 +4,4 @@ import { Injectable } from '@angular/core'
 
 export class AppConstants{
 
-  WEIGHT_UNITS = [
-    'kg', 'lb'
-  ];
-
-  HEIGHT_UNITS = [
-    'cm', 'in'
-  ];
-
 }
