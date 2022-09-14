@@ -276,7 +276,7 @@ export class ReferralManagerComponent implements OnInit {
           {
             next: (data: ServiceRequest) => {
               this.isLoading = false;
-              const params = data.supportingInfo.find(element => element.type.value === "Parameters");
+              const params = data.supportingInfo.find(element => element.type?.value === "Parameters");
               if(params){
                 const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
                 if (paramsId){

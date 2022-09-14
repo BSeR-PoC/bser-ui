@@ -27,7 +27,7 @@
       ></app-service-request-list>
     </mat-tab>
 
-    <mat-tab label="Complete {{ isLoading? '' : '(' + (activeServiceRequests?.length || 0) + ')' }}">
+    <mat-tab label="Complete {{ isLoading? '' : '(' + (completeServiceRequests?.length || 0) + ')' }}">
       <app-service-request-list
         [serviceRequest]="completeServiceRequests"
         [isLoading]="isLoading"
