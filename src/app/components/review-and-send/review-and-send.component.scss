@@ -1,0 +1,56 @@
+.top-spacer {
+  margin-top: 2em;
+}
+
+.col-fill {
+  flex: 1 1 auto;
+}
+
+.label {
+  font-weight: bold;
+  font-size: medium;
+  justify-content: flex-end;
+  text-align: right;
+  padding: 0.5em;
+  white-space: nowrap;
+}
+
+.value {
+  padding: 0.5em;
+  font-size: medium;
+}
+
+.big-label {
+  font-size: larger;
+}
+.big-value {
+  font-size: larger;
+}
+
+.col-grow {
+  flex-grow: 3;
+}
+
+
+.divider {
+  flex: 0 0 auto;
+  width: 0.1em;
+  margin: 0.5em;
+}
+
+.mat-card-summary {
+  height: 100%;
+  flex: 1 1 auto;
+  padding: 0;
+}
+
+.mat-card-summary-header {
+  background-color: var(--primary100);
+  padding: 5px;
+}
+.mat-card-summary-title {
+  margin: 5px;
+}
+.mat-card-summary-content {
+  padding: 5px;
+}

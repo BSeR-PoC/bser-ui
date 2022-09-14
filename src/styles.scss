@@ -13,6 +13,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   flex: 1 1 auto;
 }
 
+.note {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  background-color: var(--primary50);
+}
+
 /*This is bootstrap-like container, and we can change the media queries as needed one day*/
 .container {
   padding-right: 30px;
