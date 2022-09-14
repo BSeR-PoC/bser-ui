@@ -211,13 +211,13 @@ export class ReferralManagerComponent implements OnInit {
     if(event.data?.height) {
       this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
         this.currentParameters, 'bodyHeight', event.data?.height?.value,
-        event.data?.height?.unit, "http://unitsofmeasure.org", event.data?.height?.unit);
+        event.data?.height?.unit?.display, "http://unitsofmeasure.org", event.data?.height?.unit?.code);
     }
 
     if(event.data?.weight) {
       this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
         this.currentParameters, 'bodyWeight', event.data?.weight?.value,
-        event.data?.weight?.unit, "http://unitsofmeasure.org", event.data?.weight?.unit);
+        event.data?.weight?.unit?.display, "http://unitsofmeasure.org", event.data?.weight?.unit?.code);
     }
 
     if(event.data?.bmi) {

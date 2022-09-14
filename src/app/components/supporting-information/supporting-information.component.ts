@@ -122,9 +122,9 @@ export class SupportingInformationComponent implements OnInit {
   private getFormData(form: FormGroup) {
     //TODO the data we gather will depend on the selected service.
     const heightValue = form.controls['heightValue'].value;
-    const heightUnit = form.controls['heightUnit'].value.code;
+    const heightUnit = form.controls['heightUnit'].value;
     const weightValue = form.controls['weightValue'].value;
-    const weightUnit = form.controls['weightUnit'].value.code;
+    const weightUnit = form.controls['weightUnit'].value;
     const bmi = form.controls['bmi'].value;
     const bpDiastolic = form.controls['bpDiastolic'].value;
     const bpSystolic = form.controls['bpSystolic'].value;

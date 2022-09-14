@@ -207,12 +207,12 @@ export class FhirTerminologyConstants{
 
   WEIGHT_UNITS = [
     {"code": "kg", "display": "kg"},
-    {"code": "[lb_av]", "display": "lb_av"},
+    {"code": "[lb_av]", "display": "lb"},
   ];
 
   HEIGHT_UNITS = [
     {"code": "cm", "display": "cm"},
-    {"code": "[in_i]", "display": "in_i"},
+    {"code": "[in_i]", "display": "in"},
   ];
 
 }
