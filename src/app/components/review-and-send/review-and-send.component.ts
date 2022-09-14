@@ -6,6 +6,7 @@ import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {UtilsService} from "../../service/utils.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import {EnginePostHandlerService} from "../../service/engine-post-handler.service";
 
 @Component({
   selector: 'app-review-and-send',
@@ -26,6 +27,7 @@ export class ReviewAndSendComponent implements OnInit {
     private fhirTerminologyConstants: FhirTerminologyConstants,
     public utilsService: UtilsService,
     private router: Router,
+    public enginePostHandler: EnginePostHandlerService
   ) { }
 
   ngOnInit(): void {
@@ -70,7 +72,8 @@ export class ReviewAndSendComponent implements OnInit {
             const stringList = this.fhirTerminologyConstants.RACE_CATEGORIES
               .filter(element => raceCodes.indexOf(element.code) != -1)
               .map(element => element.display);
-            return stringList;
+            const completeString = stringList.join(", ")
+            return completeString;
           }
           return "UNKNOWN";
         }
@@ -103,6 +106,11 @@ export class ReviewAndSendComponent implements OnInit {
   }
 
   onSendReferral() {
-    console.log("on send referral");
+    this.enginePostHandler.postToEngine(this.currentSnapshot, this.currentParameters).subscribe({
+      next: result => {
+        console.log(result)
+      },
+      error: console.error
+    })
   }
 }

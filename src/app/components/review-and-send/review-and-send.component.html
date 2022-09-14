@@ -1,112 +1,5 @@
-<!--
-<div class="scrollable-container">
-  <mat-card>
-    <mat-card-title>Review and Submit</mat-card-title>
-    <mat-card-content>
-      <div class="top-spacer">
-        <div class="row top-spacer"> Service Provider </div>
-        <div clss="row">
-          <span
-            *ngIf="selectedServiceProvider?.practitioner?.familyName; then practitionerFound else noPractitionerFound"></span>
-          <ng-template #practitionerFound>
-            {{selectedServiceProvider?.practitioner?.familyName}}, {{selectedServiceProvider?.practitioner?.givenName}}
-            ({{selectedServiceProvider?.organization?.name}})
-          </ng-template>
-          <ng-template #noPractitionerFound>
-            {{selectedServiceProvider?.organization?.name}}
-          </ng-template>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div style="font-weight: bold">Services Provided:</div>
-            <div class=row *ngFor="let serviceType of selectedServiceProvider?.services?.serviceType">
-              * {{ serviceType | serviceType}}
-            </div>
-          </div>
-          <div class="col">
-            <div style="font-weight: bold; margin-bottom: 0.2em">Available Times:</div>
-            <div class=row *ngFor="let day of selectedServiceProvider?.services?.daysOfWeek">
-              <div class="col">
-                {{ day | daysOfWeek }}
-              </div>
-              <div class="col">
-                {{ selectedServiceProvider?.services?.startTime | militaryToStandardTime }} -
-                {{ selectedServiceProvider?.services?.endTime | militaryToStandardTime }}
-              </div>
-            </div>
-          </div>
-          <div class="col" style="padding-left: 2em">
-            <div style="font-weight: bold; margin-bottom: 0.2em">Languages:</div>
-            <div class="row" *ngFor="let language of selectedServiceProvider?.services?.languages">
-              {{language}}
-            </div>
-          </div>
-        </div>
-        <div class="row" style="margin-top: 1em">
-          <div class="col">
-            <div style="font-weight: bold; margin-bottom: 0.2em;">Service Delivery Location:</div>
-            <div *ngIf="!utilsService.isEmpty(selectedServiceProvider?.location)">
-              {{ selectedServiceProvider?.location?.line }}<br/>
-              {{ selectedServiceProvider?.location?.city }}, {{ selectedServiceProvider?.location?.postalCode }}, {{ selectedServiceProvider?.location?.state }}
-            </div>
-            <div *ngIf="!selectedServiceProvider?.location || utilsService.isEmpty(selectedServiceProvider?.location)">
-              To be determined by the service provider.
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <div style="font-weight: bold; margin-bottom: 0.2em">Provider Contact Info:</div>
-            <div>{{ selectedServiceProvider?.practitioner?.name }}</div>
-            <div>phone: {{ selectedServiceProvider?.practitioner?.phone }}</div>
-          </div>
-          <div class="col">
-            <div style="font-weight: bold; margin-bottom: 0.2em">Organization Contact Info:</div>
-            <div>{{ selectedServiceProvider?.organization?.name }}</div>
-            <div>phone: {{ selectedServiceProvider?.organization?.phone }}</div>
-          </div>
-        </div>
-
-
-
-
-
-        <div class="row top-spacer"> General Information and Service type</div>
-        <div class="row">Service Type: {{ getValueCodeParam(currentParameters, 'serviceType')?.display }}</div>
-
-
-        <div class="row top-spacer"> Supporting Information</div>
-
-        <div class="top-spacer">
-          <h2> Selected Service Provider </h2>
-          <pre>{{ selectedServiceProvider | json}}</pre>
-        </div>
-
-        <hr/>
-
-        <div class="top-spacer">
-          <h2> Service Request </h2>
-          <pre>{{ currentSnapshot | json }}</pre>
-        </div>
-
-        <hr/>
-
-        <div class="top-spacer">
-          <h2> Parameters </h2>
-          <pre>{{ currentParameters | json }}</pre>
-        </div>
-
-      </div>
-
-    </mat-card-content>
-  </mat-card>
-
-</div>-->
 
 <div class="scrollable-container">
-  <h1>Review and Submit</h1>
-
   <div class="note">
     Please review the information selected carefully before submitting the referral request to the Service Provider.
   </div>
@@ -125,7 +18,8 @@
               <ng-container *ngIf="selectedServiceProvider">
                 <span *ngIf="selectedServiceProvider.practitioner?.familyName; then practitionerFound else noPractitionerFound"></span>
                 <ng-template #practitionerFound>
-                  {{selectedServiceProvider.practitioner?.familyName}}, {{selectedServiceProvider.practitioner?.givenName}} ({{selectedServiceProvider.organization?.name}})
+                  {{selectedServiceProvider.practitioner?.familyName}}, {{selectedServiceProvider.practitioner?.givenName}}<br/>
+                  {{selectedServiceProvider.organization?.name}}
                 </ng-template>
                 <ng-template #noPractitionerFound>
                   {{selectedServiceProvider.organization?.name}}
@@ -134,10 +28,10 @@
             </div>
           </div>
           <div class="row">
-            <div class="col label">
+            <div class="col label big-label">
               Service Type:
             </div>
-            <div class="col value">
+            <div class="col value big-value">
               {{ getValueCodeParam(currentParameters, 'serviceType')?.display }}
             </div>
           </div>
@@ -160,26 +54,95 @@
               {{ getValueCodeParam(currentParameters, 'race') }}
             </div>
           </div>
-          <div class="row">Ethnicity: {{ getValueCodeParam(currentParameters,'ethnicity')?.display }}</div>
-          <div class="row">Education Level: {{ getValueCodeParam(currentParameters, 'educationLevel')?.display }}</div>
-          <div class="row">Employment Status: {{ getValueCodeParam(currentParameters, 'employmentStatus')?.display }}</div>
+          <div class="row">
+            <div class="col label">
+              Ethnicity:
+            </div>
+            <div class="col value col-grow">
+              {{ getValueCodeParam(currentParameters,'ethnicity')?.display }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col label">
+              Education Level:
+            </div>
+            <div class="col value col-grow">
+              {{ getValueCodeParam(currentParameters, 'educationLevel')?.display }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col label">
+              Employment Status:
+            </div>
+            <div class="col value col-grow">
+              {{ getValueCodeParam(currentParameters, 'employmentStatus')?.display }}
+            </div>
+          </div>
         </mat-card-content>
       </mat-card>
     </div>
   </div>
   <div class="row top-spacer">
-    <mat-card class="mat-card-summary">
-      <mat-card-header class="mat-card-summary-header">
-        <mat-card-title class="mat-card-summary-title">Supporting Information</mat-card-title>
-      </mat-card-header>
-      <mat-card-content class="mat-card-summary-content">
-        <div class="row">Patient Height: {{ getValueCodeParam(currentParameters, 'bodyHeight') }}</div>
-        <div class="row">Patient Weight: {{ getValueCodeParam(currentParameters, 'bodyWeight') }}</div>
-        <div class="row">BMI: {{ getValueCodeParam(currentParameters, 'bmi') }}</div>
-        <div class="row">Blood Pressure: {{ getValueCodeParam(currentParameters, 'bloodPressure') }}</div>
-
-      </mat-card-content>
-    </mat-card>
+    <div class="col">
+      <mat-card class="mat-card-summary">
+        <mat-card-header class="mat-card-summary-header">
+          <mat-card-title class="mat-card-summary-title">Vital Signs</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="mat-card-summary-content">
+          <div class="row">
+            <div class="col label">
+              Patient Height:
+            </div>
+            <div class="col value col-grow">
+              {{ getValueCodeParam(currentParameters, 'bodyHeight') }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col label">
+              Patient Weight:
+            </div>
+            <div class="col value col-grow">
+              {{ getValueCodeParam(currentParameters, 'bodyWeight') }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col label">
+              BMI:
+            </div>
+            <div class="col value col-grow">
+              {{ getValueCodeParam(currentParameters, 'bmi') }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col label">
+              Blood Pressure:
+            </div>
+            <div class="col value col-grow">
+              {{ getValueCodeParam(currentParameters, 'bloodPressure') }}
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="divider">
+    </div>
+    <div class="col">
+      <mat-card class="mat-card-summary">
+        <mat-card-header class="mat-card-summary-header">
+          <mat-card-title class="mat-card-summary-title">Labs</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="mat-card-summary-content">
+          <div class="row">
+            <div class="col label">
+              HA1C:
+            </div>
+            <div class="col value col-grow">
+              {{ getValueCodeParam(currentParameters, 'bodyHeight') }}
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>
 
