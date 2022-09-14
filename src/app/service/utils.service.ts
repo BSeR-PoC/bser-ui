@@ -12,7 +12,8 @@ export class UtilsService {
     this._snackBar.open(messageStr, 'x' ,{
       horizontalPosition: 'center',
       verticalPosition: 'top',
-      panelClass: ['error-color'],
+      panelClass: ["error-message"],
+      duration: 10000
     });
   }
 

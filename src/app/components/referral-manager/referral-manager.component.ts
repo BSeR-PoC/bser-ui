@@ -50,7 +50,8 @@ export class ReferralManagerComponent implements OnInit {
         else {
           this.createNewServiceRequest();
         }
-      }
+      },
+      error: err => this.utilsService.showErrorNotification(err.toString())
     });
 
     this.serviceRequestHandler.currentParameters$.subscribe(
@@ -59,7 +60,7 @@ export class ReferralManagerComponent implements OnInit {
           this.currentParameters = data || new Parameters();
           //console.log("DATA:", data)
         },
-        error: console.error
+        error: err => this.utilsService.showErrorNotification(err.toString())
       }
     );
 
@@ -276,7 +277,7 @@ export class ReferralManagerComponent implements OnInit {
                 }
               }
             },
-            error: console.error
+            error: err=> this.utilsService.showErrorNotification(err.toString())
           }
         );
       }
@@ -291,7 +292,7 @@ export class ReferralManagerComponent implements OnInit {
           this.currentSnapshot = data;
           console.log("DATA:", data)
         },
-        error: console.error
+        error: err => this.utilsService.showErrorNotification(err.toString())
       }
     );
   }
@@ -308,7 +309,7 @@ export class ReferralManagerComponent implements OnInit {
       },
       error: err => {
         this.isLoading = false;
-        console.error;
+        this.utilsService.showErrorNotification(err.toString());
       }
     });
   }
