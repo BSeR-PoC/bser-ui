@@ -95,6 +95,17 @@ export class ReviewAndSendComponent implements OnInit {
           const bpSystolic = param.part.find(param => param.name.value == 'systolic')?.value?.toJSON()?.value;
           return bpSystolic + '/' + bpDiastolic +  ' mmHg';
         }
+        else if (name === 'ha1c') {
+          const ha1c = param.value.toJSON()?.value;
+          return ha1c;
+        }
+        // const ha1cParam = parameters.parameter.find(param => param.name.value == 'ha1c');
+        // if (ha1cParam) {
+        //   const ha1c = ha1cParam.value.toJSON()?.value;
+        //   this.supportingInformationForm.controls['ha1c'].patchValue(ha1c);
+        // }
+
+
         return "UNKNOWN";
       }
       return "UNKNOWN";
