@@ -79,24 +79,25 @@ export class ReviewAndSendComponent implements OnInit {
         }
         else if (name === 'bodyHeight') {
           const value = param.value.toJSON()?.value;
-          const bodyHeightUnitCode = param.value.toJSON()?.unit;
+          const bodyHeightUnitCode = param.value.toJSON()?.code;
           const unit = this.fhirConstants.HEIGHT_UNITS.find(unit => unit.code === bodyHeightUnitCode)?.display;
           return value + ' ' + unit;
         }
         else if (name === 'bodyWeight') {
           const value = param.value.toJSON()?.value;
-          const bodyWeightUnitCode = param.value.toJSON()?.unit;
+          const bodyWeightUnitCode = param.value.toJSON()?.code;
           const unit = this.fhirConstants.WEIGHT_UNITS.find(unit => unit.code === bodyWeightUnitCode)?.display;
           return value + ' ' + unit;
         }
         else if (name === 'bmi') {
           const bmi = param.value.toJSON()?.value;
-          return bmi;
+          const unit = this.fhirConstants.OTHER_UNITS.find(unit => unit.code === "kg/m2")?.display;
+          return bmi + ' ' + unit;
         }
         else if (name === 'bloodPressure') {
           const bpDiastolic = param.part.find(param => param.name.value == 'diastolic')?.value?.toJSON()?.value;
           const bpSystolic = param.part.find(param => param.name.value == 'systolic')?.value?.toJSON()?.value;
-          return bpSystolic + '/' + bpDiastolic +  ' mmHg';
+          return bpSystolic + '/' + bpDiastolic +  ' mmHg'; // TODO: Do not hardcode this
         }
         else if (name === 'ha1c') {
           const ha1c = param.value.toJSON()?.value;

@@ -215,4 +215,9 @@ export class FhirTerminologyConstants{
     {"code": "[in_i]", "display": "in"},
   ];
 
+  OTHER_UNITS = [
+    {"code": "mmHg", "display": "mmHg"},
+    {"code": "kg/m2", "display": "kg/m²"}
+  ];
+
 }
