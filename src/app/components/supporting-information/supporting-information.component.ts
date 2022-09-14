@@ -68,13 +68,15 @@ export class SupportingInformationComponent implements OnInit {
     const bmi =  new  FormControl(null, [Validators.required]);
     const bpDiastolic =  new  FormControl(null, [Validators.required]);
     const bpSystolic =  new  FormControl(null, [Validators.required]);
+    const ha1c =  new  FormControl(null, [Validators.required]);
+
     // const smokingStatus =  new  FormControl(null, [Validators.required]);
     // const allergies =  new  FormControl(null);
     // const medicalHistory =  new  FormControl(null);
 
     //TODO init a form based on the service request, additionally as the service3 request is modified, we need to change the form fields dynamically.
     this.supportingInformationForm = new FormGroup({
-      heightValue, heightUnit, weightValue, weightUnit, bmi, bpDiastolic, bpSystolic
+      heightValue, heightUnit, weightValue, weightUnit, bmi, bpDiastolic, bpSystolic, ha1c
     });
   }
 
@@ -128,6 +130,7 @@ export class SupportingInformationComponent implements OnInit {
     const bmi = form.controls['bmi'].value;
     const bpDiastolic = form.controls['bpDiastolic'].value;
     const bpSystolic = form.controls['bpSystolic'].value;
+    const ha1c = form.controls['bpSystolic'].value;
     // const smokingStatus = form.controls['smokingStatus'].value;
     // const allergies = form.controls['allergies'].value;
     // const medicalHistory = form.controls['medicalHistory'].value;
@@ -136,7 +139,8 @@ export class SupportingInformationComponent implements OnInit {
       height: {value: heightValue, unit: heightUnit},
       weight: {value: weightValue, unit: weightUnit},
       bmi: {value: bmi, unit: "kg/m2"},
-      bp: { bpDiastolic: { name: 'diastolic', value: bpDiastolic }, bpSystolic : { name: 'systolic', value: bpSystolic }}
+      bp: { bpDiastolic: { name: 'diastolic', value: bpDiastolic }, bpSystolic : { name: 'systolic', value: bpSystolic }},
+      ha1c: {value: ha1c, unit: "%"},
       // smokingStatus: smokingStatus,
       // allergies: allergies,
       // medicalHistory: medicalHistory,
@@ -152,6 +156,12 @@ export class SupportingInformationComponent implements OnInit {
     if (bmiParam) {
       const bmi = bmiParam.value.toJSON()?.value;
       this.supportingInformationForm.controls['bmi'].patchValue(bmi);
+    }
+
+    const ha1cParam = parameters.parameter.find(param => param.name.value == 'ha1c');
+    if (ha1cParam) {
+      const ha1c = ha1cParam.value.toJSON()?.value;
+      this.supportingInformationForm.controls['ha1c'].patchValue(ha1c);
     }
 
     const bloodPressureParam = parameters.parameter.find(param => param.name.value == 'bloodPressure');
