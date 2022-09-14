@@ -100,15 +100,10 @@ export class ReviewAndSendComponent implements OnInit {
           return bpSystolic + '/' + bpDiastolic +  ' mmHg'; // TODO: Do not hardcode this
         }
         else if (name === 'ha1c') {
-          const ha1c = param.value.toJSON()?.value;
-          return ha1c;
+          const value = param.value.toJSON()?.value;
+          const ha1cUnitCode = param.value.toJSON()?.unit;
+          return value + ' ' + ha1cUnitCode;
         }
-        // const ha1cParam = parameters.parameter.find(param => param.name.value == 'ha1c');
-        // if (ha1cParam) {
-        //   const ha1c = ha1cParam.value.toJSON()?.value;
-        //   this.supportingInformationForm.controls['ha1c'].patchValue(ha1c);
-        // }
-
 
         return "UNKNOWN";
       }
