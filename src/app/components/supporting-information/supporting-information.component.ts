@@ -184,8 +184,8 @@ export class SupportingInformationComponent implements OnInit {
       const bodyWeightValue = bodyWeightParam.value.toJSON()?.value;
       this.supportingInformationForm.controls['weightValue'].patchValue(bodyWeightValue);
 
-      const bodyWeightUnitCode = bodyWeightParam.value.toJSON()?.unit;
-      const bodyWeight = this.fhirConstants.WEIGHT_UNITS.find(unit => unit.code === bodyWeightUnitCode)
+      const bodyWeightUnitValue = bodyWeightParam.value.toJSON()?.unit;
+      const bodyWeight = this.fhirConstants.WEIGHT_UNITS.find(unit => unit.display === bodyWeightUnitValue)
       this.supportingInformationForm.controls['weightUnit'].patchValue(bodyWeight);
     }
 
@@ -194,8 +194,8 @@ export class SupportingInformationComponent implements OnInit {
       const bodyHeightValue = bodyHeightParam.value.toJSON()?.value;
       this.supportingInformationForm.controls['heightValue'].patchValue(bodyHeightValue);
 
-      const bodyHeightUnitCode = bodyHeightParam.value.toJSON()?.unit;
-      const bodyHeightUnit = this.fhirConstants.HEIGHT_UNITS.find(unit => unit.code === bodyHeightUnitCode)
+      const bodyHeightUnitValue = bodyHeightParam.value.toJSON()?.unit;
+      const bodyHeightUnit = this.fhirConstants.HEIGHT_UNITS.find(unit => unit.display === bodyHeightUnitValue)
       this.supportingInformationForm.controls['heightUnit'].patchValue(bodyHeightUnit);
     }
   }

@@ -139,7 +139,7 @@ export class ReferralManagerComponent implements OnInit {
           this.dialog,
           {
             title: "Service not Performed by Provider",
-            content: `${selectedServiceProvider?.practitioner?.familyName} (${selectedServiceProvider?.organization?.name})
+            content: `${this.getPractitionerNameAndOrg(this.selectedServiceProvider)}
                 does not provide the previously selected service type, ${serviceRequestService}.
                 Proceeding with this selection will discard other referral information.`,
             defaultActionBtnTitle: "Cancel",
@@ -158,6 +158,15 @@ export class ReferralManagerComponent implements OnInit {
             }
           )
       }
+    }
+  }
+
+  private getPractitionerNameAndOrg(selectedServiceProvider): string {
+    if(selectedServiceProvider?.practitioner?.familyName){
+      return selectedServiceProvider?.practitioner?.familyName + ' (' + selectedServiceProvider?.organization?.name + ')';
+    }
+    else {
+      return selectedServiceProvider?.organization?.name
     }
   }
 
