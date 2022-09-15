@@ -31,7 +31,6 @@ import {
   SupportingInformationComponent
 } from './components/supporting-information/supporting-information.component';
 import {MatSelectModule} from "@angular/material/select";
-import {AppConstants} from "./providers/app-constants";
 import {FhirTerminologyConstants} from "./providers/fhir-terminology-constants";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { ConformationDialogComponent } from './components/conformation-dialog/conformation-dialog.component';
@@ -99,7 +98,7 @@ import { ReviewAndSendComponent } from './components/review-and-send/review-and-
     MatMenuModule,
     MatDividerModule
   ],
-  providers: [AppConstants, FhirTerminologyConstants],
+  providers: [FhirTerminologyConstants],
   bootstrap: [AppComponent]
 })
 export class AppModule {

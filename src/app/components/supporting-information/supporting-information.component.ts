@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {AppConstants} from "../../providers/app-constants";
 import {Router} from "@angular/router";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
@@ -27,7 +26,6 @@ export class SupportingInformationComponent implements OnInit {
   private initialFormValue: any;
 
   constructor(
-    public appConstants: AppConstants,
     private router: Router,
     public fhirConstants: FhirTerminologyConstants,
     private serviceRequestHandlerService: ServiceRequestHandlerService,
