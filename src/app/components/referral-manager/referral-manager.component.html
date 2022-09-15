@@ -6,9 +6,10 @@
       <mat-stepper linear #stepper>
 
         <!-- Select a Provider (for example YMCA) -->
-        <mat-step label="Select Recipient" [completed]='isStepCompleted(1)'>
+        <mat-step label="Select Recipient" [completed]='isStepCompleted(1)'  [editable]="stepsEnabled">
           <div>
             <app-service-provider-list
+              (requestStep)="onRequestStep($event)"
               (savedSuccessEvent)="onSaveProvider($event)"
               (serviceProviderSelectedEvent)="onServiceProviderSelected($event)"
             ></app-service-provider-list>
@@ -16,18 +17,20 @@
         </mat-step>
 
         <!-- Select supporting information -->
-        <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)' >
+        <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)' [editable]="stepsEnabled">
           <app-general-information-and-service-type
             (savedSuccessEvent)="onSaveGeneralInfoAndServiceType($event)"
+            (requestStepEvent)="onRequestStep($event)"
             [selectedServiceProvider]="selectedServiceProvider"
           ></app-general-information-and-service-type>
         </mat-step>
 
         <!-- Add Patient general information -->
-        <mat-step label="Supporting Information" [completed]='isStepCompleted(3)'>
+        <mat-step label="Supporting Information" [completed]='isStepCompleted(3)' [editable]="stepsEnabled">
           <div>
             <app-supporting-information
               (savedSuccessEvent)="onSaveSupportingInfo($event)"
+              (requestStepEvent)="onRequestStep($event)"
               [selectedServiceProvider]="selectedServiceProvider"
             >
             </app-supporting-information>
@@ -38,6 +41,7 @@
           <div>
             <app-review-and-send
               [selectedServiceProvider]="selectedServiceProvider"
+              (returnToEditEvent)="onRequestStep($event)"
             >
             </app-review-and-send>
           </div>

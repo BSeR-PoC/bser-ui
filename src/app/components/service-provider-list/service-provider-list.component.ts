@@ -21,6 +21,8 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
   serviceRequest: any;
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() serviceProviderSelectedEvent = new EventEmitter();
+  @Output() requestStep = new EventEmitter();
+
 
   constructor(
     private serviceProviderService: ServiceProviderService,
@@ -52,7 +54,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
         },
         error: (err)=> {
           console.error(err);
-          this.utilsService.showErrorNotification(err.toString());
+          this.utilsService.showErrorNotification(err?.message?.toString());
           this.isLoading = false;
         }
       });
@@ -152,5 +154,16 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
     }
     serviceProvider.selected = true;
     return serviceProvider;
+  }
+
+  onProceed() {
+    if(
+      !this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
+    ) {
+      this.onSave(true);
+    }
+    else {
+      this.requestStep.emit(2)
+    }
   }
 }

@@ -25,6 +25,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   @Input() selectedServiceProvider: any;
 
   @Output() savedSuccessEvent = new EventEmitter();
+  @Output() requestStepEvent = new EventEmitter();
 
   generalInfoServiceTypeForm: FormGroup;
   usCorePatient: USCorePatient;
@@ -177,7 +178,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   };
 
   onCancel() {
-    if(!this.serviceRequestHandlerService.deepCompare(this.generalInfoServiceTypeForm.value, this.initialFormValue)){
+    if(this.serviceRequestHandlerService.deepCompare(this.generalInfoServiceTypeForm.value, this.initialFormValue)){
       this.router.navigate(['/']);
     }
     else {
@@ -193,10 +194,10 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         })
         .subscribe(
           action => {
-            if (action == 'rejected') {
+            if (action == 'secondaryAction') {
               this.router.navigate(['/']);
             }
-            else if (action == 'confirmed') {
+            else if (action == 'defaultAction') {
               this.onSave(true);
             }
           }
@@ -298,10 +299,58 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
       this.generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes'].patchValue(raceCheckboxesSelectedList);
     }
 
-    //When populating the radio buttons we assume that the array of values contains 1 element with value UNK ASKU
+    // When populating the radio buttons we assume that the array of values contains 1 element with value UNK ASKU
     if (raceCodes?.length === 1) {
       const race = this.fhirConstants.RACE_CATEGORIES.find(category => category.code === raceCodes[0]);
       this.generalInfoServiceTypeForm.controls['raceCategoriesListRadioBtns'].patchValue(race);
+    }
+  }
+
+  onReturn() {
+    const requestedStep = 1;
+    if(
+      this.generalInfoServiceTypeForm.pristine
+      ||
+      this.serviceRequestHandlerService.deepCompare(this.generalInfoServiceTypeForm.value, this.initialFormValue)){
+      this.requestStepEvent.emit(requestedStep);
+    }
+    else {
+      openConformationDialog(
+        this.dialog,
+        {
+          title: "Save Changes",
+          content: "Save your current changes?",
+          defaultActionBtnTitle: "Save",
+          secondaryActionBtnTitle: "Cancel",
+          width: "20em",
+          height: "12em"
+        })
+        .subscribe(
+          action => {
+            if (action == 'secondaryAction') {
+              this.router.navigate(['/']);
+            }
+            else if (action == 'defaultAction') {
+              this.onSave(false);
+            }
+          }
+        )
+    }
+  }
+
+  onProceed() {
+    const requestedStep = 3;
+    if(
+       this.generalInfoServiceTypeForm.status === 'VALID'
+      &&
+      (
+        this.generalInfoServiceTypeForm.pristine
+        ||
+        this.serviceRequestHandlerService.deepCompare(this.generalInfoServiceTypeForm.value, this.initialFormValue))){
+      this.requestStepEvent.emit(requestedStep);
+    }
+    else {
+      this.onSave(true);
     }
   }
 }

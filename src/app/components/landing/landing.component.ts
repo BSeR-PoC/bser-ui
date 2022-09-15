@@ -1,5 +1,4 @@
-import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {MatTableDataSource} from "@angular/material/table";
+import {Component, OnInit, SimpleChanges} from '@angular/core';
 import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Router} from "@angular/router";

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
@@ -16,6 +16,8 @@ import {Router} from "@angular/router";
 export class ReviewAndSendComponent implements OnInit {
 
   @Input() selectedServiceProvider: any;
+
+  @Output() returnToEditEvent = new EventEmitter();
 
   currentSnapshot: ServiceRequest;
 
@@ -117,9 +119,18 @@ export class ReviewAndSendComponent implements OnInit {
   onSendReferral() {
     this.enginePostHandler.postToEngine(this.currentSnapshot, this.currentParameters).subscribe({
       next: result => {
+        this.utilsService.showSuccessNotification("Referral Send Successfully.")
         console.log(result)
       },
-      error: console.error
+      error: err => {
+        console.error(err);
+        this.utilsService.showErrorNotification(err?.message?.toString());
+      }
     })
+  }
+
+  onReturn() {
+    const requestedStep = 1;
+    this.returnToEditEvent.emit(requestedStep);
   }
 }

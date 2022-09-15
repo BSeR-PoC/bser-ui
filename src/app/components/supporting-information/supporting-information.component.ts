@@ -18,6 +18,7 @@ export class SupportingInformationComponent implements OnInit {
   @Input() selectedServiceProvider: any;
 
   @Output() savedSuccessEvent = new EventEmitter();
+  @Output() requestStepEvent = new EventEmitter();
 
   supportingInformationForm: FormGroup;
   parameters: Parameters;
@@ -195,6 +196,54 @@ export class SupportingInformationComponent implements OnInit {
       const bodyHeightUnitValue = bodyHeightParam.value.toJSON()?.unit;
       const bodyHeightUnit = this.fhirConstants.HEIGHT_UNITS.find(unit => unit.display === bodyHeightUnitValue)
       this.supportingInformationForm.controls['heightUnit'].patchValue(bodyHeightUnit);
+    }
+  }
+
+  onReturn() {
+    const requestedStep = 2;
+    if(
+      this.supportingInformationForm.pristine
+      ||
+      this.serviceRequestHandlerService.deepCompare(this.supportingInformationForm.value, this.initialFormValue)){
+      this.requestStepEvent.emit(requestedStep);
+    }
+    else {
+      openConformationDialog(
+        this.dialog,
+        {
+          title: "Save Changes",
+          content: "Save your current changes?",
+          defaultActionBtnTitle: "Save",
+          secondaryActionBtnTitle: "Cancel",
+          width: "20em",
+          height: "12em"
+        })
+        .subscribe(
+          action => {
+            if (action == 'secondaryAction') {
+              this.router.navigate(['/']);
+            }
+            else if (action == 'defaultAction') {
+              this.onSave(false);
+            }
+          }
+        )
+    }
+  }
+
+  onProceed() {
+    const requestedStep = 4;
+    if(
+      this.supportingInformationForm.status === 'VALID'
+      &&
+      (
+        this.supportingInformationForm.pristine
+        ||
+        this.serviceRequestHandlerService.deepCompare(this.supportingInformationForm.value, this.initialFormValue))){
+      this.requestStepEvent.emit(requestedStep);
+    }
+    else {
+      this.onSave(true);
     }
   }
 }

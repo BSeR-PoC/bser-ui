@@ -12,6 +12,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {EnginePostHandlerService} from "../../service/engine-post-handler.service";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
+import {timeout} from "rxjs";
 
 @Component({
   selector: 'app-referral-manager',
@@ -29,6 +30,10 @@ export class ReferralManagerComponent implements OnInit {
 
   isLoading: boolean = false;
 
+  completedSteps = new Set<number>();
+
+  stepsEnabled: boolean;
+
   constructor(
     private serviceRequestHandler: ServiceRequestHandlerService,
     private route: ActivatedRoute,
@@ -39,7 +44,7 @@ export class ReferralManagerComponent implements OnInit {
 ) { }
 
   ngOnInit(): void {
-
+    this.completedSteps = new Set<number>();
     this.route.params.subscribe({
       next: params => {
         if(params && params['id']){
@@ -51,7 +56,7 @@ export class ReferralManagerComponent implements OnInit {
           this.createNewServiceRequest();
         }
       },
-      error: err => this.utilsService.showErrorNotification(err.toString())
+      error: err => this.utilsService.showErrorNotification(err?.message?.toString())
     });
 
     this.serviceRequestHandler.currentParameters$.subscribe(
@@ -60,7 +65,7 @@ export class ReferralManagerComponent implements OnInit {
           this.currentParameters = data || new Parameters();
           //console.log("DATA:", data)
         },
-        error: err => this.utilsService.showErrorNotification(err.toString())
+        error: err => this.utilsService.showErrorNotification(err?.message?.toString())
       }
     );
 
@@ -79,38 +84,40 @@ export class ReferralManagerComponent implements OnInit {
 
   isStepCompleted(stepNumber: number): boolean {
     const  paramNames = this.currentParameters?.parameter?.map(param => param.name.toJSON().value);
-    let completedSteps = new Set<number>();
     if(stepNumber === 1){
-      const result = !!this.selectedServiceProvider;
-      if(result){
-        completedSteps.add(1);
-      }
-      return result;
+      return this.completedSteps.has(1);
+      // const result = !!this.selectedServiceProvider;
+      // if(result){
+      //   completedSteps.add(1);
+      // }
+      // return result;
     }
     else if (stepNumber === 2) {
-      const requiredParamsStep2 = ['race', 'ethnicity', 'educationLevel', 'employmentStatus', 'serviceType'];
-      if(!paramNames ||  paramNames.length < requiredParamsStep2.length){
-        return false;
-      }
-      const result = paramNames.filter(element => requiredParamsStep2.indexOf(element) != -1).length == requiredParamsStep2.length;
-      if(result){
-        completedSteps.add(2);
-      }
-      return result;
+      //const requiredParamsStep2 = ['race', 'ethnicity', 'educationLevel', 'employmentStatus', 'serviceType'];
+      // if(!paramNames ||  paramNames.length < requiredParamsStep2.length){
+      //   return false;
+      // }
+      // const result = paramNames.filter(element => requiredParamsStep2.indexOf(element) != -1).length == requiredParamsStep2.length;
+      // if(result){
+      //   completedSteps.add(2);
+      // }
+      // return result;
+      return this.completedSteps.has(2);
     }
     else if (stepNumber === 3) {
-      const requiredParamsStep3 = ['bodyHeight', 'bodyWeight', 'bmi', 'bloodPressure'];
-      if(!paramNames ||  paramNames.length < requiredParamsStep3.length){
-        return false;
-      }
-      const result =  paramNames.filter(element => requiredParamsStep3.indexOf(element) != -1).length == requiredParamsStep3.length;
-      if(result){
-        completedSteps.add(3);
-      }
-      return result;
+      // const requiredParamsStep3 = ['bodyHeight', 'bodyWeight', 'bmi', 'bloodPressure'];
+      // if(!paramNames ||  paramNames.length < requiredParamsStep3.length){
+      //   return false;
+      // }
+      // const result =  paramNames.filter(element => requiredParamsStep3.indexOf(element) != -1).length == requiredParamsStep3.length;
+      // if(result){
+      //   completedSteps.add(3);
+      // }
+      // return result;
+      return this.completedSteps.has(3);
     }
-    else if (stepNumber === 3) {
-      return completedSteps.size === 3;
+    else if (stepNumber === 4) {
+      return this.completedSteps.has(4);
     }
     else {
       return false;
@@ -131,7 +138,7 @@ export class ReferralManagerComponent implements OnInit {
         selectedServiceProviderServices.indexOf(serviceRequestService) != -1
       ){
         this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-        this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
+        this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested, 1);
       }
       else {
         // the selected service provider does not offer the service in the existing service request.
@@ -153,7 +160,7 @@ export class ReferralManagerComponent implements OnInit {
                 this.currentSnapshot.orderDetail = null;
                 this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
                 this.currentParameters.parameter.length = 0;
-                this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
+                this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested, 1);
               }
             }
           )
@@ -210,7 +217,7 @@ export class ReferralManagerComponent implements OnInit {
     }
     //TODO not sure if we need this method since we already have a parameterHandlerService
     //this.serviceRequestHandler.updateParams(this.currentParameters);
-    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested, 2);
 
   }
 
@@ -271,8 +278,10 @@ export class ReferralManagerComponent implements OnInit {
         event.data?.ha1c?.unit, "http://unitsofmeasure.org", event.data?.ha1c?.unit);
     }
 
-    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested);
-    this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested, 3);
+    this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters).subscribe({
+      next: () => this.completedSteps.add(4)
+    });
     //TODO need to add allergies and medication history
   }
 
@@ -293,7 +302,7 @@ export class ReferralManagerComponent implements OnInit {
                 }
               }
             },
-            error: err=> this.utilsService.showErrorNotification(err.toString())
+            error: err => this.utilsService.showErrorNotification(err?.message?.toString())
           }
         );
       }
@@ -308,24 +317,26 @@ export class ReferralManagerComponent implements OnInit {
           this.currentSnapshot = data;
           console.log("DATA:", data)
         },
-        error: err => this.utilsService.showErrorNotification(err.toString())
+        error: err => this.utilsService.showErrorNotification(err?.message?.toString())
       }
     );
   }
 
-  saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, advanceRequested: boolean) {
+  saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, advanceRequested: boolean, step) {
     this.isLoading = true;
     this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe({
       next: value => {
+        this.completedSteps.add(step);
         this.isLoading = false;
         if (advanceRequested) {
-          this.stepper.next();
+          //We need additional cycle for the stepper, or it will not advance
+          setTimeout(()=> this.stepper.next())
         }
         this.utilsService.showSuccessNotification("The referral was saved successfully.");
       },
       error: err => {
         this.isLoading = false;
-        this.utilsService.showErrorNotification(err.toString());
+        this.utilsService.showErrorNotification(err?.message?.toString());
       }
     });
   }
@@ -334,5 +345,55 @@ export class ReferralManagerComponent implements OnInit {
     this.selectedServiceProvider = serviceProvider;
   }
 
+  onRequestStep(step: number){
+    // 1. Temporary set the returnToPreviousRequested to true
+    // 2. Return a step (we need the timeout to keep the stepper enabled)
+    // 3. Remove the last completed step. This way the user cannot advance the stepper directly from the header.
+    this.stepsEnabled = true;
+    let operation = '';
+    if(step === 1){
+      setTimeout(()=> {
+        if (step === 1) {
+          this.stepper.reset();
+          this.completedSteps = new Set<number>();
+          this.stepsEnabled = false;
+        }
+      });
+    }
+    else if (this.completedSteps.has(step)){
+      this.completedSteps.delete(step);
+      setTimeout(() => {
+        this.stepper.previous();
+        this.stepsEnabled = false;
+      });
+    }
+    else {
+      this.completedSteps.add(step-1);
+      setTimeout(() => {
+        this.stepper.next();
+        this.stepsEnabled = false;
+      });
+    }
+    // }
+    // }
+    // this.returnToPreviousRequested = true;
+    // setTimeout(()=> {
+    //   if(step === 1){
+    //     this.stepper.reset();
+    //     this.completedSteps = new Set<number>()
+    //   }
+    //   else if(this.completedSteps.has(step)) {
+    //     this.stepper.previous();
+    //     this.returnToPreviousRequested = false;
+    //     this.completedSteps.delete(step);
+    //   }
+    //   else {
+    //     this.completedSteps.add(step);
+    //     this.stepper.next();
+    //   }
+    // });
+
+  }
 }
+
 
