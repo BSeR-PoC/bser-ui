@@ -38,7 +38,7 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;" style="cursor: pointer" (click)="onRowClick(row)"></tr>
 
-  <ng-container *ngIf="isLoading">
+  <ng-container>
     <tr class="mat-row" *matNoDataRow>
       <td *ngIf="isLoading" class="mat-cell loading" [attr.colspan]="displayedColumns.length">
         Loading Referrals
