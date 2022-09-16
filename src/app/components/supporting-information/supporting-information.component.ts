@@ -7,6 +7,7 @@ import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest"
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {UtilsService} from "../../service/utils.service";
 
 const CURRENT_STEP = 3;
 
@@ -33,6 +34,7 @@ export class SupportingInformationComponent implements OnInit {
     public fhirConstants: FhirTerminologyConstants,
     private serviceRequestHandlerService: ServiceRequestHandlerService,
     private dialog: MatDialog,
+    private utilsService: UtilsService
   ) { }
 
   ngOnInit(): void {
@@ -205,6 +207,7 @@ export class SupportingInformationComponent implements OnInit {
       this.supportingInformationForm.pristine
       ||
       this.serviceRequestHandlerService.deepCompare(this.supportingInformationForm.value, this.initialFormValue)){
+      this.utilsService.resetFormErrors(this.supportingInformationForm);
       this.requestStepEvent.emit(CURRENT_STEP -1);
     }
     else {
@@ -222,6 +225,7 @@ export class SupportingInformationComponent implements OnInit {
           action => {
             if (action == 'secondaryAction') {
               this.supportingInformationForm.reset();
+              this.utilsService.resetFormErrors(this.supportingInformationForm);
               if(this.parameters && this.parameters?.parameter?.length > 0){
                 this.updateFormControlsWithParamsValues(this.parameters);
               }

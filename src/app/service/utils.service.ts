@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {FormGroup} from "@angular/forms";
 
 @Injectable({
   providedIn: 'root'
@@ -40,4 +41,10 @@ export class UtilsService {
     return isEmpty
   }
 
+  resetFormErrors(form: FormGroup) {
+    Object.keys(form.controls).forEach((key) => {
+      const control = form.controls[key];
+      control.setErrors(null);
+    });
+  }
 }

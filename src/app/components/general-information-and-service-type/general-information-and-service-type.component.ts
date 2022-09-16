@@ -10,6 +10,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
+import {UtilsService} from "../../service/utils.service";
 
 const CURRENT_STEP = 2;
 
@@ -40,7 +41,8 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
     private router: Router,
     private fhirClient: FhirClientService,
     private dialog: MatDialog,
-    private serviceRequestHandlerService: ServiceRequestHandlerService
+    private serviceRequestHandlerService: ServiceRequestHandlerService,
+    private utilsService: UtilsService
   ) {
   }
 
@@ -315,6 +317,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
       ||
       this.serviceRequestHandlerService.deepCompare(this.generalInfoServiceTypeForm.value, this.initialFormValue)){
       this.requestStepEvent.emit(requestedStep);
+      this.utilsService.resetFormErrors(this.generalInfoServiceTypeForm);
     }
     else {
       openConformationDialog(
@@ -332,6 +335,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
             if (action == 'secondaryAction') {
               //restore the form to it's initial state
               this.generalInfoServiceTypeForm.reset();
+              this.utilsService.resetFormErrors(this.generalInfoServiceTypeForm);
               if(this.parameters && this.parameters?.parameter?.length > 0){
                 this.updateFormControlsWithParamsValues(this.parameters);
               }
