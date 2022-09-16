@@ -7,6 +7,8 @@ import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest"
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {UtilsService} from "../../service/utils.service";
 
+const CURRENT_STEP = 1;
+
 @Component({
   selector: 'app-service-provider-list',
   templateUrl: './service-provider-list.component.html',
@@ -92,7 +94,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
               this.router.navigate(['/']);
             }
             else if (action == 'defaultAction') {
-              this.onSave(true);
+              this.onSave(CURRENT_STEP + 1);
             }
           }
         )
@@ -100,8 +102,8 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
 
   }
 
-  onSave(advanceRequested) {
-    this.savedSuccessEvent.emit({ advanceRequested: advanceRequested, data: this.selectedServiceProvider });
+  onSave(requestedStep?: number) {
+    this.savedSuccessEvent.emit({ requestedStep: requestedStep, data: this.selectedServiceProvider });
   }
 
   onSelectedServiceProvider(serviceProvider: any) {
@@ -160,10 +162,10 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
     if(
       !this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
     ) {
-      this.onSave(true);
+      this.onSave(CURRENT_STEP + 1);
     }
     else {
-      this.requestStep.emit(2)
+      this.requestStep.emit(CURRENT_STEP + 1)
     }
   }
 }

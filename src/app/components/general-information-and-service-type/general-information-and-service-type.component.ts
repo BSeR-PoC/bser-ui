@@ -11,6 +11,8 @@ import {ServiceRequestHandlerService} from "../../service/service-request-handle
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 
+const CURRENT_STEP = 2;
+
 @Component({
   selector: 'app-general-information-and-service-type',
   templateUrl: './general-information-and-service-type.component.html',
@@ -198,18 +200,18 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
               this.router.navigate(['/']);
             }
             else if (action == 'defaultAction') {
-              this.onSave(true);
+              this.onSave(CURRENT_STEP + 1);
             }
           }
         )
     }
   }
 
-  onSave(advanceRequested: boolean) {
+  onSave(requestedStep?: number) {
     this.generalInfoServiceTypeForm.markAllAsTouched();
     if(this.generalInfoServiceTypeForm.status === 'VALID') {
       const formData = this.getFormData(this.generalInfoServiceTypeForm);
-      this.savedSuccessEvent.emit({ advanceRequested: advanceRequested, data: formData });
+      this.savedSuccessEvent.emit({ requestedStep: requestedStep, data: formData });
     }
   }
 
@@ -328,10 +330,18 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         .subscribe(
           action => {
             if (action == 'secondaryAction') {
-              this.requestStepEvent.emit(1);
+              //restore the form to it's initial state
+              this.generalInfoServiceTypeForm.reset();
+              if(this.parameters && this.parameters?.parameter?.length > 0){
+                this.updateFormControlsWithParamsValues(this.parameters);
+              }
+              else if (this.usCorePatient){
+                this.updateFormControlsWithPatientValues(this.usCorePatient);
+              }
+              this.requestStepEvent.emit(CURRENT_STEP-1);
             }
             else if (action == 'defaultAction') {
-              this.onSave(false);
+              this.onSave(CURRENT_STEP-1);
             }
           }
         )
@@ -339,7 +349,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   }
 
   onProceed() {
-    const requestedStep = 3;
+    const requestedStep = CURRENT_STEP + 1;
     if(
        this.generalInfoServiceTypeForm.status === 'VALID'
       &&
@@ -350,7 +360,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
       this.requestStepEvent.emit(requestedStep);
     }
     else {
-      this.onSave(true);
+      this.onSave(requestedStep);
     }
   }
 }

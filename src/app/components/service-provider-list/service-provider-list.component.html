@@ -43,7 +43,7 @@
 <div class="row-button-wrapper">
   <button mat-raised-button (click)="onCancel()">Cancel</button>
   <span class="spacer"></span>
-  <button mat-raised-button (click)="onSave(false)" [disabled]="!selectedServiceProvider">Save</button>
+  <button mat-raised-button (click)="onSave()" [disabled]="!selectedServiceProvider">Save</button>
   <button mat-raised-button color="primary" [disabled]="!selectedServiceProvider" (click)="onProceed()"
           style="margin-left: 1em">
     Proceed

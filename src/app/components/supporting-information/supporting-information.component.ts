@@ -8,6 +8,8 @@ import {ServiceRequestHandlerService} from "../../service/service-request-handle
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 
+const CURRENT_STEP = 3;
+
 @Component({
   selector: 'app-supporting-information',
   templateUrl: './supporting-information.component.html',
@@ -104,19 +106,18 @@ export class SupportingInformationComponent implements OnInit {
               this.router.navigate(['/']);
             }
             else if (action == 'confirmed') {
-              this.onSave(true);
+              this.onSave(CURRENT_STEP + 1);
             }
             this.supportingInformationForm.reset();
           }
         )
     }
   }
-  onSave(advanceRequested: boolean) {
-    console.log(this.supportingInformationForm.value)
+  onSave(requestedStep?: number) {
     this.supportingInformationForm.markAllAsTouched();
     if(this.supportingInformationForm.status === 'VALID') {
       const formData = this.getFormData(this.supportingInformationForm);
-      this.savedSuccessEvent.emit({ advanceRequested: advanceRequested, data: formData });
+      this.savedSuccessEvent.emit({ requestedStep: requestedStep, data: formData });
     }
   }
 
@@ -200,12 +201,11 @@ export class SupportingInformationComponent implements OnInit {
   }
 
   onReturn() {
-    const requestedStep = 2;
     if(
       this.supportingInformationForm.pristine
       ||
       this.serviceRequestHandlerService.deepCompare(this.supportingInformationForm.value, this.initialFormValue)){
-      this.requestStepEvent.emit(requestedStep);
+      this.requestStepEvent.emit(CURRENT_STEP -1);
     }
     else {
       openConformationDialog(
@@ -221,10 +221,14 @@ export class SupportingInformationComponent implements OnInit {
         .subscribe(
           action => {
             if (action == 'secondaryAction') {
-              this.router.navigate(['/']);
+              this.supportingInformationForm.reset();
+              if(this.parameters && this.parameters?.parameter?.length > 0){
+                this.updateFormControlsWithParamsValues(this.parameters);
+              }
+              this.requestStepEvent.emit(CURRENT_STEP-1);
             }
             else if (action == 'defaultAction') {
-              this.onSave(false);
+              this.onSave(CURRENT_STEP-1);
             }
           }
         )
@@ -232,7 +236,6 @@ export class SupportingInformationComponent implements OnInit {
   }
 
   onProceed() {
-    const requestedStep = 4;
     if(
       this.supportingInformationForm.status === 'VALID'
       &&
@@ -240,10 +243,10 @@ export class SupportingInformationComponent implements OnInit {
         this.supportingInformationForm.pristine
         ||
         this.serviceRequestHandlerService.deepCompare(this.supportingInformationForm.value, this.initialFormValue))){
-      this.requestStepEvent.emit(requestedStep);
+      this.requestStepEvent.emit(CURRENT_STEP + 1);
     }
     else {
-      this.onSave(true);
+      this.onSave(CURRENT_STEP + 1);
     }
   }
 }

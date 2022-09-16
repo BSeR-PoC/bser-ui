@@ -12,7 +12,6 @@ import {MatDialog} from "@angular/material/dialog";
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {EnginePostHandlerService} from "../../service/engine-post-handler.service";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
-import {timeout} from "rxjs";
 
 @Component({
   selector: 'app-referral-manager',
@@ -77,56 +76,15 @@ export class ReferralManagerComponent implements OnInit {
         error: console.error
       }
     );
-
-
-    //TODO We should keep track of the completed steps and initialize them after we get the parameters resource.
   }
 
   isStepCompleted(stepNumber: number): boolean {
-    const  paramNames = this.currentParameters?.parameter?.map(param => param.name.toJSON().value);
-    if(stepNumber === 1){
-      return this.completedSteps.has(1);
-      // const result = !!this.selectedServiceProvider;
-      // if(result){
-      //   completedSteps.add(1);
-      // }
-      // return result;
-    }
-    else if (stepNumber === 2) {
-      //const requiredParamsStep2 = ['race', 'ethnicity', 'educationLevel', 'employmentStatus', 'serviceType'];
-      // if(!paramNames ||  paramNames.length < requiredParamsStep2.length){
-      //   return false;
-      // }
-      // const result = paramNames.filter(element => requiredParamsStep2.indexOf(element) != -1).length == requiredParamsStep2.length;
-      // if(result){
-      //   completedSteps.add(2);
-      // }
-      // return result;
-      return this.completedSteps.has(2);
-    }
-    else if (stepNumber === 3) {
-      // const requiredParamsStep3 = ['bodyHeight', 'bodyWeight', 'bmi', 'bloodPressure'];
-      // if(!paramNames ||  paramNames.length < requiredParamsStep3.length){
-      //   return false;
-      // }
-      // const result =  paramNames.filter(element => requiredParamsStep3.indexOf(element) != -1).length == requiredParamsStep3.length;
-      // if(result){
-      //   completedSteps.add(3);
-      // }
-      // return result;
-      return this.completedSteps.has(3);
-    }
-    else if (stepNumber === 4) {
-      return this.completedSteps.has(4);
-    }
-    else {
-      return false;
-    }
+   return this.completedSteps.has(stepNumber);
   }
 
   //Handles the first step of the form (Selecting a service provider).
   onSaveProvider(event: any) {
-    const advanceRequested = event.advanceRequested;
+    const requestedStep = event.requestedStep;
     const selectedServiceProvider = event.data;
 
     if(selectedServiceProvider.selected && selectedServiceProvider.serviceProviderId){
@@ -138,7 +96,7 @@ export class ReferralManagerComponent implements OnInit {
         selectedServiceProviderServices.indexOf(serviceRequestService) != -1
       ){
         this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-        this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested, 1);
+        this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
       }
       else {
         // the selected service provider does not offer the service in the existing service request.
@@ -160,7 +118,7 @@ export class ReferralManagerComponent implements OnInit {
                 this.currentSnapshot.orderDetail = null;
                 this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
                 this.currentParameters.parameter.length = 0;
-                this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested, 1);
+                this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
               }
             }
           )
@@ -180,7 +138,7 @@ export class ReferralManagerComponent implements OnInit {
   //Saving the data from Step #2: General Information and Service Type in the stepper
   onSaveGeneralInfoAndServiceType(event: any){
 
-    const advanceRequested = event.advanceRequested;
+    const requestedStep = event.requestedStep;
 
     if(event.data?.serviceType){
       let coding = new Coding({code: event.data?.serviceType?.code, display : event.data?.serviceType?.display});
@@ -217,13 +175,13 @@ export class ReferralManagerComponent implements OnInit {
     }
     //TODO not sure if we need this method since we already have a parameterHandlerService
     //this.serviceRequestHandler.updateParams(this.currentParameters);
-    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested, 2);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
 
   }
 
   //Saving the data from Step #3: Supporting Information
   onSaveSupportingInfo(event: any) {
-    const advanceRequested = event.advanceRequested;
+    const requestedStep = event.requestedStep;
 
     if(event.data?.height) {
       this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
@@ -278,9 +236,10 @@ export class ReferralManagerComponent implements OnInit {
         event.data?.ha1c?.unit, "http://unitsofmeasure.org", event.data?.ha1c?.unit);
     }
 
-    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, advanceRequested, 3);
+    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
     this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters).subscribe({
-      next: () => this.completedSteps.add(4)
+      next: () => this.completedSteps.add(4),
+      error: err => this.utilsService.showErrorNotification(err?.message?.toString())
     });
     //TODO need to add allergies and medication history
   }
@@ -322,15 +281,13 @@ export class ReferralManagerComponent implements OnInit {
     );
   }
 
-  saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, advanceRequested: boolean, step) {
+  saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, requestedStep: number) {
     this.isLoading = true;
     this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe({
       next: value => {
-        this.completedSteps.add(step);
         this.isLoading = false;
-        if (advanceRequested) {
-          //We need additional cycle for the stepper, or it will not advance
-          setTimeout(()=> this.stepper.next())
+        if(requestedStep){
+          this.onRequestStep(requestedStep);
         }
         this.utilsService.showSuccessNotification("The referral was saved successfully.");
       },
@@ -349,9 +306,11 @@ export class ReferralManagerComponent implements OnInit {
     // 1. Temporary set the returnToPreviousRequested to true
     // 2. Return a step (we need the timeout to keep the stepper enabled)
     // 3. Remove the last completed step. This way the user cannot advance the stepper directly from the header.
-    this.stepsEnabled = true;
-    let operation = '';
+
+    this.stepsEnabled = true; // reset this value ONLY AFTER the stepper operation (advance or return) is complete.
     if(step === 1){
+      // If the first step is requested, we need to clear the completed steps set, and reset the stepper.
+      // Resetting the stepper, automatically goes back to step1
       setTimeout(()=> {
         if (step === 1) {
           this.stepper.reset();
@@ -361,6 +320,7 @@ export class ReferralManagerComponent implements OnInit {
       });
     }
     else if (this.completedSteps.has(step)){
+      // If the requested step is already completed, the only logical operation is return to previous step.
       this.completedSteps.delete(step);
       setTimeout(() => {
         this.stepper.previous();
@@ -368,31 +328,13 @@ export class ReferralManagerComponent implements OnInit {
       });
     }
     else {
+      // If the requested has not been completed, the only logical operation is advance to the next step.
       this.completedSteps.add(step-1);
       setTimeout(() => {
         this.stepper.next();
         this.stepsEnabled = false;
       });
     }
-    // }
-    // }
-    // this.returnToPreviousRequested = true;
-    // setTimeout(()=> {
-    //   if(step === 1){
-    //     this.stepper.reset();
-    //     this.completedSteps = new Set<number>()
-    //   }
-    //   else if(this.completedSteps.has(step)) {
-    //     this.stepper.previous();
-    //     this.returnToPreviousRequested = false;
-    //     this.completedSteps.delete(step);
-    //   }
-    //   else {
-    //     this.completedSteps.add(step);
-    //     this.stepper.next();
-    //   }
-    // });
-
   }
 }
 
