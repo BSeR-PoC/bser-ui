@@ -328,7 +328,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         .subscribe(
           action => {
             if (action == 'secondaryAction') {
-              this.router.navigate(['/']);
+              this.requestStepEvent.emit(1);
             }
             else if (action == 'defaultAction') {
               this.onSave(false);

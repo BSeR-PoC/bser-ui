@@ -76,6 +76,7 @@ export class LandingComponent implements OnInit {
    this.fhirClient.getPatient().subscribe({
      //TODO there should be a better way to to this, we need to refactor the code and handle this in the service
      next: value => {
+       console.log(value);
        if(value?.id) {
          this.getServiceRequests();
        }
