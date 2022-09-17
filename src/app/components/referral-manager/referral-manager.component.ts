@@ -10,7 +10,6 @@ import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcep
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
-import {EnginePostHandlerService} from "../../service/engine-post-handler.service";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 
 @Component({
@@ -38,9 +37,7 @@ export class ReferralManagerComponent implements OnInit {
     private route: ActivatedRoute,
     private utilsService: UtilsService,
     private dialog: MatDialog,
-    private parameterHandlerService: ParameterHandlerService,
-    private enginePostHandlerService: EnginePostHandlerService
-) { }
+    private parameterHandlerService: ParameterHandlerService) { }
 
   ngOnInit(): void {
     this.completedSteps = new Set<number>();
@@ -237,10 +234,10 @@ export class ReferralManagerComponent implements OnInit {
     }
 
     this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
-    this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters).subscribe({
-      next: () => this.completedSteps.add(4),
-      error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-    });
+    // this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters).subscribe({
+    //   next: () => this.completedSteps.add(4),
+    //   error: err => this.utilsService.showErrorNotification(err?.message?.toString())
+    // });
     //TODO need to add allergies and medication history
   }
 

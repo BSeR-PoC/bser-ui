@@ -39,6 +39,9 @@ export class EnginePostHandlerService {
     let serviceRequestCopy: ServiceRequest = Object.assign(new ServiceRequest(), serviceRequest);
     serviceRequestCopy.supportingInfo.length = 0; // Remove Supporting Info
 
+    serviceRequestCopy.meta = null;
+    parametersCopy.meta = null;
+
     // Package The Resources
     parametersCopy = this.parameterHandler.setResourceParameter(parametersCopy, "referral", serviceRequestCopy.toJSON());
     parametersCopy = this.parameterHandler.setResourceParameter(parametersCopy, "patient", this.patient);
