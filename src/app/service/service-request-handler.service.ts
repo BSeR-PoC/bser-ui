@@ -31,9 +31,19 @@ export class ServiceRequestHandlerService {
 
   constructor(private http: HttpClient, private fhirClient: FhirClientService,
               private transBundleHandler: TransactionBundleHandlerService) {
-    this.fhirClient.getPractitioner().subscribe({next: (data)=>this.practitioner = data});
-    this.fhirClient.getPatient().subscribe({next: (data)=>this.patient = data});
-    this.fhirClient.serverUrl$.subscribe({next: (data)=>this.serverUrl = data});
+    // this.fhirClient.getPractitioner().subscribe({next: (data)=>this.practitioner = data});
+    // this.fhirClient.getPatient().subscribe({next: (data)=>this.patient = data});
+    // this.fhirClient.serverUrl$.subscribe({next: (data)=>this.serverUrl = data});
+  }
+
+  initClient(): Observable<any>{
+    const practitioner$ = this.fhirClient.getPractitioner().pipe(map(result => this.practitioner = result));
+    const patient$ = this.fhirClient.getPatient().pipe(map(result => this.patient = result));
+    const serverUrl$ = this.fhirClient.serverUrl$.pipe(map(result => this.serverUrl = result));
+
+    return practitioner$.pipe(
+      switchMap(result => serverUrl$),
+      switchMap( result => patient$))
   }
 
   // STEP 0
@@ -64,53 +74,6 @@ export class ServiceRequestHandlerService {
     this.currentSnapshot.next(serviceRequest);
     this.currentParameters.next(parameters);
   }
-
-  // createNewServiceRequest() {
-  //   console.log("In Create New")
-  //   this.fhirClient.getPractitioner().subscribe({next: (data)=>console.log(data)});
-  //   this.fhirClient.getPatient().subscribe({next: (data)=>console.log(data)});
-  //   this.fhirClient.serverUrl$.subscribe({next: (data)=>console.log(data)});
-  //   const practitioner = this.fhirClient.getPractitioner();
-  //   const patient = this.fhirClient.getPatient();
-  //   const serverUrl = this.fhirClient.serverUrl$;
-  //
-  //   forkJoin([practitioner, patient, serverUrl]).subscribe(
-  //     results => {
-  //       console.log("Fork Joining")
-  //       const practitioner = results[0];
-  //       const patient = results[1];
-  //       const smartServerUrl = serverUrl[2];
-  //
-  //       //TODO: delete the codeable concept code, it should come from the UI when the user selects the Recipient
-  //       // let coding = new Coding({code: "diabetes-prevention", display : "Diabetes Prevention"});
-  //       // let codeableConcept = new CodeableConcept({coding: [coding], text: "Diabetes Prevention"});
-  //       // console.log(codeableConcept);
-  //
-  //       this.practitioner = Object.assign(new Practitioner(), practitioner);
-  //       let parameters = new Parameters( {id: uuidv4()});
-  //       let serviceRequest = new ServiceRequest({
-  //         code: this.createServiceRequestCoding(),
-  //         requester: Reference.fromResource(practitioner, smartServerUrl),
-  //        // requester: Reference.fromResource(practitioner),
-  //         status: "draft",
-  //         intent: "order",
-  //         authoredOn: new Date().toISOString(),
-  //         //supportingInfo: [Reference.fromResource(parameters, environment.bserProviderServer)],
-  //         supportingInfo: [Reference.fromResource(parameters)],
-  //         subject: Reference.fromResource(patient, smartServerUrl),
-  //   //      orderDetail: [new CodeableConcept(codeableConcept)]
-  //         //subject: Reference.fromResource(patient),
-  //       });
-  //       this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
-  //       this.lastParameters = new Parameters(this.deepCopy(parameters));
-  //       console.log(serviceRequest)
-  //       console.log(this.lastSnapshot)
-  //       this.currentSnapshot.next(serviceRequest);
-  //       this.currentParameters.next(parameters);
-  //       console.log("SERVICE REQUEST CREATED");
-  //     }
-  //   )
-  // }
 
   private createServiceRequestCoding(): CodeableConcept {
     let coding = new Coding({system: "http://snomed.info/sct", code: "3457005", display: "Patient referral (procedure)"})
@@ -143,18 +106,6 @@ export class ServiceRequestHandlerService {
         switchMap((data: any) => this.getServiceRequestAndParamsHelper(data)))
     }
   }
-
-  // saveServiceRequest(currentSnapshot: any, currentParameters: any) {
-  //   currentSnapshot = new ServiceRequest(currentSnapshot);
-  //   currentParameters = new Parameters(currentParameters);
-  //   // TODO: Add POST Parameters alongside ServiceRequest
-  //   if (!("id" in currentSnapshot)) {
-  //     return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters])
-  //   }
-  //   else {
-  //     return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters])
-  //   }
-  // }
 
   private getServiceRequestAndParamsHelper(data) : Observable<any> {
 
@@ -267,10 +218,6 @@ export class ServiceRequestHandlerService {
     return this.http.delete(connectionUrl + "/" + serviceRequestId)
   }
 
-  updateParams(params) {
-    this.currentParameters.next(params);
-  }
-
   getParametersById(paramsId: string) {
     const requestUrl = environment.bserProviderServer + "Parameters/" + paramsId;
 
@@ -282,16 +229,4 @@ export class ServiceRequestHandlerService {
     ))
   }
 
-  hasSnapshotChanged(serviceRequest: ServiceRequest): boolean {
-    return !this.deepCompare(serviceRequest, this.lastSnapshot);
-  }
-
-  hasParametersChanged(parameters: Parameters): boolean {
-    return !this.deepCompare(parameters, this.lastParameters);
-  }
-
-  restoreState(){
-    this.currentParameters = this.deepCopy(this.lastParameters);
-    this.currentSnapshot = this.deepCopy(this.lastParameters);
-  }
 }
