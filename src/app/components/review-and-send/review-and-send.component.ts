@@ -121,6 +121,7 @@ export class ReviewAndSendComponent implements OnInit {
       next: result => {
         this.utilsService.showSuccessNotification("Referral Send Successfully.")
         console.log(result)
+        this.router.navigate(['/']);
       },
       error: err => {
         console.error(err);

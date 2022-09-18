@@ -97,6 +97,17 @@ export class ServiceRequestHandlerService {
   }
 
   saveServiceRequest(currentSnapshot: ServiceRequest, currentParameters: Parameters) : Observable<any> {
+    console.log(currentSnapshot)
+    if (currentSnapshot.meta) {
+      console.log("Removing Service Request Version")
+      currentSnapshot.meta = null;
+    }
+    if (currentParameters.meta) {
+      console.log("Removing Parameters Version")
+      currentParameters.meta = null;
+    }
+    (console.log(currentSnapshot))
+
     if (!(currentSnapshot.id)) {
       return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters]).pipe(
         switchMap((data: any) => this.getServiceRequestAndParamsHelper(data)))
