@@ -45,8 +45,6 @@ export class ReferralManagerComponent implements OnInit {
       next: params => {
         if(params && params['id']){
           this.getServiceRequestById(params['id']);
-          // TODO: Make HTTP Call for ServiceRequest.supportingInfo[0].reference
-          // GET cqf-ruler/fhir/Parameters/09d02cfa-48ef-4a8d-9875-a2870a54f728
         }
         else {
           this.createNewServiceRequest();
@@ -59,7 +57,6 @@ export class ReferralManagerComponent implements OnInit {
       {
         next: (data: Parameters) => {
           this.currentParameters = data || new Parameters();
-          //console.log("DATA:", data)
         },
         error: err => this.utilsService.showErrorNotification(err?.message?.toString())
       }
@@ -70,7 +67,7 @@ export class ReferralManagerComponent implements OnInit {
         next: (data: ServiceRequest) => {
           this.currentSnapshot = data
         },
-        error: console.error
+        error: err => this.utilsService.showErrorNotification(err?.message?.toString())
       }
     );
   }
@@ -79,7 +76,7 @@ export class ReferralManagerComponent implements OnInit {
    return this.completedSteps.has(stepNumber);
   }
 
-  //Handles the first step of the form (Selecting a service provider).
+  // Handles the first step of the form (Selecting a service provider).
   onSaveProvider(event: any) {
     const requestedStep = event.requestedStep;
     const selectedServiceProvider = event.data;
@@ -170,13 +167,10 @@ export class ReferralManagerComponent implements OnInit {
       this.currentParameters = this.parameterHandlerService
         .setCodeParameter(this.currentParameters, 'race', raceStr);
     }
-    //TODO not sure if we need this method since we already have a parameterHandlerService
-    //this.serviceRequestHandler.updateParams(this.currentParameters);
     this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
-
   }
 
-  //Saving the data from Step #3: Supporting Information
+  // Saving the data from Step #3: Supporting Information
   onSaveSupportingInfo(event: any) {
     const requestedStep = event.requestedStep;
 
@@ -185,19 +179,16 @@ export class ReferralManagerComponent implements OnInit {
         this.currentParameters, 'bodyHeight', event.data?.height?.value,
         event.data?.height?.unit?.display, "http://unitsofmeasure.org", event.data?.height?.unit?.code);
     }
-
     if(event.data?.weight) {
       this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
         this.currentParameters, 'bodyWeight', event.data?.weight?.value,
         event.data?.weight?.unit?.display, "http://unitsofmeasure.org", event.data?.weight?.unit?.code);
     }
-
     if(event.data?.bmi) {
       this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
         this.currentParameters, 'bmi', event.data?.bmi?.value,
         event.data?.bmi?.unit, "http://unitsofmeasure.org", event.data?.bmi?.unit);
     }
-
     if(event.data?.bp){
       const partArray = [
         {
@@ -234,11 +225,6 @@ export class ReferralManagerComponent implements OnInit {
     }
 
     this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
-    // this.enginePostHandlerService.postToEngine(this.currentSnapshot, this.currentParameters).subscribe({
-    //   next: () => this.completedSteps.add(4),
-    //   error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-    // });
-    //TODO need to add allergies and medication history
   }
 
   // TODO refactor nested subscriptions
@@ -300,11 +286,10 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   onRequestStep(step: number){
-    // 1. Temporary set the returnToPreviousRequested to true
-    // 2. Return a step (we need the timeout to keep the stepper enabled)
-    // 3. Remove the last completed step. This way the user cannot advance the stepper directly from the header.
+    // Temporary set the returnToPreviousRequested to true. This will enable the stepper to switch between steps.
+    // Reset this value ONLY AFTER the stepper operation (advance or return) is complete.
+    this.stepsEnabled = true;
 
-    this.stepsEnabled = true; // reset this value ONLY AFTER the stepper operation (advance or return) is complete.
     if(step === 1){
       // If the first step is requested, we need to clear the completed steps set, and reset the stepper.
       // Resetting the stepper, automatically goes back to step1
