@@ -87,11 +87,9 @@ export class ServiceRequestHandlerService {
   checkIfSnapshotStateChanged(currentSnapshot: ServiceRequest, currentParameters: Parameters): boolean {
     // Compare currentSnapshot to lastSnapshot.
     if (this.deepCompare(currentSnapshot, this.lastSnapshot) && this.deepCompare(currentParameters, this.lastParameters)) {
-      console.log("Service Request Not Changed");
       return false;
     }
     else {
-      console.log("Service Request Changed");
       return true;
     }
   }
@@ -106,7 +104,6 @@ export class ServiceRequestHandlerService {
       console.log("Removing Parameters Version")
       currentParameters.meta = null;
     }
-    (console.log(currentSnapshot))
 
     if (!(currentSnapshot.id)) {
       return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters]).pipe(
@@ -192,7 +189,6 @@ export class ServiceRequestHandlerService {
   deleteTestData() {
     let connectionUrl = environment.bserProviderServer + "ServiceRequest";
     this.http.get(connectionUrl).toPromise().then((data: any) => {
-      console.log(data);
       data.entry.forEach(resource => {
         let id = resource.resource.id;
         this.http.delete(connectionUrl + "/" + id).toPromise().then(result => console.log(result));
@@ -240,4 +236,7 @@ export class ServiceRequestHandlerService {
     ))
   }
 
+  getReferral(bundleReference: any): Observable<any>{
+    return this.http.get(bundleReference);
+  }
 }

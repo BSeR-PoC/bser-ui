@@ -146,10 +146,18 @@
   </div>
 </div>
 
+
 <div class="row-button-wrapper">
   <button mat-raised-button (click)="onReturn()">Return to Editing</button>
   <button mat-raised-button (click)="onCancel()" style="margin-left: 1em">Cancel</button>
   <span class="spacer"></span>
-  <button mat-raised-button (click)="onSendReferral()">Send Referral</button>
+  <button mat-raised-button (click)="onSendReferral(true)" style="margin-right: 1rem">
+    <mat-icon>download</mat-icon>
+    Send and Download Referral
+  </button>
+  <button mat-raised-button color="primary" (click)="onSendReferral(false)" cdkFocusInitial>
+    <mat-icon>send</mat-icon>
+    Send Referral
+  </button>
 </div>
 
