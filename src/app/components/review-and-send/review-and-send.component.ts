@@ -116,12 +116,17 @@ export class ReviewAndSendComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  onSendReferral() {
+  onSendReferral(downloadRequested: boolean) {
     this.enginePostHandler.postToEngine(this.currentSnapshot, this.currentParameters).subscribe({
       next: result => {
         this.utilsService.showSuccessNotification("Referral Send Successfully.")
-        console.log(result)
-        this.router.navigate(['/']);
+        if(downloadRequested){
+          const bundleReference = result['parameter']?.find(parameter => parameter.name === 'referral_request').valueReference?.reference;
+          this.getReferralBundle(bundleReference);
+        }
+        else {
+          this.router.navigate(['/']);
+        }
       },
       error: err => {
         console.error(err);
@@ -134,4 +139,25 @@ export class ReviewAndSendComponent implements OnInit {
     const requestedStep = 1;
     this.returnToEditEvent.emit(requestedStep);
   }
+
+  private getReferralBundle(bundleReference: any) {
+    this.serviceRequestHandlerService.getReferral(bundleReference).subscribe({
+      next: value => {
+        const sJson = JSON.stringify(value);
+        const element = document.createElement('a');
+        element.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(sJson));
+        element.setAttribute('download', "primer-server-task.json");
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click(); // simulate click
+        document.body.removeChild(element);
+        this.router.navigate(['/']);
+      },
+      error: err => {
+        console.error(err);
+        this.utilsService.showErrorNotification();
+      }
+    })
+  }
+
 }

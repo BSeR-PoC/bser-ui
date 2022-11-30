@@ -257,7 +257,6 @@ export class ReferralManagerComponent implements OnInit {
       {
         next: (data: ServiceRequest) => {
           this.currentSnapshot = data;
-          console.log("DATA:", data)
         },
         error: err => this.utilsService.showErrorNotification(err?.message?.toString())
       }

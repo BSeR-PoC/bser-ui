@@ -84,8 +84,4 @@ export class LandingComponent implements OnInit {
     this.router.navigate(['referral-manager', element.serviceRequestId])
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-    console.log(this.fhirClient);
-  }
 }
