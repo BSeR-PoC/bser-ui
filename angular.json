@@ -78,10 +78,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "bser-ui:build:production"
+              "buildTarget": "bser-ui:build:production"
             },
             "development": {
-              "browserTarget": "bser-ui:build:development"
+              "buildTarget": "bser-ui:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -89,7 +89,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "bser-ui:build"
+            "buildTarget": "bser-ui:build"
           }
         },
         "test": {
@@ -113,6 +113,5 @@
         }
       }
     }
-  },
-  "defaultProject": "bser-ui"
+  }
 }

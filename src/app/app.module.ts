@@ -7,17 +7,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
-import {MatInputModule} from "@angular/material/input";
-import {MatButtonModule} from "@angular/material/button";
-import {MatTableModule} from "@angular/material/table";
-import {MatPaginatorModule} from "@angular/material/paginator";
-import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatSortModule} from "@angular/material/sort";
 import {HttpClientModule} from "@angular/common/http";
-import {MatRadioModule} from "@angular/material/radio";
-import {MatCardModule} from "@angular/material/card";
-import {MatTooltipModule} from "@angular/material/tooltip";
-import {MatListModule} from "@angular/material/list";
 import {PatientDemographicsComponent} from './components/patient-demographics/patient-demographics.component';
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatStepperModule} from "@angular/material/stepper";
@@ -30,24 +21,33 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {
   SupportingInformationComponent
 } from './components/supporting-information/supporting-information.component';
-import {MatSelectModule} from "@angular/material/select";
 import {FhirTerminologyConstants} from "./providers/fhir-terminology-constants";
-import {MatCheckboxModule} from "@angular/material/checkbox";
 import { ConformationDialogComponent } from './components/conformation-dialog/conformation-dialog.component';
-import {MatDialogModule} from "@angular/material/dialog";
 import {ReferralManagerComponent} from "./components/referral-manager/referral-manager.component";
-import {MatTabsModule} from "@angular/material/tabs";
 import { RegistrationComponent } from './components/registration/registration.component';
 import { DaysOfWeekPipe } from './pipes/days-of-week.pipe';
 import { MilitaryToStandardTimePipe } from './pipes/military-to-standard-time.pipe';
 import { ServiceTypePipe } from './pipes/service-type.pipe';
 import { LandingComponent } from './components/landing/landing.component';
 import { ServiceRequestListComponent } from './components/service-request-list/service-request-list.component';
-import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { TelecomComponent } from './components/fhir-widgets/telecom/telecom.component';
-import {MatMenuModule} from '@angular/material/menu';
 import {MatDividerModule} from '@angular/material/divider';
 import { ReviewAndSendComponent } from './components/review-and-send/review-and-send.component';
+import {MatRadioModule} from "@angular/material/radio";
+import {MatCardModule} from "@angular/material/card";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatListModule} from "@angular/material/list";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatMenuModule} from "@angular/material/menu";
+import {MatInputModule} from "@angular/material/input";
+import {MatButtonModule} from "@angular/material/button";
+import {MatTableModule} from "@angular/material/table";
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatSelectModule} from "@angular/material/select";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatTabsModule} from "@angular/material/tabs";
 
 @NgModule({
   declarations: [

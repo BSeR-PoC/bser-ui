@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {ServiceProviderService} from "../../service/service-provider.service";
 import {Router} from "@angular/router";
-import {MatDialog} from "@angular/material/dialog";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {UtilsService} from "../../service/utils.service";
+import {MatDialog} from "@angular/material/dialog";
 
 const CURRENT_STEP = 1;
 

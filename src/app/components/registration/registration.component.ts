@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {MatTableDataSource} from "@angular/material/table";
 import {ServiceProviderRegistrationService} from "../../service/service-provider-registration.service";
-import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {Subscription} from "rxjs";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'app-registration',
@@ -13,7 +13,7 @@ import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constan
 export class RegistrationComponent implements OnInit {
   public dataSource = new MatTableDataSource<any>([]);
   displayedColumns: string[] = ['organizationName', 'practitionerName', 'deleteButton'];
-  serviceProviderRegistrationForm: FormGroup;
+  serviceProviderRegistrationForm: UntypedFormGroup;
   dataSubscription: Subscription;
 
   constructor(public fhirConstants: FhirTerminologyConstants, private providerRegistrationService: ServiceProviderRegistrationService) { }
@@ -28,56 +28,56 @@ export class RegistrationComponent implements OnInit {
     // TODO: Add validators for practitioner. If any field is given, all are required.
     // TODO: Add service delivery location.
     // TODO: Add Healthcare Services Provided.
-    this.serviceProviderRegistrationForm = new FormGroup({
-      practitioner: new FormGroup({
-        givenName: new FormControl(),
-        familyName: new FormControl(),
-        phone: new FormControl(),
-        npi: new FormControl(null,
+    this.serviceProviderRegistrationForm = new UntypedFormGroup({
+      practitioner: new UntypedFormGroup({
+        givenName: new UntypedFormControl(),
+        familyName: new UntypedFormControl(),
+        phone: new UntypedFormControl(),
+        npi: new UntypedFormControl(null,
           [Validators.minLength(10), Validators.maxLength(10)])
       }),
-      organization: new FormGroup({
-        name: new FormControl(null, [Validators.required]),
-        phone: new FormControl(null, [Validators.required])
+      organization: new UntypedFormGroup({
+        name: new UntypedFormControl(null, [Validators.required]),
+        phone: new UntypedFormControl(null, [Validators.required])
       }),
-      location: new FormGroup( {
-        name: new FormControl(),
-        phone: new FormControl(),
-        street1: new FormControl(),
-        street2: new FormControl(),
-        city: new FormControl(),
-        state: new FormControl(),
-        zip: new FormControl()
+      location: new UntypedFormGroup( {
+        name: new UntypedFormControl(),
+        phone: new UntypedFormControl(),
+        street1: new UntypedFormControl(),
+        street2: new UntypedFormControl(),
+        city: new UntypedFormControl(),
+        state: new UntypedFormControl(),
+        zip: new UntypedFormControl()
       }),
-      services: new FormGroup({
+      services: new UntypedFormGroup({
         serviceType: this.createServiceTypeControls(this.fhirConstants.SERVICE_TYPES),
         days: this.createDayOfWeekControls(this.fhirConstants.DAYS_OF_WEEK),
         languages: this.createLanguageControls(this.fhirConstants.LANGUAGE),
-        startTime: new FormControl(null, [Validators.required]),
-        endTime: new FormControl(null, [Validators.required])
+        startTime: new UntypedFormControl(null, [Validators.required]),
+        endTime: new UntypedFormControl(null, [Validators.required])
       }),
-      endpoint: new FormGroup({
-        address: new FormControl(null, [Validators.required]),
+      endpoint: new UntypedFormGroup({
+        address: new UntypedFormControl(null, [Validators.required]),
       })});
   }
 
   private createDayOfWeekControls(daysOfWeek: any[]) {
     const arr = daysOfWeek.map(day => {
-      return new FormControl();
+      return new UntypedFormControl();
     });
-    return new FormArray(arr);
+    return new UntypedFormArray(arr);
   }
   private createServiceTypeControls(serviceTypes: any[]) {
     const arr = serviceTypes.map(serviceType => {
-      return new FormControl();
+      return new UntypedFormControl();
     });
-    return new FormArray(arr);
+    return new UntypedFormArray(arr);
   }
   private createLanguageControls(languages: any[]) {
     const arr = languages.map(language => {
-      return new FormControl();
+      return new UntypedFormControl();
     });
-    return new FormArray(arr);
+    return new UntypedFormArray(arr);
   }
 
   // TODO: Review this, need a better way to handle refreshing from server since the return of a transaction bundle is just success/error.
