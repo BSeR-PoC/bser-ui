@@ -6,11 +6,11 @@ import {FhirClientService} from "../../service/fhir-client.service";
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 import {USCorePatient} from "../../domain/USCorePatient";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
-import {MatLegacyDialog as MatDialog} from "@angular/material/legacy-dialog";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {UtilsService} from "../../service/utils.service";
+import {MatDialog} from "@angular/material/dialog";
 
 const CURRENT_STEP = 2;
 

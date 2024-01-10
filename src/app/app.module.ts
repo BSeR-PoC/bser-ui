@@ -7,17 +7,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
-import {MatLegacyInputModule as MatInputModule} from "@angular/material/legacy-input";
-import {MatLegacyButtonModule as MatButtonModule} from "@angular/material/legacy-button";
-import {MatLegacyTableModule as MatTableModule} from "@angular/material/legacy-table";
-import {MatLegacyPaginatorModule as MatPaginatorModule} from "@angular/material/legacy-paginator";
-import {MatLegacyProgressSpinnerModule as MatProgressSpinnerModule} from "@angular/material/legacy-progress-spinner";
 import {MatSortModule} from "@angular/material/sort";
 import {HttpClientModule} from "@angular/common/http";
-import {MatLegacyRadioModule as MatRadioModule} from "@angular/material/legacy-radio";
-import {MatLegacyCardModule as MatCardModule} from "@angular/material/legacy-card";
-import {MatLegacyTooltipModule as MatTooltipModule} from "@angular/material/legacy-tooltip";
-import {MatLegacyListModule as MatListModule} from "@angular/material/legacy-list";
 import {PatientDemographicsComponent} from './components/patient-demographics/patient-demographics.component';
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatStepperModule} from "@angular/material/stepper";
@@ -30,24 +21,33 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {
   SupportingInformationComponent
 } from './components/supporting-information/supporting-information.component';
-import {MatLegacySelectModule as MatSelectModule} from "@angular/material/legacy-select";
 import {FhirTerminologyConstants} from "./providers/fhir-terminology-constants";
-import {MatLegacyCheckboxModule as MatCheckboxModule} from "@angular/material/legacy-checkbox";
 import { ConformationDialogComponent } from './components/conformation-dialog/conformation-dialog.component';
-import {MatLegacyDialogModule as MatDialogModule} from "@angular/material/legacy-dialog";
 import {ReferralManagerComponent} from "./components/referral-manager/referral-manager.component";
-import {MatLegacyTabsModule as MatTabsModule} from "@angular/material/legacy-tabs";
 import { RegistrationComponent } from './components/registration/registration.component';
 import { DaysOfWeekPipe } from './pipes/days-of-week.pipe';
 import { MilitaryToStandardTimePipe } from './pipes/military-to-standard-time.pipe';
 import { ServiceTypePipe } from './pipes/service-type.pipe';
 import { LandingComponent } from './components/landing/landing.component';
 import { ServiceRequestListComponent } from './components/service-request-list/service-request-list.component';
-import {MatLegacySnackBarModule as MatSnackBarModule} from "@angular/material/legacy-snack-bar";
 import { TelecomComponent } from './components/fhir-widgets/telecom/telecom.component';
-import {MatLegacyMenuModule as MatMenuModule} from '@angular/material/legacy-menu';
 import {MatDividerModule} from '@angular/material/divider';
 import { ReviewAndSendComponent } from './components/review-and-send/review-and-send.component';
+import {MatRadioModule} from "@angular/material/radio";
+import {MatCardModule} from "@angular/material/card";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatListModule} from "@angular/material/list";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatMenuModule} from "@angular/material/menu";
+import {MatInputModule} from "@angular/material/input";
+import {MatButtonModule} from "@angular/material/button";
+import {MatTableModule} from "@angular/material/table";
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatSelectModule} from "@angular/material/select";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatTabsModule} from "@angular/material/tabs";
 
 @NgModule({
   declarations: [
