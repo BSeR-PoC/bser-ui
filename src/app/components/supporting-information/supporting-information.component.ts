@@ -6,7 +6,7 @@ import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
+import {MatLegacyDialog as MatDialog} from "@angular/material/legacy-dialog";
 import {UtilsService} from "../../service/utils.service";
 
 const CURRENT_STEP = 3;

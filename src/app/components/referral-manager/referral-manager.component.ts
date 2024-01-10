@@ -8,7 +8,7 @@ import {UtilsService} from "../../service/utils.service";
 import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
 import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
+import {MatLegacyDialog as MatDialog} from "@angular/material/legacy-dialog";
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 
