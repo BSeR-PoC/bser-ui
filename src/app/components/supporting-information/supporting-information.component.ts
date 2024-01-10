@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
@@ -6,8 +6,8 @@ import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
-import {MatLegacyDialog as MatDialog} from "@angular/material/legacy-dialog";
 import {UtilsService} from "../../service/utils.service";
+import {MatDialog} from "@angular/material/dialog";
 
 const CURRENT_STEP = 3;
 

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {MatLegacyTableDataSource as MatTableDataSource} from "@angular/material/legacy-table";
 import {ServiceProviderRegistrationService} from "../../service/service-provider-registration.service";
 import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {Subscription} from "rxjs";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'app-registration',
