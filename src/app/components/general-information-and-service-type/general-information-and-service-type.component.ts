@@ -1,16 +1,16 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Router} from "@angular/router";
 import {FhirClientService} from "../../service/fhir-client.service";
 import {Patient} from "@fhir-typescript/r4-core/dist/fhir/Patient";
 import {USCorePatient} from "../../domain/USCorePatient";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {UtilsService} from "../../service/utils.service";
+import {MatDialog} from "@angular/material/dialog";
 
 const CURRENT_STEP = 2;
 
@@ -30,7 +30,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() requestStepEvent = new EventEmitter();
 
-  generalInfoServiceTypeForm: FormGroup;
+  generalInfoServiceTypeForm: UntypedFormGroup;
   usCorePatient: USCorePatient;
   serviceRequest: ServiceRequest;
   parameters: Parameters;
@@ -47,13 +47,13 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.generalInfoServiceTypeForm = new FormGroup({
-      serviceType: new FormControl(null, [Validators.required]),
+    this.generalInfoServiceTypeForm = new UntypedFormGroup({
+      serviceType: new UntypedFormControl(null, [Validators.required]),
       raceCategoriesListCheckboxes: this.createRaceCategoryControls(this.fhirConstants.RACE_CATEGORIES.slice(0, 5)),
-      raceCategoriesListRadioBtns: new FormControl(),
-      educationLevel: new FormControl(null, [Validators.required]),
-      employmentStatus: new FormControl(null, [Validators.required]),
-      ethnicity: new FormControl(null, [Validators.required])
+      raceCategoriesListRadioBtns: new UntypedFormControl(),
+      educationLevel: new UntypedFormControl(null, [Validators.required]),
+      employmentStatus: new UntypedFormControl(null, [Validators.required]),
+      ethnicity: new UntypedFormControl(null, [Validators.required])
     });
 
     this.fhirClient.getPatient().subscribe({
@@ -127,9 +127,9 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
 
   private createRaceCategoryControls(raceCategories) {
     const arr = raceCategories.map(category => {
-      return new FormControl(category.selected || false);
+      return new UntypedFormControl(category.selected || false);
     });
-    return new FormArray(arr);
+    return new UntypedFormArray(arr);
   }
 
   /**
@@ -245,7 +245,7 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
     return [form.controls['raceCategoriesListRadioBtns'].value];
   }
 
-  private getFormData(generalInfoServiceTypeForm: FormGroup) {
+  private getFormData(generalInfoServiceTypeForm: UntypedFormGroup) {
 
     const serviceType = generalInfoServiceTypeForm.controls['serviceType'].value;
     const educationLevel = generalInfoServiceTypeForm.controls['educationLevel'].value;

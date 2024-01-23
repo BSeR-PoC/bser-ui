@@ -1,11 +1,11 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {MatTableDataSource} from "@angular/material/table";
 import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Router} from "@angular/router";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
 import {UtilsService} from "../../service/utils.service";
+import {MatTableDataSource} from "@angular/material/table";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-service-request-list',

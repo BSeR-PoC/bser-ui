@@ -1,13 +1,13 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
 import {UtilsService} from "../../service/utils.service";
+import {MatDialog} from "@angular/material/dialog";
 
 const CURRENT_STEP = 3;
 
@@ -23,7 +23,7 @@ export class SupportingInformationComponent implements OnInit {
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() requestStepEvent = new EventEmitter();
 
-  supportingInformationForm: FormGroup;
+  supportingInformationForm: UntypedFormGroup;
   parameters: Parameters;
 
   private serviceRequest: ServiceRequest;
@@ -64,21 +64,21 @@ export class SupportingInformationComponent implements OnInit {
 
   private initForm(serviceRequest: ServiceRequest) {
     // TODO the content of this form will change based on the service request. We need to be able to track the changes somehow.
-    const heightValue = new FormControl(null, [Validators.required]);
-    const heightUnit = new FormControl(this.fhirConstants.HEIGHT_UNITS[1], [Validators.required]);
-    const weightValue =  new  FormControl(null, [Validators.required]);
-    const weightUnit =  new  FormControl(this.fhirConstants.WEIGHT_UNITS[1], [Validators.required]);
-    const bmi =  new  FormControl(null, [Validators.required]);
-    const bpDiastolic =  new  FormControl(null, [Validators.required]);
-    const bpSystolic =  new  FormControl(null, [Validators.required]);
-    const ha1c =  new  FormControl(null, [Validators.required]);
+    const heightValue = new UntypedFormControl(null, [Validators.required]);
+    const heightUnit = new UntypedFormControl(this.fhirConstants.HEIGHT_UNITS[1], [Validators.required]);
+    const weightValue =  new  UntypedFormControl(null, [Validators.required]);
+    const weightUnit =  new  UntypedFormControl(this.fhirConstants.WEIGHT_UNITS[1], [Validators.required]);
+    const bmi =  new  UntypedFormControl(null, [Validators.required]);
+    const bpDiastolic =  new  UntypedFormControl(null, [Validators.required]);
+    const bpSystolic =  new  UntypedFormControl(null, [Validators.required]);
+    const ha1c =  new  UntypedFormControl(null, [Validators.required]);
 
     // const smokingStatus =  new  FormControl(null, [Validators.required]);
     // const allergies =  new  FormControl(null);
     // const medicalHistory =  new  FormControl(null);
 
     //TODO init a form based on the service request, additionally as the service3 request is modified, we need to change the form fields dynamically.
-    this.supportingInformationForm = new FormGroup({
+    this.supportingInformationForm = new UntypedFormGroup({
       heightValue, heightUnit, weightValue, weightUnit, bmi, bpDiastolic, bpSystolic, ha1c
     });
   }
@@ -123,7 +123,7 @@ export class SupportingInformationComponent implements OnInit {
     }
   }
 
-  private getFormData(form: FormGroup) {
+  private getFormData(form: UntypedFormGroup) {
     //TODO the data we gather will depend on the selected service.
     const heightValue = form.controls['heightValue'].value;
     const heightUnit = form.controls['heightUnit'].value;
