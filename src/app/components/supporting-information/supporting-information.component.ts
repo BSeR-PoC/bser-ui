@@ -29,6 +29,8 @@ export class SupportingInformationComponent implements OnInit {
   private serviceRequest: ServiceRequest;
   private initialFormValue: any;
 
+  serviceType: string;
+
   constructor(
     private router: Router,
     public fhirConstants: FhirTerminologyConstants,
@@ -51,6 +53,7 @@ export class SupportingInformationComponent implements OnInit {
             next: value => {
               this.parameters = value;
               if (this.parameters) {
+                this.serviceType = this.parameters?.parameter?.find(param=> param?.name?.value == 'serviceType')?.value?.['value'];
                 this.updateFormControlsWithParamsValues(this.parameters);
               }
               this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.supportingInformationForm.value);
