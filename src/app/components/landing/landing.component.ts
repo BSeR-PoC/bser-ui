@@ -94,7 +94,7 @@ export class LandingComponent implements OnInit {
   protected readonly ServiceRequestStatusType = ServiceRequestStatusType;
 
 
-  onClick(tabNumber: number) {
+  onSelectServiceRequestType(tabNumber: number) {
     switch (tabNumber){
       case (0): {this.selectedServiceRequestType = ServiceRequestStatusType.draft; break }
       case (1): {this.selectedServiceRequestType = ServiceRequestStatusType.active; break }

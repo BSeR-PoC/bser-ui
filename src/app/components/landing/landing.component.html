@@ -10,12 +10,13 @@
     </button>
   </div>
 
-  <mat-tab-group class="mat-elevation-z4" (selectedIndexChange)="onClick($event)">
+  <mat-tab-group class="mat-elevation-z4" (selectedIndexChange)="onSelectServiceRequestType($event)">
+
     <mat-tab label="Draft {{ isLoading? '' : '(' + (draftServiceRequests?.length || 0) + ')' }}">
       <app-service-request-list
         [serviceRequest]="draftServiceRequests"
         [isLoading]="isLoading"
-        [serviceRequestType]="'draft'"
+        [serviceRequestType]="selectedServiceRequestType"
         (serviceRequestDeletedEvent)="getServiceRequests()"
       ></app-service-request-list>
     </mat-tab>
@@ -24,7 +25,7 @@
       <app-service-request-list
         [serviceRequest]="activeServiceRequests"
         [isLoading]="isLoading"
-        [serviceRequestType]="'active'"
+        [serviceRequestType]="selectedServiceRequestType"
         (serviceRequestDeletedEvent)="getServiceRequests()"
       ></app-service-request-list>
     </mat-tab>
@@ -33,7 +34,7 @@
       <app-service-request-list
         [serviceRequest]="completeServiceRequests"
         [isLoading]="isLoading"
-        [serviceRequestType]="'complete'"
+        [serviceRequestType]="selectedServiceRequestType"
         (serviceRequestDeletedEvent)="getServiceRequests()"
       ></app-service-request-list>
     </mat-tab>

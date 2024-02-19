@@ -25,15 +25,17 @@
     <td mat-cell *matCellDef="let element"> {{element.lastUpdated | date : 'medium'}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef> Actions </th>
-    <td mat-cell *matCellDef="let element">
-      <button mat-stroked-button color="primary" (click)="onEdit(element)">Edit</button>
-      <mat-icon color="accent" (click)="onDelete(element); $event.stopPropagation()" style="margin-left: 1em">
-        delete
-      </mat-icon>
-    </td>>
-  </ng-container>
+  @if (serviceRequestType == ServiceRequestStatusType.draft) {
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-stroked-button color="primary" (click)="onEdit(element)">Edit</button>
+        <mat-icon color="accent" (click)="onDelete(element); $event.stopPropagation()" style="margin-left: 1em">
+          delete
+        </mat-icon>
+      </td>
+    </ng-container>
+  }
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;" style="cursor: pointer" (click)="onRowClick(row)"></tr>
@@ -44,7 +46,7 @@
         Loading Referrals
       </td>
       <td *ngIf="!isLoading" class="mat-cell" [attr.colspan]="displayedColumns.length">
-        This patient does not have {{serviceRequestType}} referrals.
+        This patient does not have {{ serviceRequestType | lowercase }} referrals.
       </td>
     </tr>
   </ng-container>
