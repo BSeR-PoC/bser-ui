@@ -3,6 +3,7 @@ import {MockDataRetrievalService} from "../../service/mock-data-retrieval.servic
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Router} from "@angular/router";
 import {FhirClientService} from "../../service/fhir-client.service";
+import {ServiceRequestStatusType} from "../../domain/service-request-status-type"
 
 @Component({
   selector: 'app-landing',
@@ -13,6 +14,7 @@ export class LandingComponent implements OnInit {
 
   isLoading: boolean = false;
   serviceRequestList: any[];
+  selectedServiceRequestType: ServiceRequestStatusType = ServiceRequestStatusType.draft;
 
   activeServiceRequests: any[] = [];
   draftServiceRequests: any[] = [];
@@ -88,4 +90,16 @@ export class LandingComponent implements OnInit {
     console.log(changes);
     console.log(this.fhirClient);
   }
+
+  protected readonly ServiceRequestStatusType = ServiceRequestStatusType;
+
+
+  onClick(tabNumber: number) {
+    switch (tabNumber){
+      case (0): {this.selectedServiceRequestType = ServiceRequestStatusType.draft; break }
+      case (1): {this.selectedServiceRequestType = ServiceRequestStatusType.active; break }
+      case (2): {this.selectedServiceRequestType = ServiceRequestStatusType.completed; break }
+    }
+  }
+
 }
