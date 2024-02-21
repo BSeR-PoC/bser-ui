@@ -4,6 +4,7 @@ import {ServiceRequestHandlerService} from "../../service/service-request-handle
 import {Router} from "@angular/router";
 import {FhirClientService} from "../../service/fhir-client.service";
 import {ServiceRequestStatusType} from "../../domain/service-request-status-type"
+import {MappedServiceRequest} from "../../models/mapped-service-request";
 
 @Component({
   selector: 'app-landing',
@@ -47,24 +48,14 @@ export class LandingComponent implements OnInit {
 
           this.serviceRequestList = results.entry.filter(entry => entry.resource.resourceType === "ServiceRequest");
 
-          let mappedServiceRequests = this.serviceRequestList
-            .map(element => ({
-              serviceRequest: element,
-              performer: this.findResourceById(results, element.resource?.performer?.[0].reference.replace('PractitionerRole/', ''))
-            }))
-            .map(element => ({
-              serviceRequest: element.serviceRequest,
-              performerOrganization: this.findResourceById(results, element.performer?.resource?.organization?.reference.replace('Organization/', ''))
-            }))
-            .map(element => ({
-              serviceRequestId: element.serviceRequest?.resource?.id,
-              serviceProvider: element.performerOrganization?.resource.name,
-              dateCreated: element.serviceRequest?.resource?.authoredOn,
-              lastUpdated: element.serviceRequest?.resource?.meta?.lastUpdated,
-              service: element.serviceRequest?.resource?.orderDetail?.[0]?.text,
-              status: element.serviceRequest?.resource?.status,
-            }));
+          let mappedServiceRequests: MappedServiceRequest[] = []
+          this.serviceRequestList.forEach(serviceRequestBundleEntry => {
+            const performerBundleEntry = this.findResourceById(results, serviceRequestBundleEntry.resource?.performer?.[0].reference.replace('PractitionerRole/', ''));
+            const performerOrganizationBundleEntry = this.findResourceById(results, performerBundleEntry?.resource?.organization?.reference.replace('Organization/', ''));
+            mappedServiceRequests.push(new MappedServiceRequest(serviceRequestBundleEntry.resource, performerOrganizationBundleEntry?.resource, undefined));
+          })
 
+          console.log(mappedServiceRequests[0]);
           this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
           this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
           this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');

@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
-import {BehaviorSubject, forkJoin, map, mergeMap, Observable, of, switchMap, timer} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, map, mergeMap, Observable, of, switchMap, timer} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -201,16 +201,33 @@ export class ServiceRequestHandlerService {
   }
 
   getServiceRequestList() : Observable<any> {
+    const patientMRN = this.patient.identifier.find((ident: any) => ident?.type?.coding?.[0]?.code === "MR");
+    const identifierParameter: string = `identifier=${patientMRN.system}|${patientMRN.value}`
+
     const subject = "subject=" + this.serverUrl;
     const patient = "/Patient/" + this.patient.id;
     const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
-
     const requestUrl = environment.bserProviderServer +
       "ServiceRequest?" +
       subject +
       patient +
       include;
-    return this.http.get(requestUrl)
+    const drafts$ = this.http.get(requestUrl)
+
+    const taskInclude = ""
+    const taskRequestUrl = environment.bserProviderServer + "Task?" + identifierParameter + taskInclude;
+    console.log(taskRequestUrl)
+    const getTasks$ = this.http.get(encodeURI(taskRequestUrl))
+
+    // TODO Get patient, and do a merge map into the combine Latest
+    // PENDING DUPLICATE PATIENT FIX
+
+    return combineLatest([drafts$, getTasks$]).pipe(
+      map(combinedResults => {
+        console.log(combinedResults[1]);
+        return combinedResults[0];
+      })
+    )
   }
 
   getServiceRequestById(serviceRequestId: string) : Observable<ServiceRequest> {
