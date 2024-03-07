@@ -97,7 +97,6 @@ export class ServiceRequestHandlerService {
   }
 
   saveServiceRequest(currentSnapshot: ServiceRequest, currentParameters: Parameters) : Observable<any> {
-    console.log(currentSnapshot)
     if (currentSnapshot.meta) {
       console.log("Removing Service Request Version")
       currentSnapshot.meta = null;
@@ -192,7 +191,6 @@ export class ServiceRequestHandlerService {
   deleteTestData() {
     let connectionUrl = environment.bserProviderServer + "ServiceRequest";
     this.http.get(connectionUrl).toPromise().then((data: any) => {
-      console.log(data);
       data.entry.forEach(resource => {
         let id = resource.resource.id;
         this.http.delete(connectionUrl + "/" + id).toPromise().then(result => console.log(result));
@@ -212,22 +210,14 @@ export class ServiceRequestHandlerService {
       subject +
       patient +
       include;
-    const drafts$ = this.http.get(requestUrl)
+    const drafts$ = this.http.get(requestUrl);
 
-    const taskInclude = ""
-    const taskRequestUrl = environment.bserProviderServer + "Task?" + identifierParameter + taskInclude;
-    console.log(taskRequestUrl)
-    const getTasks$ = this.http.get(encodeURI(taskRequestUrl))
+    const taskInclude = "_include=Task:focus&_include=Task:owner&_include:iterate=PractitionerRole:organization";
+    const tasks$ = this.http.get(encodeURI(environment.bserProviderServer + "Task?" + taskInclude));
 
-    // TODO Get patient, and do a merge map into the combine Latest
-    // PENDING DUPLICATE PATIENT FIX
-
-    return combineLatest([drafts$, getTasks$]).pipe(
-      map(combinedResults => {
-        console.log(combinedResults[1]);
-        return combinedResults[0];
-      })
-    )
+    return combineLatest([drafts$, tasks$]).pipe(
+      map((combinedResults: [any, any]) => [...combinedResults[0].entry, ...combinedResults?.[1]?.entry])
+    );
   }
 
   getServiceRequestById(serviceRequestId: string) : Observable<ServiceRequest> {
