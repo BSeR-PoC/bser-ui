@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
-import {BehaviorSubject, combineLatest, forkJoin, map, mergeMap, Observable, of, switchMap, timer} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, map, Observable, switchMap} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -229,6 +229,12 @@ export class ServiceRequestHandlerService {
         return  result as ServiceRequest;
       }
     ))
+  }
+
+  //TODO considering that we are using FHIR API we don't need any other het methods
+  getDataByQueryStr(str){
+    const requestUrl = environment.bserProviderServer + str;
+    return this.http.get(requestUrl);
   }
 
   deleteServiceRequest(serviceRequestId: any)  : Observable<any> {

@@ -65,7 +65,7 @@ export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
       this.displayedColumns = this.displayedColumns.filter(column => column != 'actions')
     }
 
-    if (this.serviceRequestType == ServiceRequestStatusType.active && (this.displayedColumns.indexOf('status') == -1)) {
+    if (this.serviceRequestType == ServiceRequestStatusType.active && (this.displayedColumns.indexOf('businessStatus') == -1)) {
         this.displayedColumns.splice(2,0,'businessStatus');
     }
     else {
@@ -77,7 +77,13 @@ export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
 
 
   onRowClick(serviceRequest) {
-    this.router.navigate(['referral-manager', serviceRequest.serviceRequestId]);
+    if(serviceRequest.status == ServiceRequestStatusType.active.toLowerCase()){
+      this.router.navigate(['referral-viewer', serviceRequest.serviceRequestId]);
+    }
+    else {
+      this.router.navigate(['referral-manager', serviceRequest.serviceRequestId]);
+    }
+
   }
 
   deleteServiceRequest(serviceRequest){
