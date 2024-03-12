@@ -37,6 +37,7 @@ export class MappedServiceRequest {
       this.taskId = taskResource.id;
     }
     this.serviceProvider = new Organization(organizationResource);
+    this.supportingInfoRef = serviceRequestResource?.supportingInfo?.[0]?.reference;
   }
   serviceRequestId: string;
   status: string; // Service Request Status
@@ -47,4 +48,5 @@ export class MappedServiceRequest {
   lastUpdated?: string;
   service?: string;
   serviceProvider?: Organization;
+  supportingInfoRef: string;
 }
