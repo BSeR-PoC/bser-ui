@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {ActivatedRoute} from "@angular/router";
-import {mergeMap, tap} from "rxjs";
+import {forkJoin, mergeMap} from "rxjs";
 
 @Component({
   selector: 'app-active-referrals',
@@ -12,77 +12,43 @@ export class ActiveReferralsComponent implements OnInit{
 
   serviceRequest: any;
   supportingInfo: any;
-  practitionerInfo: any;
+  taskResource: any;
+
   constructor(private serviceRequestHandler: ServiceRequestHandlerService, private activeRoute: ActivatedRoute){}
   ngOnInit(): void {
 
-    const serviceRequestId = "624646";
-    this.serviceRequestHandler.getServiceRequestById(serviceRequestId).
-    pipe(
-      tap(sr=> this.serviceRequest = sr),
+    const taskId = this.activeRoute.snapshot.params['taskId'];
 
-      mergeMap(value=> {
-        const referenceStr = this.serviceRequest.supportingInfo.find(param => param?.type === "Parameters")?.reference;
-        if(!referenceStr){
-          return null;
+    this.serviceRequestHandler.getDataByQueryStr("Task/" + taskId).pipe(
+      mergeMap(taskResource=> {
+        this.taskResource = taskResource;
+        const serviceRequestRef = this.taskResource?.focus?.reference;
+        if(serviceRequestRef){
+          return this.serviceRequestHandler.getDataByQueryStr(serviceRequestRef)
         }
         else {
-          return this.serviceRequestHandler.getDataByQueryStr(referenceStr);
-        }
-      }),
-      tap(si=> this.supportingInfo = si),
-
-      mergeMap(value=> {
-        const referenceStr = this.serviceRequest.performer.find(param => param?.type === "PractitionerRole")?.reference;
-        if(!referenceStr){
+          console.error("Task Resource missing Service Request ID " + JSON.stringify(this.taskResource));
           return null;
         }
-        else {
-          return this.serviceRequestHandler.getDataByQueryStr(referenceStr);
-        }
       }),
-
-      mergeMap((pr: any)=> {
-        const referenceStr = pr?.organization.reference;
-        if(!referenceStr){
+      mergeMap(serviceRequest=> {
+        this.serviceRequest = serviceRequest;
+        const supportingInfoBundleRef =  this.serviceRequest?.supportingInfo?.[0]?.reference;
+        if(supportingInfoBundleRef){
+          return this.serviceRequestHandler.getDataByQueryStr(supportingInfoBundleRef)
+        }
+        else {
+          console.error("Service Request Resource missing Supporting InfoBundle Ref (ServiceRequest.supportingInfo[0].reference) "
+            + JSON.stringify(this.serviceRequest));
           return null;
         }
-        else {
-          return this.serviceRequestHandler.getDataByQueryStr(referenceStr);
-        }
       }),
-
     ).subscribe({
-      next: value => {
-        this.practitionerInfo = value;
-        console.log(value)
-      }
+      next: supportingInfoBundle => {
+        //TODO we can use a common model such as the one we have when we load the initial data, but we have to refactor it (perhaps use inheritance)
+        this.supportingInfo = supportingInfoBundle;
+      },
+      error: err => console.log
     });
-
-
-    // this.serviceRequestHandler.getServiceRequestById(serviceRequestId).
-    // pipe(
-    //   tap(sr=> this.serviceRequest = sr),
-    //   mergeMap(value=> {
-    //     const paramsId = this.serviceRequest.supportingInfo.find(param => param?.type === "Parameters")?.reference?.replace("Parameters/", "");
-    //     if(!paramsId){
-    //       return null;
-    //     }
-    //     else {
-    //       return this.serviceRequestHandler.getParametersById(paramsId);
-    //     }
-    //   }),
-    //   tap(si=> this.supportingInfo = si),
-    // ).subscribe({
-    //   next: value => {
-    //     this.supportingInfo = value;
-    //     console.log(value)
-    //   }
-    // });
   }
-
-
-
-
-
 }

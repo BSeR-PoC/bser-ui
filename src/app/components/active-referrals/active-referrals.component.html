@@ -1,5 +1,11 @@
 <p>active-referrals works!</p>
-<div> Service Request: </div>
+<div>Service Provider:  </div>
+<div>Service Type: {{ serviceRequest?.orderDetail?.[0]?.coding?.[0]?.display }} </div>
+<div>Status: {{ taskResource?.businessStatus?.coding?.[0]?.display }}</div>
+<div>Created: </div>
+<div>Last Updated: </div>
 <pre>{{ serviceRequest | json }}</pre>
+<div>Task Info:</div>
+<pre style="color: darkred">{{ taskResource | json }}</pre>
 <div>Supporting Info:</div>
 <pre>{{ supportingInfo | json }}</pre>

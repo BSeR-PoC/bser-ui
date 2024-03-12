@@ -9,11 +9,13 @@ export class MappedServiceRequest {
     if (this.status === "active") {
       this.taskStatus = taskResource?.status;
       this.businessStatus = taskResource?.businessStatus?.coding?.[0]?.display;
+      this.taskId = taskResource.id;
     }
   }
   serviceRequestId: string;
   status: string; // Service Request Status
   taskStatus?: string;
+  taskId?: string;
   businessStatus?: string;
   dateCreated?: string;
   lastUpdated?: string;
