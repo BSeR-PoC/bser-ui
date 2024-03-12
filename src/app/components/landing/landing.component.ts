@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {FhirClientService} from "../../service/fhir-client.service";
 import {ServiceRequestStatusType} from "../../domain/service-request-status-type"
-import {MappedServiceRequest} from "../../models/mapped-service-request";
 import {UtilsService} from "../../service/utils.service";
+import {mergeMap, pipe, tap} from "rxjs";
 
 @Component({
   selector: 'app-landing',
@@ -13,7 +13,6 @@ import {UtilsService} from "../../service/utils.service";
 export class LandingComponent implements OnInit {
 
   isLoading: boolean = false;
-  serviceRequestList: any[];
   selectedServiceRequestType: ServiceRequestStatusType = ServiceRequestStatusType.draft;
 
   activeServiceRequests: any[] = [];
@@ -27,54 +26,25 @@ export class LandingComponent implements OnInit {
     this.fhirClient.readyClient();
   }
 
-  findResourceById(entryList, resourceId){
-    if(!entryList || entryList.length === 0 || !resourceId){
-      return null;
-    }
-    return entryList.find(entry => entry?.resource?.id === resourceId);
-  }
-
-  getServiceRequests() {
+  ngOnInit(): void {
     this.isLoading = true;
-    this.serviceRequestHandlerService.getServiceRequestList().subscribe({
-      next: results => {
+    this.serviceRequestHandlerService.initClient().pipe(
+      mergeMap(result=> this.serviceRequestHandlerService.getServiceRequestData())
+    ).subscribe({
+      next: mappedServiceRequests=> {
         this.isLoading = false;
-
-        this.serviceRequestList = results.filter(entry => entry.resource.resourceType === "ServiceRequest");
-        const taskList = results.filter(entry => entry.resource.resourceType === "Task");
-        let mappedServiceRequests: MappedServiceRequest[] = []
-
-        this.serviceRequestList.forEach(serviceRequestBundleEntry => {
-
-          const performerBundleEntry = this.findResourceById(results, serviceRequestBundleEntry.resource?.performer?.[0].reference.replace('PractitionerRole/', ''));
-
-          const performerOrganizationBundleEntry = this.findResourceById(results, performerBundleEntry?.resource?.organization?.reference.replace('Organization/', ''));
-
-          const taskEntry = taskList.find(task => {
-            const serviceRequestReferenceId = task.resource?.focus?.reference?.replace("ServiceRequest/", "");
-            return serviceRequestReferenceId == serviceRequestBundleEntry.resource.id;
-          });
-
-          mappedServiceRequests.push(new MappedServiceRequest(serviceRequestBundleEntry.resource, performerOrganizationBundleEntry?.resource, taskEntry?.resource));
-        });
+        this.serviceRequestHandlerService.setMappedServiceRequests(mappedServiceRequests);
 
         this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
         this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
         this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');
       },
-      error: err=> {
+      error: err => {
+        this.isLoading = false;
         console.error(err);
-        this.utilsService.showErrorNotification();
       }
     })
-  }
 
-  ngOnInit(): void {
-    this.isLoading = true;
-    this.serviceRequestHandlerService.initClient().subscribe({
-      next: result =>
-        this.getServiceRequests()
-    })
   }
 
   onSelectServiceRequestType(tabNumber: number) {

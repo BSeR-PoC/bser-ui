@@ -48,6 +48,12 @@ export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'serviceProvider': return  item.serviceProvider.name;
+        default: return item[property];
+      }
+    }
   }
 
   onEdit(serviceRequest) {
@@ -78,7 +84,7 @@ export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
 
   onRowClick(serviceRequest) {
     if(serviceRequest.status == ServiceRequestStatusType.active.toLowerCase()){
-      this.router.navigate(['referral-viewer', serviceRequest.taskId]);
+      this.router.navigate(['referral-viewer', serviceRequest.serviceRequestId]);
     }
     else {
       this.router.navigate(['referral-manager', serviceRequest.serviceRequestId]);

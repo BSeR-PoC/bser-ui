@@ -12,6 +12,7 @@ import {Parameters, ParametersParameter} from "@fhir-typescript/r4-core/dist/fhi
 import {CodeableConcept} from "@fhir-typescript/r4-core/dist/fhir/CodeableConcept";
 import {Coding} from "@fhir-typescript/r4-core/dist/fhir/Coding";
 import {TransactionBundleHandlerService} from "./transaction-bundle-handler.service";
+import {MappedServiceRequest} from "../models/mapped-service-request";
 
 @Injectable({
   providedIn: 'root'
@@ -29,11 +30,16 @@ export class ServiceRequestHandlerService {
   private patient: any;
   private serverUrl: string;
 
+  private _mappedServiceRequests = new BehaviorSubject<MappedServiceRequest[]>([]);
+  public mappedServiceRequests = this._mappedServiceRequests.asObservable();
+
+  setMappedServiceRequests(mappedServiceRequests: MappedServiceRequest[]){
+    console.log(mappedServiceRequests);
+    this._mappedServiceRequests.next(mappedServiceRequests);
+  }
+
   constructor(private http: HttpClient, private fhirClient: FhirClientService,
               private transBundleHandler: TransactionBundleHandlerService) {
-    // this.fhirClient.getPractitioner().subscribe({next: (data)=>this.practitioner = data});
-    // this.fhirClient.getPatient().subscribe({next: (data)=>this.patient = data});
-    // this.fhirClient.serverUrl$.subscribe({next: (data)=>this.serverUrl = data});
   }
 
   initClient(): Observable<any>{
@@ -147,7 +153,6 @@ export class ServiceRequestHandlerService {
     }
 
     currentSnapshot.performer = [];
-    //currentSnapshot.performer.push(Reference.fromResource(recipientTest,  environment.bserProviderServer));
     currentSnapshot.performer.push(Reference.fromResource(recipientTest));
   }
 
@@ -198,7 +203,7 @@ export class ServiceRequestHandlerService {
     });
   }
 
-  getServiceRequestList() : Observable<any> {
+  getServiceRequestData() : Observable<MappedServiceRequest[]> {
     const patientMRN = this.patient.identifier.find((ident: any) => ident?.type?.coding?.[0]?.code === "MR");
     const identifierParameter: string = `identifier=${patientMRN.system}|${patientMRN.value}`
 
@@ -216,8 +221,44 @@ export class ServiceRequestHandlerService {
     const tasks$ = this.http.get(encodeURI(environment.bserProviderServer + "Task?" + taskInclude));
 
     return combineLatest([drafts$, tasks$]).pipe(
-      map((combinedResults: [any, any]) => [...combinedResults[0].entry, ...combinedResults?.[1]?.entry])
+      map((combinedResults: [any, any]) => [...combinedResults[0].entry, ...combinedResults?.[1]?.entry]),
+      map(results=> {
+        return this.convertToMappedServiceRequests(results);
+      })
     );
+  }
+
+  private convertToMappedServiceRequests(bundleEntries: any): MappedServiceRequest[] {
+    const serviceRequestResources = bundleEntries.filter(entry => entry.resource.resourceType === "ServiceRequest");
+    const taskResources = bundleEntries.filter(entry => entry.resource.resourceType === "Task");
+    const organizationResources =  bundleEntries.filter(entry => entry.resource.resourceType === "Organization");
+    const practitionerRoleResources = bundleEntries.filter(entry => entry.resource.resourceType === "PractitionerRole");
+
+    let mappedServiceRequests = [];
+
+    serviceRequestResources.forEach(serviceRequestBundleEntry => {
+
+      //const performerBundleEntry = this.findResourceById(results, serviceRequestBundleEntry.resource?.performer?.[0].reference.replace('PractitionerRole/', ''));
+      const practitionerRoleResourceId =  serviceRequestBundleEntry.resource?.performer?.[0].reference.replace('PractitionerRole/', '');
+      let practitionerRoleResource = null;
+      if(practitionerRoleResourceId){
+        practitionerRoleResource = practitionerRoleResources.find(entry => entry.id == practitionerRoleResourceId)?.resource;
+      }
+
+      const performerOrgIdId =  practitionerRoleResource?.resource?.organization?.reference.replace('Organization/', '');
+      let performerResource = null;
+      if(practitionerRoleResourceId){
+        performerResource = organizationResources.find(entry => entry.id == performerOrgIdId)?.resource;
+      }
+
+      const taskResource = taskResources.find(task => {
+        const serviceRequestReferenceId = task.resource?.focus?.reference?.replace("ServiceRequest/", "");
+        return serviceRequestReferenceId == serviceRequestBundleEntry.resource.id;
+      })?.resource;
+
+      mappedServiceRequests.push(new MappedServiceRequest(serviceRequestBundleEntry.resource, performerResource, taskResource));
+    });
+    return  mappedServiceRequests;
   }
 
   getServiceRequestById(serviceRequestId: string) : Observable<ServiceRequest> {

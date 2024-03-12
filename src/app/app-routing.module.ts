@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: '', component: LandingComponent},
   { path: 'referral-manager/:id', component: ReferralManagerComponent},
   { path: 'referral-manager', component: ReferralManagerComponent},
-  { path: 'referral-viewer/:taskId', component: ActiveReferralsComponent},
+  { path: 'referral-viewer/:serviceRequestId', component: ActiveReferralsComponent},
   { path: 'launch', component: LaunchComponent},
   { path: 'register', component: RegistrationComponent},
   { // This path MUST ALWAYS be the last path!!!
