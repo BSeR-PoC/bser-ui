@@ -34,7 +34,6 @@ export class ServiceRequestHandlerService {
   public mappedServiceRequests = this._mappedServiceRequests.asObservable();
 
   setMappedServiceRequests(mappedServiceRequests: MappedServiceRequest[]){
-    console.log(mappedServiceRequests);
     this._mappedServiceRequests.next(mappedServiceRequests);
   }
 
