@@ -1,7 +1,24 @@
-<div>Service Provider: Name: {{ serviceRequest?.serviceProvider?.name }} | Phone: {{ serviceRequest?.serviceProvider?.phone  }}</div>
-<div>Service Type: {{ serviceRequest?.service }} </div>
-<div>Status: {{ serviceRequest?.businessStatus }}</div>
-<div>Created: {{ serviceRequest?.dateCreated | date }}</div>
-<div>Last Updated: {{ serviceRequest?.dateCreated | date }}</div>
-<pre>{{ serviceRequest | json }}</pre>
-<pre>{{ data | json}}</pre>
+<div class="container top-spacer">
+  <mat-card>
+    <mat-card-content>
+      <div>Service Type: {{ serviceRequest?.service }}</div>
+      <div>Status: {{ serviceRequest?.businessStatus }}</div>
+      <div>Created: {{ serviceRequest?.dateCreated | date }}</div>
+      <div>Last Updated: {{ serviceRequest?.dateCreated | date }}</div>
+
+      <div>Observations:</div>
+
+      @for (observation of mappedObservations?.mappedSimpleObservations; track observation) {
+        <div>{{ observation.name }}: {{ observation.value }} {{ observation.unit }}</div>
+      }
+
+      @for (observation of mappedObservations?.mappedComponentObservations; track observation) {
+        <div>{{ observation.name }}</div>
+        @for (component of observation.components; track component) {
+          <div>{{ component.name }}: {{ component.value }} {{ component.unit }}</div>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+
