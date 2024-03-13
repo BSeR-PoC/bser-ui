@@ -1,28 +1,4 @@
-export class Address {
-  constructor (address){
-    this.line = address?.line?.[0];
-    this.city = address?.city;
-    this.state = address?.state;
-    this.postalCode = address?.postalCode;
-    this.country = address?.country;
-  }
-  line: string
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-}
-
-export class Organization {
-  constructor(organizationResource){
-    this.address = new Address(organizationResource?.address?.[0]);
-    this.name = organizationResource?.name;
-    this.phone = organizationResource?.telecom?.[0]?.value;
-  }
-  name: string;
-  phone: string;
-  address: Address;
-}
+import {Organization} from "./organization";
 
 export class MappedServiceRequest {
   constructor(serviceRequestResource: any, organizationResource: any, taskResource?: any) {

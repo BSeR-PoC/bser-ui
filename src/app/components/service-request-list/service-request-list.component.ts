@@ -15,7 +15,7 @@ import {openConformationDialog} from "../conformation-dialog/conformation-dialog
 import {UtilsService} from "../../service/utils.service";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
-import {ServiceRequestStatusType} from "../../domain/service-request-status-type";
+import {ServiceRequestStatusType} from "../../models/service-request-status-type";
 import {MatSort} from "@angular/material/sort";
 import {MatPaginator} from "@angular/material/paginator";
 

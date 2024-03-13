@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {FhirClientService} from "../../service/fhir-client.service";
-import {ServiceRequestStatusType} from "../../domain/service-request-status-type"
+import {ServiceRequestStatusType} from "../../models/service-request-status-type"
 import {UtilsService} from "../../service/utils.service";
-import {mergeMap, pipe, tap} from "rxjs";
+import {mergeMap} from "rxjs";
 
 @Component({
   selector: 'app-landing',
