@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
-import {BehaviorSubject, combineLatest, forkJoin, map, Observable, switchMap} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, map, Observable, switchMap, tap} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -30,6 +30,9 @@ export class ServiceRequestHandlerService {
   private patient: any;
   private serverUrl: string;
 
+  private isClientInitialized = new BehaviorSubject<boolean>(false);
+  public isClientInitialized$ = this.isClientInitialized.asObservable();
+
   private _mappedServiceRequests = new BehaviorSubject<MappedServiceRequest[]>([]);
   public mappedServiceRequests = this._mappedServiceRequests.asObservable();
 
@@ -48,7 +51,8 @@ export class ServiceRequestHandlerService {
 
     return practitioner$.pipe(
       switchMap(result => serverUrl$),
-      switchMap( result => patient$))
+      switchMap( result => patient$),
+      tap(value=> this.isClientInitialized.next(true)))
   }
 
   // STEP 0
