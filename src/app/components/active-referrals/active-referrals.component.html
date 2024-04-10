@@ -1,21 +1,54 @@
 <div class="container top-spacer">
-  <mat-card>
+  <mat-card class="padding-left-md padding-right-md">
+
+    <mat-card-header>
+      <mat-card-title>
+        <div>Service Type: {{ serviceRequest?.service }}</div>
+      </mat-card-title>
+    </mat-card-header>
+
     <mat-card-content>
-      <div>Service Type: {{ serviceRequest?.service }}</div>
-      <div>Status: {{ serviceRequest?.businessStatus }}</div>
-      <div>Created: {{ serviceRequest?.dateCreated | date }}</div>
-      <div>Last Updated: {{ serviceRequest?.dateCreated | date }}</div>
+      <div>
+        <div class="margin-top-sm">
+          <span class="bold-text">Status:</span> {{ serviceRequest?.businessStatus }}
+        </div>
 
-      <div>Observations:</div>
+        <div class="margin-top-sm">
+          <span class="bold-text">Created:</span> {{ serviceRequest?.dateCreated | date }}
+        </div>
 
-      @for (observation of mappedObservations?.mappedSimpleObservations; track observation) {
-        <div>{{ observation.name }}: {{ observation.value }} {{ observation.unit }}</div>
+        <div class="margin-top-sm">
+          <span class="bold-text">Last Updated:</span> {{ serviceRequest?.dateCreated | date }}
+        </div>
+      </div>
+
+      <!--Observations Section-->
+      <div class="margin-top-md large-text">
+        Observations:
+      </div>
+      @if(!(mappedObservations?.mappedSimpleObservations?.length > 1)
+          &&
+          !(mappedObservations?.mappedComponentObservations?.length > 1)){
+        <!-- If the patient has no observations -->
+        <div class="margin-top-sm bold-text" style="font-style: italic">
+          **No observations found.
+        </div>
       }
+      @else {
+        <!-- Render the available observations -->
+        @for (observation of mappedObservations?.mappedSimpleObservations; track observation) {
+        <div class="margin-top-sm">
+          <span class="bold-text">{{ observation.name }}</span>: {{ observation.value }} {{ observation.unit }}
+        </div>
+        }
 
-      @for (observation of mappedObservations?.mappedComponentObservations; track observation) {
-        <div>{{ observation.name }}</div>
-        @for (component of observation.components; track component) {
-          <div>{{ component.name }}: {{ component.value }} {{ component.unit }}</div>
+        @for (observation of mappedObservations?.mappedComponentObservations; track observation) {
+          <div class="margin-top-md" style="font-size: medium">{{ observation.name }}:</div>
+          @for (component of observation.components; track component) {
+            <div class="margin-top-sm">
+              <span class="bold-text">{{ component.name }}</span>: {{ component.value }} {{ component.unit }}
+            </div>
+          }
         }
       }
     </mat-card-content>

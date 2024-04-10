@@ -9,6 +9,44 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+/* Margins and Paddings */
+$xs: 4px;
+$sm: 8px;
+$md: 16px;
+$lg: 24px;
+.margin-none { margin: 0; }
+.margin-sm { margin: $sm; }
+.margin-md { margin: $md; }
+.margin-lg { margin: $lg; }
+.padding-none { padding: 0; }
+.padding-xs { padding: $xs; }
+.padding-sm { padding: $sm; }
+.padding-md { padding: $md; }
+.padding-lg { padding: $lg; }
+// Add more of the following as needed.
+.margin-bottom-xs { margin-bottom: $xs; }
+.margin-bottom-sm { margin-bottom: $sm; }
+.margin-bottom-md { margin-bottom: $md; }
+.margin-top-xs { margin-top: $xs; }
+.margin-top-sm { margin-top: $sm; }
+.margin-top-md { margin-top: $md; }
+.margin-left-md { margin-left: $md; }
+.margin-right-md { margin-right: $md; }
+.padding-bottom-md { padding-bottom: $md; }
+.padding-top-md { padding-top: $md; }
+.padding-bottom-md { padding-bottom: $md; }
+.padding-left-md { padding-left: $md; }
+.padding-right-md { padding-right: $md; }
+.border-radius-xs { border-radius: $xs; }
+
+/* Simple text sizes */
+.bold-text {
+  font-weight: bold;
+}
+.large-text {
+  font-size: large;
+}
+
 .spacer {
   flex: 1 1 auto;
 }
@@ -86,7 +124,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   -webkit-animation: ellipsis steps(4,end) 900ms infinite;
   animation: ellipsis steps(4,end) 900ms infinite;
   content: "\2026"; /* ascii code for the ellipsis character */
-  width: 0px;
+  width: 0;
 }
 
 @keyframes ellipsis {
