@@ -275,7 +275,7 @@ export class ServiceRequestHandlerService {
     ))
   }
 
-  //TODO considering that we are using FHIR API we don't need any other het methods
+  //TODO considering that we are using FHIR API we don't need any other get methods
   getDataByQueryStr(str){
     const requestUrl = environment.bserProviderServer + str;
     return this.http.get(requestUrl);
