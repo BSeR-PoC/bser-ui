@@ -2,9 +2,7 @@
 <div class="scrollable-container" style="padding-top: 1em">
 
   <form [formGroup]="supportingInformationForm">
-   @switch (serviceType){
-
-     @case("diabetes"){
+     @if(serviceType == DIABETES_PREVENTION){
         <div class="row" style="background-color: var(--primary100); margin-bottom: 1em; padding: 1em 1em 1em 1em">
           Vital Signs
         </div>
@@ -85,7 +83,7 @@
 
       }
 
-     @case("hypertension"){
+     @else{
        <div class="row" style="background-color: var(--primary100); margin-bottom: 1em; padding: 1em 1em 1em 1em">
          Vital Signs
        </div>
@@ -149,7 +147,7 @@
          </div>
        </div>
      }
-   }
+<!-- //  }-->
   </form>
 
 </div>
