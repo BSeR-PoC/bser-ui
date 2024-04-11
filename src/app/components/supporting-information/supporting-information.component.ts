@@ -216,12 +216,9 @@ export class SupportingInformationComponent implements OnInit {
       if (ha1cParam) {
         const ha1cValue = ha1cParam.value.toJSON()?.value;
         this.supportingInformationForm.controls['ha1c'].patchValue(ha1cValue);
-
-        const ha1cUnitValue = ha1cParam.value.toJSON()?.unit;
-        const ha1cUnit = this.fhirConstants.PERCENT_UNITS.find(unit => unit.display === ha1cUnitValue)
-        this.supportingInformationForm.controls['ha1c'].patchValue(ha1cUnit);
       }
     }
+    console.log(this.supportingInformationForm);
 
   }
 
