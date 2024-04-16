@@ -24,14 +24,14 @@
 
       <!--Observations Section-->
       <div class="margin-top-md large-text">
-        Observations:
+        Supporting Information:
       </div>
       @if(!(mappedObservations?.mappedSimpleObservations?.length > 1)
           &&
           !(mappedObservations?.mappedComponentObservations?.length > 1)){
         <!-- If the patient has no observations -->
         <div class="margin-top-sm bold-text" style="font-style: italic">
-          **No observations found.
+          **No feedback observations available.
         </div>
       }
       @else {
