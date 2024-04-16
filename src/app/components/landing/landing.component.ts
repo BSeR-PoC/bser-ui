@@ -1,8 +1,10 @@
-import {Component, OnInit, SimpleChanges} from '@angular/core';
-import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
+import {Component, OnInit} from '@angular/core';
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
-import {Router} from "@angular/router";
 import {FhirClientService} from "../../service/fhir-client.service";
+import {ServiceRequestStatusType} from "../../models/service-request-status-type"
+import {UtilsService} from "../../service/utils.service";
+import {mergeMap} from "rxjs";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-landing',
@@ -12,80 +14,46 @@ import {FhirClientService} from "../../service/fhir-client.service";
 export class LandingComponent implements OnInit {
 
   isLoading: boolean = false;
-  serviceRequestList: any[];
+  selectedServiceRequestType: ServiceRequestStatusType = ServiceRequestStatusType.draft;
 
   activeServiceRequests: any[] = [];
   draftServiceRequests: any[] = [];
   completeServiceRequests: any[] = [];
 
   constructor(
-    private mockDataRetrievalService: MockDataRetrievalService,
     private serviceRequestHandlerService: ServiceRequestHandlerService,
-    private router: Router,
+    private utilsService: UtilsService,
     private fhirClient: FhirClientService) {
-
     this.fhirClient.readyClient();
   }
 
-  findResourceById(bundle, resourceId){
-    if(!bundle.entry || bundle.entry.length === 0 || !resourceId){
-      return null;
-    }
-    return bundle.entry.find(entry => entry?.resource?.id === resourceId);
-  }
-
-  getServiceRequests(){
+  ngOnInit(): void {
     this.isLoading = true;
-    this.serviceRequestHandlerService.getServiceRequestList().subscribe({
-      next: results => {
-
+    this.serviceRequestHandlerService.initClient().pipe(
+      mergeMap(result=> this.serviceRequestHandlerService.getServiceRequestData())
+    ).subscribe({
+      next: mappedServiceRequests=> {
         this.isLoading = false;
+        this.serviceRequestHandlerService.setMappedServiceRequests(mappedServiceRequests);
 
-        if (results.entry && results.entry.length) {
-
-          this.serviceRequestList = results.entry.filter(entry => entry.resource.resourceType === "ServiceRequest");
-
-          let mappedServiceRequests = this.serviceRequestList
-            .map(element => ({
-              serviceRequest: element,
-              performer: this.findResourceById(results, element.resource?.performer?.[0].reference.replace('PractitionerRole/', ''))
-            }))
-            .map(element => ({
-              serviceRequest: element.serviceRequest,
-              performerOrganization: this.findResourceById(results, element.performer?.resource?.organization?.reference.replace('Organization/', ''))
-            }))
-            .map(element => ({
-              serviceRequestId: element.serviceRequest?.resource?.id,
-              serviceProvider: element.performerOrganization?.resource.name,
-              dateCreated: element.serviceRequest?.resource?.authoredOn,
-              lastUpdated: element.serviceRequest?.resource?.meta?.lastUpdated,
-              service: element.serviceRequest?.resource?.orderDetail?.[0]?.text,
-              status: element.serviceRequest?.resource?.status,
-            }));
-
-          this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
-          this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
-          this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');
-        }
+        this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
+        this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
+        this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');
+      },
+      error: err => {
+        this.isLoading = false;
+        console.error(err);
       }
     })
 
   }
 
-  ngOnInit(): void {
-    this.isLoading = true;
-    this.serviceRequestHandlerService.initClient().subscribe({
-      next: result =>
-        this.getServiceRequests()
-    })
+  onSelectServiceRequestType(tabNumber: number) {
+    switch (tabNumber){
+      case (0): {this.selectedServiceRequestType = ServiceRequestStatusType.draft; break }
+      case (1): {this.selectedServiceRequestType = ServiceRequestStatusType.active; break }
+      case (2): {this.selectedServiceRequestType = ServiceRequestStatusType.completed; break }
+    }
   }
 
-  onEdit(element) {
-    this.router.navigate(['referral-manager', element.serviceRequestId])
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-    console.log(this.fhirClient);
-  }
 }

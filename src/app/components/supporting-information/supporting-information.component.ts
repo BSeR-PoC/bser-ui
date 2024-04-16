@@ -8,6 +8,7 @@ import {ServiceRequestHandlerService} from "../../service/service-request-handle
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
 import {UtilsService} from "../../service/utils.service";
 import {MatDialog} from "@angular/material/dialog";
+import {mergeMap} from "rxjs";
 
 const CURRENT_STEP = 3;
 
@@ -22,6 +23,8 @@ export class SupportingInformationComponent implements OnInit {
 
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() requestStepEvent = new EventEmitter();
+
+  readonly DIABETES_PREVENTION = "diabetes-prevention";
 
   supportingInformationForm: UntypedFormGroup;
   parameters: Parameters;
@@ -41,28 +44,31 @@ export class SupportingInformationComponent implements OnInit {
 
   ngOnInit(): void {
 
-    //TODO remove nested subscriptions
-    this.serviceRequestHandlerService.currentSnapshot$.subscribe({
-        next: (value: ServiceRequest) => {
+    this.serviceRequestHandlerService.currentSnapshot$.pipe(
+      mergeMap(value=> {
+        this.serviceRequest = value;
+        this.initForm(this.serviceRequest);
+        return this.serviceRequestHandlerService.currentParameters$
+      })
+    ).subscribe({
+      next: value => {
+        this.parameters = value;
+        if (this.parameters) {
+          this.serviceType = this.parameters?.parameter?.find(param=> param?.name?.value == 'serviceType')?.value?.['value'];
 
-          this.serviceRequest = value;
-          this.initForm(this.serviceRequest);
+          if(this.serviceType == this.DIABETES_PREVENTION){
+            const ha1c =  new  UntypedFormControl(null, [Validators.required]);
+            this.supportingInformationForm.addControl('ha1c', ha1c);
+          }
+          else if(this.supportingInformationForm.controls['ha1c']){
+            this.supportingInformationForm.removeControl('ha1c');
+          }
 
-          this.serviceRequestHandlerService.currentParameters$.subscribe({
-
-            next: value => {
-              this.parameters = value;
-              if (this.parameters) {
-                this.serviceType = this.parameters?.parameter?.find(param=> param?.name?.value == 'serviceType')?.value?.['value'];
-                this.updateFormControlsWithParamsValues(this.parameters);
-              }
-              this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.supportingInformationForm.value);
-            }
-
-          });
+          this.updateFormControlsWithParamsValues(this.parameters);
         }
+        this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.supportingInformationForm.value);
       }
-    );
+    });
   }
 
   private initForm(serviceRequest: ServiceRequest) {
@@ -84,7 +90,7 @@ export class SupportingInformationComponent implements OnInit {
       heightValue, heightUnit, weightValue, weightUnit, bmi, bpDiastolic, bpSystolic
     });
 
-    if(this.serviceType == 'diabetes'){
+    if(this.serviceType == this.DIABETES_PREVENTION){
       const ha1c =  new  UntypedFormControl(null, [Validators.required]);
       this.supportingInformationForm.addControl('ha1c', ha1c);
     }
@@ -139,10 +145,6 @@ export class SupportingInformationComponent implements OnInit {
     const bmi = form.controls['bmi'].value;
     const bpDiastolic = form.controls['bpDiastolic'].value;
     const bpSystolic = form.controls['bpSystolic'].value;
-    // if(this.serviceType == 'diabetes'){
-    //   const ha1c = form.controls['bpSystolic'].value;
-    // }
-
 
     // const smokingStatus = form.controls['smokingStatus'].value;
     // const allergies = form.controls['allergies'].value;
@@ -158,8 +160,8 @@ export class SupportingInformationComponent implements OnInit {
       // medicalHistory: medicalHistory,
     }
 
-    if(this.serviceType == 'diabetes'){
-      emitterData['ha1c'] = form.controls['ha1c'].value;
+    if(this.serviceType == this.DIABETES_PREVENTION){
+      emitterData['ha1c'] = {value: form.controls['ha1c'].value, unit: "%"};
     }
 
     return emitterData;
@@ -209,13 +211,14 @@ export class SupportingInformationComponent implements OnInit {
       this.supportingInformationForm.controls['heightUnit'].patchValue(bodyHeightUnit);
     }
 
-    if(this.serviceType == 'diabetes'){
+    if(this.serviceType == this.DIABETES_PREVENTION){
       const ha1cParam = parameters.parameter.find(param => param.name.value == 'ha1c');
       if (ha1cParam) {
-        const ha1c = ha1cParam.value.toJSON()?.value;
-        this.supportingInformationForm.controls['ha1c'].patchValue(ha1c);
+        const ha1cValue = ha1cParam.value.toJSON()?.value;
+        this.supportingInformationForm.controls['ha1c'].patchValue(ha1cValue);
       }
     }
+    console.log(this.supportingInformationForm);
 
   }
 

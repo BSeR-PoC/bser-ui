@@ -11,7 +11,8 @@ export const environment = {
   //fhirIss: 'https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4',
   fhirRedirectUri: 'https://localhost:4200/',
   bserProviderServer: 'https://heat.icl.gtri.org/hapi-fhir-public/fhir/', // Server base to manage BSeR workflow resources, Service Providers, etc.
-  bserEngineEndpoint: 'https://apps.hdap.gatech.edu/bser-engine/fhir/$referral-request',
+  //bserEngineEndpoint: 'https://apps.hdap.gatech.edu/bser-engine/fhir/$referral-request',
+  bserEngineEndpoint: "https://bser-engine.heat.icl.gtri.org/fhir/$referral-request",
   bserEngineBasicAuthUser: 'client', // This is a public server wherein basic auth is provided for demo purposes. This is not a security issue.
   bserEngineBasicAuthPass: 'secret'
 };

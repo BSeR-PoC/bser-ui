@@ -220,4 +220,9 @@ export class FhirTerminologyConstants{
     {"code": "kg/m2", "display": "kg/m²"}
   ];
 
+  PERCENT_UNITS = [
+    {"code": "percent", "display": "%"},
+  ]
+
+
 }

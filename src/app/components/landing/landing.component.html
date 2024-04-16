@@ -1,6 +1,8 @@
 <div class="container top-spacer">
   <div class="controls">
-    <div style="font-size: large">Active Referrals and Drafts</div>
+    <div style="font-size: large">
+      {{ selectedServiceRequestType }} Service Requests
+    </div>
     <div class="spacer"></div>
     <button mat-raised-button color="primary" [routerLink]="['/referral-manager']">
       <mat-icon>add</mat-icon>
@@ -8,13 +10,14 @@
     </button>
   </div>
 
-  <mat-tab-group class="mat-elevation-z4">
+  <mat-tab-group class="mat-elevation-z4" (selectedIndexChange)="onSelectServiceRequestType($event)">
+
     <mat-tab label="Draft {{ isLoading? '' : '(' + (draftServiceRequests?.length || 0) + ')' }}">
       <app-service-request-list
         [serviceRequest]="draftServiceRequests"
         [isLoading]="isLoading"
-        [serviceRequestType]="'draft'"
-        (serviceRequestDeletedEvent)="getServiceRequests()"
+        [serviceRequestType]="selectedServiceRequestType"
+        (serviceRequestDeletedEvent)="draftServiceRequests"
       ></app-service-request-list>
     </mat-tab>
 
@@ -22,8 +25,8 @@
       <app-service-request-list
         [serviceRequest]="activeServiceRequests"
         [isLoading]="isLoading"
-        [serviceRequestType]="'active'"
-        (serviceRequestDeletedEvent)="getServiceRequests()"
+        [serviceRequestType]="selectedServiceRequestType"
+        (serviceRequestDeletedEvent)="activeServiceRequests"
       ></app-service-request-list>
     </mat-tab>
 
@@ -31,8 +34,8 @@
       <app-service-request-list
         [serviceRequest]="completeServiceRequests"
         [isLoading]="isLoading"
-        [serviceRequestType]="'complete'"
-        (serviceRequestDeletedEvent)="getServiceRequests()"
+        [serviceRequestType]="selectedServiceRequestType"
+        (serviceRequestDeletedEvent)="completeServiceRequests"
       ></app-service-request-list>
     </mat-tab>
 
