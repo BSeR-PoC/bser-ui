@@ -15,11 +15,6 @@ export class MappedSimpleObservation {
   }
 }
 
-export class ObservationComponents{
-
-
-}
-
 export class MappedCompositeObservation {
   name: string;
   components: MappedSimpleObservation[];
@@ -30,11 +25,11 @@ export class MappedCompositeObservation {
 }
 
 @Component({
-  selector: 'app-active-referrals',
-  templateUrl: './active-referrals.component.html',
-  styleUrl: './active-referrals.component.scss'
+  selector: 'app-active-referral-details',
+  templateUrl: './active-referral-details.component.html',
+  styleUrl: './active-referral-details.component.scss'
 })
-export class ActiveReferralsComponent implements OnInit{
+export class ActiveReferralDetailsComponent implements OnInit{
 
   serviceRequest: MappedServiceRequest;
   data: any;
