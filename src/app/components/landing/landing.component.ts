@@ -38,7 +38,7 @@ export class LandingComponent implements OnInit {
 
         this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
         this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
-        this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');
+        this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'completed');
       },
       error: err => {
         this.isLoading = false;

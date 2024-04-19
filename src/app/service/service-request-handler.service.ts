@@ -208,23 +208,21 @@ export class ServiceRequestHandlerService {
 
   getServiceRequestData() : Observable<MappedServiceRequest[]> {
     const patientMRN = this.patient.identifier.find((ident: any) => ident?.type?.coding?.[0]?.code === "MR");
-    const identifierParameter: string = `identifier=${patientMRN.system}|${patientMRN.value}`
 
-    const subject = "subject=" + this.serverUrl;
-    const patient = "/Patient/" + this.patient.id;
+    // Construct the Draft ServiceRequest HTTP Request
+    const subject = `${this.serverUrl}/Patient/${this.patient.id}`;
     const include = "&_include=ServiceRequest:performer&_include:iterate=PractitionerRole:organization";
-    const requestUrl = environment.bserProviderServer +
-      "ServiceRequest?" +
-      subject +
-      patient +
-      include;
-    const drafts$ = this.http.get(requestUrl);
+    const draftRequestUrl = encodeURI(environment.bserProviderServer + "ServiceRequest?subject=" + subject + include);
+    const getDrafts$ = this.http.get(draftRequestUrl)
 
-    const taskInclude = "_include=Task:focus&_include=Task:owner&_include:iterate=PractitionerRole:organization";
-    const tasks$ = this.http.get(encodeURI(environment.bserProviderServer + "Task?" + taskInclude));
+    // Construct the Active/Complete Task HTTP Request
+    const taskSubject: string = `patient.identifier=${patientMRN.value}`
+    const taskInclude = "&_include=Task:focus&_include=Task:owner&_include:iterate=PractitionerRole:organization";
+    const taskRequestUrl = encodeURI(environment.bserProviderServer + "Task?" + taskSubject + taskInclude);
+    const getTasks$ = this.http.get(taskRequestUrl)
 
-    return combineLatest([drafts$, tasks$]).pipe(
-      map((combinedResults: [any, any]) => [...combinedResults[0].entry, ...combinedResults?.[1]?.entry]),
+    return combineLatest([getDrafts$, getTasks$]).pipe(
+      map((combinedResults: [any, any]) => [...combinedResults?.[0]?.entry, ...combinedResults?.[1]?.entry]),
       map(results=> {
         return this.convertToMappedServiceRequests(results);
       })
