@@ -48,7 +48,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatTabsModule} from "@angular/material/tabs";
-import {ActiveReferralDetailsComponent} from "./components/active-referral-details/active-referral-details.component";
+import {ReferralDetailsComponent} from "./components/referral-details/referral-details.component";
 
 @NgModule({
   declarations: [
@@ -69,7 +69,7 @@ import {ActiveReferralDetailsComponent} from "./components/active-referral-detai
     ServiceRequestListComponent,
     TelecomComponent,
     ReviewAndSendComponent,
-    ActiveReferralDetailsComponent
+    ReferralDetailsComponent
   ],
   imports: [
     BrowserModule,

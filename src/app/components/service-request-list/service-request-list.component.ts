@@ -83,11 +83,11 @@ export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
 
 
   onRowClick(serviceRequest) {
-    if(serviceRequest.status == ServiceRequestStatusType.active.toLowerCase()){
-      this.router.navigate(['referral-viewer', serviceRequest.serviceRequestId]);
+    if(serviceRequest.status == ServiceRequestStatusType.draft.toLowerCase()){
+      this.router.navigate(['referral-manager', serviceRequest.serviceRequestId]);
     }
     else {
-      this.router.navigate(['referral-manager', serviceRequest.serviceRequestId]);
+      this.router.navigate(['referral-viewer', serviceRequest.serviceRequestId]);
     }
 
   }

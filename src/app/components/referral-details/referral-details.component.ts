@@ -25,11 +25,11 @@ export class MappedCompositeObservation {
 }
 
 @Component({
-  selector: 'app-active-referral-details',
-  templateUrl: './active-referral-details.component.html',
-  styleUrl: './active-referral-details.component.scss'
+  selector: 'app-referral-details',
+  templateUrl: './referral-details.component.html',
+  styleUrl: './referral-details.component.scss'
 })
-export class ActiveReferralDetailsComponent implements OnInit{
+export class ReferralDetailsComponent implements OnInit{
 
   serviceRequest: MappedServiceRequest;
   data: any;

@@ -4,7 +4,6 @@ import {FhirClientService} from "../../service/fhir-client.service";
 import {ServiceRequestStatusType} from "../../models/service-request-status-type"
 import {UtilsService} from "../../service/utils.service";
 import {mergeMap} from "rxjs";
-import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-landing',
@@ -35,10 +34,11 @@ export class LandingComponent implements OnInit {
       next: mappedServiceRequests=> {
         this.isLoading = false;
         this.serviceRequestHandlerService.setMappedServiceRequests(mappedServiceRequests);
-
         this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
         this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
-        this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'completed');
+        this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest =>
+          serviceRequest.status === 'completed' || serviceRequest.status === 'revoked'
+        );
       },
       error: err => {
         this.isLoading = false;
