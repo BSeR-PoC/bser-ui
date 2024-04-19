@@ -7,7 +7,7 @@ export class MappedServiceRequest {
     this.dateCreated = serviceRequestResource?.authoredOn;
     this.lastUpdated = serviceRequestResource?.meta?.lastUpdated;
     this.service = serviceRequestResource?.orderDetail?.[0]?.text;
-    if (this.status === "active") {
+    if (this.status !== "draft") {
       this.taskStatus = taskResource?.status;
       this.businessStatus = taskResource?.businessStatus?.coding?.[0]?.display;
       this.taskId = taskResource.id;

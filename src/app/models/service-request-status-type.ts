@@ -1,5 +1,6 @@
 export enum ServiceRequestStatusType  {
   draft = 'Draft',
   active = 'Active',
-  completed = 'Completed'
+  completed = 'Completed',
+  revoked = 'Revoked'
 }
