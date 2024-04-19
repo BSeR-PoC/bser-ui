@@ -1,5 +1,7 @@
 <mat-card>
-  <mat-card-title>Selected Service Provider</mat-card-title>
+  <mat-card-header>
+    <mat-card-title>Selected Service Provider</mat-card-title>
+  </mat-card-header>
   <mat-card-content>
     <!--If a service provider is selected, render the provider information-->
     <div *ngIf="selectedServiceProvider" style="color: #0d47a1">
@@ -10,9 +12,6 @@
       <ng-template #noPractitionerFound>
         {{selectedServiceProvider.organization?.name}}
       </ng-template>
-
-
-
     </div>
     <!--If no service provider is selected prompt the user to select one-->
     <div *ngIf="!selectedServiceProvider">Please select a service provider from the list below.</div>
