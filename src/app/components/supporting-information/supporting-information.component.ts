@@ -218,8 +218,6 @@ export class SupportingInformationComponent implements OnInit {
         this.supportingInformationForm.controls['ha1c'].patchValue(ha1cValue);
       }
     }
-    console.log(this.supportingInformationForm);
-
   }
 
   onReturn() {
