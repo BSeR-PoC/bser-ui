@@ -11,6 +11,7 @@ import {openConformationDialog} from "../conformation-dialog/conformation-dialog
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {MatDialog} from "@angular/material/dialog";
+import {mergeMap, of} from "rxjs";
 
 @Component({
   selector: 'app-referral-manager',
@@ -227,28 +228,31 @@ export class ReferralManagerComponent implements OnInit {
     this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
   }
 
-  // TODO refactor nested subscriptions
+  // TODO refactored nested subscription, but the serviceRequestHandler needs total refactoring with nested subscriptions removed
   private getServiceRequestById(serviceRequestId: any) {
     this.isLoading = true;
-    this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
+    this.serviceRequestHandler.getServiceRequestById(serviceRequestId).pipe(
+      mergeMap( (value: any) => {
+        return this.serviceRequestHandler.currentSnapshot$
+      }),
+      mergeMap( (value: any) => {
+        const params = value.supportingInfo.find(element => element.type?.value === "Parameters");
+        if (params) {
+          const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
+          return this.serviceRequestHandler.getParametersById(paramsId); // Return observable for parameters
+        }
+        return of(null);
+      }),
+    ).subscribe({
       next: value => {
-        this.serviceRequestHandler.currentSnapshot$.subscribe(
-          {
-            next: (data: ServiceRequest) => {
-              this.isLoading = false;
-              const params = data.supportingInfo.find(element => element.type?.value === "Parameters");
-              if(params){
-                const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
-                if (paramsId){
-                  this.serviceRequestHandler.getParametersById(paramsId).subscribe()
-                }
-              }
-            },
-            error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-          }
-        );
+        this.isLoading = false;
+      },
+      error: err => {
+        this.isLoading = false;
+        this.utilsService.showErrorNotification("Server error retrieving results from API!")
+        this.utilsService.showErrorNotification(err?.message?.toString())
       }
-    });
+    })
   }
 
   private createNewServiceRequest() {
