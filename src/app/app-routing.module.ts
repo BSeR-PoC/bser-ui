@@ -4,13 +4,13 @@ import {LaunchComponent} from "./components/launch/launch.component";
 import {ReferralManagerComponent} from "./components/referral-manager/referral-manager.component";
 import {RegistrationComponent} from "./components/registration/registration.component";
 import {LandingComponent} from "./components/landing/landing.component";
-import {ActiveReferralDetailsComponent} from "./components/active-referral-details/active-referral-details.component";
+import {ReferralDetailsComponent} from "./components/referral-details/referral-details.component";
 
 const routes: Routes = [
   { path: '', component: LandingComponent},
   { path: 'referral-manager/:id', component: ReferralManagerComponent},
   { path: 'referral-manager', component: ReferralManagerComponent},
-  { path: 'referral-viewer/:serviceRequestId', component: ActiveReferralDetailsComponent},
+  { path: 'referral-viewer/:serviceRequestId', component: ReferralDetailsComponent},
   { path: 'launch', component: LaunchComponent},
   { path: 'register', component: RegistrationComponent},
   { // This path MUST ALWAYS be the last path!!!

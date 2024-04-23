@@ -36,7 +36,6 @@ export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
 
   displayedColumns: string[] = ['service', 'serviceProvider', 'dateCreated', 'lastUpdated'];
   public dataSource = new MatTableDataSource<any>([]);
-  protected readonly ServiceRequestStatusType = ServiceRequestStatusType;
 
   constructor(
     private mockDataRetrievalService: MockDataRetrievalService,
@@ -64,18 +63,17 @@ export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
     // Data is loaded asynchronously and we set the table data source every time the data changes.
     // TODO this may be a performance issue, and we may need to load the data asynchronously and only once
 
-    if (this.serviceRequestType == ServiceRequestStatusType.draft && (this.displayedColumns.indexOf('actions') == -1)) {
+    if(this.serviceRequestType == ServiceRequestStatusType.draft){
+      if(this.displayedColumns.indexOf('actions') == -1){
         this.displayedColumns.push('actions')
-    }
-    else {
-      this.displayedColumns = this.displayedColumns.filter(column => column != 'actions')
-    }
-
-    if (this.serviceRequestType == ServiceRequestStatusType.active && (this.displayedColumns.indexOf('businessStatus') == -1)) {
-        this.displayedColumns.splice(2,0,'businessStatus');
-    }
-    else {
+      }
       this.displayedColumns = this.displayedColumns.filter(column => column != 'businessStatus')
+    }
+    else {
+      if(this.displayedColumns.indexOf('businessStatus') == -1){
+        this.displayedColumns.splice(2,0,'businessStatus');
+      }
+      this.displayedColumns = this.displayedColumns.filter(column => column != 'actions')
     }
 
     this.dataSource.data = this.serviceRequest;
@@ -83,11 +81,11 @@ export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
 
 
   onRowClick(serviceRequest) {
-    if(serviceRequest.status == ServiceRequestStatusType.active.toLowerCase()){
-      this.router.navigate(['referral-viewer', serviceRequest.serviceRequestId]);
+    if(serviceRequest.status == ServiceRequestStatusType.draft.toLowerCase()){
+      this.router.navigate(['referral-manager', serviceRequest.serviceRequestId]);
     }
     else {
-      this.router.navigate(['referral-manager', serviceRequest.serviceRequestId]);
+      this.router.navigate(['referral-viewer', serviceRequest.serviceRequestId]);
     }
 
   }
