@@ -54,7 +54,6 @@ export class TransactionBundleHandlerService {
   createBundlePutRequestEntries(resources: Resource[]): BundleEntry[] {
     let bundleEntries = []
     resources.forEach(resource => {
-      console.log(resource)
       let bundleEntry = new BundleEntry({
         fullUrl: resource.resourceType + "/" + resource.id,
         resource: resource.toJSON(),

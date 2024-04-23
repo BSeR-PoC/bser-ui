@@ -11,7 +11,7 @@ import {openConformationDialog} from "../conformation-dialog/conformation-dialog
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {MatDialog} from "@angular/material/dialog";
-import {mergeMap, of} from "rxjs";
+import {mergeMap, of, take} from "rxjs";
 
 @Component({
   selector: 'app-referral-manager',
@@ -239,10 +239,13 @@ export class ReferralManagerComponent implements OnInit {
         const params = value.supportingInfo.find(element => element.type?.value === "Parameters");
         if (params) {
           const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
+          console.log("called 2");
           return this.serviceRequestHandler.getParametersById(paramsId); // Return observable for parameters
+
         }
         return of(null);
       }),
+      take(1), // we don't want to generate multiple subscriptions every time we call getServiceRequestById
     ).subscribe({
       next: value => {
         this.isLoading = false;
