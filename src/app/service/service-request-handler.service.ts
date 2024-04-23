@@ -116,13 +116,12 @@ export class ServiceRequestHandlerService {
     }
     (console.log(currentSnapshot))
 
+
     if (!(currentSnapshot.id)) {
-      return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters]).pipe(
-        switchMap((data: any) => this.getServiceRequestAndParamsHelper(data)))
+      return this.transBundleHandler.sendTransactionBundle("POST", [currentSnapshot, currentParameters])
     }
     else {
-      return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters]).pipe(
-        switchMap((data: any) => this.getServiceRequestAndParamsHelper(data)))
+      return this.transBundleHandler.sendTransactionBundle("PUT", [currentSnapshot, currentParameters])
     }
   }
 
