@@ -239,9 +239,7 @@ export class ReferralManagerComponent implements OnInit {
         const params = value.supportingInfo.find(element => element.type?.value === "Parameters");
         if (params) {
           const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
-          console.log("called 2");
           return this.serviceRequestHandler.getParametersById(paramsId); // Return observable for parameters
-
         }
         return of(null);
       }),
@@ -264,7 +262,6 @@ export class ReferralManagerComponent implements OnInit {
       {
         next: (data: ServiceRequest) => {
           this.currentSnapshot = data;
-          console.log("DATA:", data)
         },
         error: err => this.utilsService.showErrorNotification(err?.message?.toString())
       }
