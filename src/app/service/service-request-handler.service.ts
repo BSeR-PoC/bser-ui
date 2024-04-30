@@ -236,7 +236,6 @@ export class ServiceRequestHandlerService {
   }
 
   private convertToMappedServiceRequests(bundleEntries: any): MappedServiceRequest[] {
-    console.log(bundleEntries);
     const serviceRequestResources = bundleEntries.filter(entry => entry.resource.resourceType === "ServiceRequest");
     const taskResources = bundleEntries.filter(entry => entry.resource.resourceType === "Task");
     const organizationResources =  bundleEntries.filter(entry => entry.resource.resourceType === "Organization");
