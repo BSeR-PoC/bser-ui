@@ -221,10 +221,17 @@ export class ServiceRequestHandlerService {
     const getTasks$ = this.http.get(taskRequestUrl)
 
     return combineLatest([getDrafts$, getTasks$]).pipe(
-      map((combinedResults: [any, any]) => [...combinedResults?.[0]?.entry, ...combinedResults?.[1]?.entry]),
-      map(results=> {
-        return this.convertToMappedServiceRequests(results);
-      })
+      map((combinedResults: [any, any]) => {
+        let result = [];
+        if(combinedResults?.[0]?.entry){
+          result = [...result, ...combinedResults?.[0]?.entry];
+        }
+        if(combinedResults?.[1]?.entry){
+          result = [...result, ...combinedResults?.[1]?.entry];
+        }
+        return result;
+      }),
+      map(results=> this.convertToMappedServiceRequests(results))
     );
   }
 
