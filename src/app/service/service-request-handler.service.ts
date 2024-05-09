@@ -1,4 +1,4 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
 import {BehaviorSubject, combineLatest, forkJoin, map, Observable, switchMap, tap} from 'rxjs';
@@ -269,6 +269,12 @@ export class ServiceRequestHandlerService {
   }
 
   getServiceRequestById(serviceRequestId: string) : Observable<ServiceRequest> {
+    console.log('getServiceRequestById');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Cache-Control': 'no-cache',
+      })
+    }
     const requestUrl = environment.bserProviderServer + "ServiceRequest/" + serviceRequestId;
 
     return this.http.get(requestUrl).pipe(map(result => {
@@ -291,9 +297,14 @@ export class ServiceRequestHandlerService {
   }
 
   getParametersById(paramsId: string) {
-    const requestUrl = environment.bserProviderServer + "Parameters/" + paramsId;
-
-    return this.http.get(requestUrl).pipe(map(result => {
+    const requestUrl = `${environment.bserProviderServer}Parameters/${paramsId}`;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Cache-Control': 'no-cache',
+      })
+    }
+    return this.http.get(requestUrl, httpOptions).pipe(
+      map(result => {
         this.lastParameters = new Parameters(this.deepCopy(result));
         this.currentParameters.next(new Parameters(result));
         return  result as Parameters;

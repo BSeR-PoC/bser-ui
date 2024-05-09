@@ -3,7 +3,7 @@ import {ServiceRequestHandlerService} from "../../service/service-request-handle
 import {FhirClientService} from "../../service/fhir-client.service";
 import {ServiceRequestStatusType} from "../../models/service-request-status-type"
 import {UtilsService} from "../../service/utils.service";
-import {mergeMap} from "rxjs";
+import {distinctUntilChanged, Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'app-landing',
@@ -18,6 +18,7 @@ export class LandingComponent implements OnInit {
   activeServiceRequests: any[] = [];
   draftServiceRequests: any[] = [];
   completeServiceRequests: any[] = [];
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(
     private serviceRequestHandlerService: ServiceRequestHandlerService,
@@ -26,10 +27,9 @@ export class LandingComponent implements OnInit {
     this.fhirClient.readyClient();
   }
 
-  ngOnInit(): void {
-    this.isLoading = true;
-    this.serviceRequestHandlerService.initClient().pipe(
-      mergeMap(result=> this.serviceRequestHandlerService.getServiceRequestData())
+  getServiceRequests(){
+    this.serviceRequestHandlerService.getServiceRequestData().pipe(
+      takeUntil(this.unsubscribe$)
     ).subscribe({
       next: mappedServiceRequests=> {
         this.isLoading = false;
@@ -45,7 +45,14 @@ export class LandingComponent implements OnInit {
         console.error(err);
       }
     })
+  }
 
+  ngOnInit(): void {
+    this.isLoading = true;
+    this.serviceRequestHandlerService.initClient().pipe(
+      distinctUntilChanged(),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(()=> this.getServiceRequests());
   }
 
   onSelectServiceRequestType(tabNumber: number) {
@@ -55,5 +62,4 @@ export class LandingComponent implements OnInit {
       case (2): {this.selectedServiceRequestType = ServiceRequestStatusType.completed; break }
     }
   }
-
 }
