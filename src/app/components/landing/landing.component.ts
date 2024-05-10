@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {FhirClientService} from "../../service/fhir-client.service";
 import {ServiceRequestStatusType} from "../../models/service-request-status-type"
@@ -10,7 +10,7 @@ import {distinctUntilChanged, Subject, takeUntil} from "rxjs";
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
-export class LandingComponent implements OnInit {
+export class LandingComponent implements OnInit, OnDestroy {
 
   isLoading: boolean = false;
   selectedServiceRequestType: ServiceRequestStatusType = ServiceRequestStatusType.draft;
@@ -27,6 +27,10 @@ export class LandingComponent implements OnInit {
     this.fhirClient.readyClient();
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
   getServiceRequests(){
     this.serviceRequestHandlerService.getServiceRequestData().pipe(
       takeUntil(this.unsubscribe$)
