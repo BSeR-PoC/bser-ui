@@ -1,7 +1,7 @@
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
-import {BehaviorSubject, combineLatest, forkJoin, map, Observable, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, map, Observable, of, switchMap, tap} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {Reference} from "@fhir-typescript/r4-core/dist/fhir/Reference";
 import {PractitionerRole} from "@fhir-typescript/r4-core/dist/fhir/PractitionerRole";
@@ -30,8 +30,8 @@ export class ServiceRequestHandlerService {
   private patient: any;
   private serverUrl: string;
 
-  private isClientInitialized = new BehaviorSubject<boolean>(false);
-  public isClientInitialized$ = this.isClientInitialized.asObservable();
+  // private isClientInitialized = new BehaviorSubject<boolean>(false);
+  // public isClientInitialized$ = this.isClientInitialized.asObservable();
 
   private _mappedServiceRequests = new BehaviorSubject<MappedServiceRequest[]>([]);
   public mappedServiceRequests = this._mappedServiceRequests.asObservable();
@@ -51,12 +51,10 @@ export class ServiceRequestHandlerService {
 
     return practitioner$.pipe(
       switchMap(result => serverUrl$),
-      switchMap( result => patient$),
-      tap(value=> this.isClientInitialized.next(true)))
-  }
+      switchMap( result => patient$))}
 
   // STEP 0
-  createNewServiceRequest() {
+  createNewServiceRequest(): Observable<{ currentSnapshot: ServiceRequest; currentParameters: Parameters; }> {
 
     //TODO: delete the codeable concept code, it should come from the UI when the user selects the Recipient
     // let coding = new Coding({code: "diabetes-prevention", display : "Diabetes Prevention"});
@@ -78,10 +76,13 @@ export class ServiceRequestHandlerService {
       //      orderDetail: [new CodeableConcept(codeableConcept)]
       //subject: Reference.fromResource(patient),
     });
+
+    //TODO delete the following after refactor
     this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
     this.lastParameters = new Parameters(this.deepCopy(parameters));
     this.currentSnapshot.next(serviceRequest);
     this.currentParameters.next(parameters);
+    return of({ currentSnapshot: serviceRequest, currentParameters: parameters })
   }
 
   private createServiceRequestCoding(): CodeableConcept {
@@ -125,23 +126,23 @@ export class ServiceRequestHandlerService {
     }
   }
 
-  private getServiceRequestAndParamsHelper(data) : Observable<any> {
-
-    const serviceRequestLocation = data.entry.find(element => element?.response?.location.indexOf('ServiceRequest') !== -1).response.location;
-    const serviceRequestId = serviceRequestLocation.substring(serviceRequestLocation.indexOf('/') + 1, serviceRequestLocation.lastIndexOf('/_'));
-
-    const parametersLocation = data.entry.find(element => element?.response?.location.indexOf('Parameters') !== -1).response.location;
-    const paramsId = parametersLocation.substring(parametersLocation.indexOf('/') + 1, parametersLocation.lastIndexOf('/_'));
-
-    return forkJoin([this.getServiceRequestById(serviceRequestId), this.getParametersById(paramsId)]).pipe(map(value=> {
-      this.lastSnapshot = new ServiceRequest(value[0]);
-      this.lastParameters = new Parameters (value[1]);
-      this.currentSnapshot.next(new ServiceRequest (value[0]));
-      this.currentParameters.next(new Parameters(value[1]));
-
-      return value;
-    }))
-  }
+  // private getServiceRequestAndParamsHelper(data) : Observable<any> {
+  //
+  //   const serviceRequestLocation = data.entry.find(element => element?.response?.location.indexOf('ServiceRequest') !== -1).response.location;
+  //   const serviceRequestId = serviceRequestLocation.substring(serviceRequestLocation.indexOf('/') + 1, serviceRequestLocation.lastIndexOf('/_'));
+  //
+  //   const parametersLocation = data.entry.find(element => element?.response?.location.indexOf('Parameters') !== -1).response.location;
+  //   const paramsId = parametersLocation.substring(parametersLocation.indexOf('/') + 1, parametersLocation.lastIndexOf('/_'));
+  //
+  //   return forkJoin([this.getServiceRequestById(serviceRequestId), this.getParametersById(paramsId)]).pipe(map(value=> {
+  //     this.lastSnapshot = new ServiceRequest(value[0]);
+  //     this.lastParameters = new Parameters (value[1]);
+  //     this.currentSnapshot.next(new ServiceRequest (value[0]));
+  //     this.currentParameters.next(new Parameters(value[1]));
+  //
+  //     return value;
+  //   }))
+  // }
 
   // First Screen User Input
   setRecipient(currentSnapshot: ServiceRequest, recipient: any) {
@@ -277,9 +278,10 @@ export class ServiceRequestHandlerService {
     }
     const requestUrl = environment.bserProviderServer + "ServiceRequest/" + serviceRequestId;
 
-    return this.http.get(requestUrl).pipe(map(result => {
-        this.lastSnapshot = new ServiceRequest(this.deepCopy(result));
-        this.currentSnapshot.next(new ServiceRequest(result));
+    return this.http.get(requestUrl, httpOptions)
+      .pipe(map(result => {
+        // this.lastSnapshot = new ServiceRequest(this.deepCopy(result));
+        // this.currentSnapshot.next(new ServiceRequest(result));
         return  result as ServiceRequest;
       }
     ))
@@ -296,7 +298,7 @@ export class ServiceRequestHandlerService {
     return this.http.delete(connectionUrl + "/" + serviceRequestId)
   }
 
-  getParametersById(paramsId: string) {
+  getParametersById(paramsId: string): Observable<Parameters> {
     const requestUrl = `${environment.bserProviderServer}Parameters/${paramsId}`;
     const httpOptions = {
       headers: new HttpHeaders({
@@ -305,8 +307,8 @@ export class ServiceRequestHandlerService {
     }
     return this.http.get(requestUrl, httpOptions).pipe(
       map(result => {
-        this.lastParameters = new Parameters(this.deepCopy(result));
-        this.currentParameters.next(new Parameters(result));
+        // this.lastParameters = new Parameters(this.deepCopy(result));
+        // this.currentParameters.next(new Parameters(result));
         return  result as Parameters;
       }
     ))

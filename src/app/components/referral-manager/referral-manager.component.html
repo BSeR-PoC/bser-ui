@@ -12,6 +12,7 @@
               (requestStep)="onRequestStep($event)"
               (savedSuccessEvent)="onSaveProvider($event)"
               (serviceProviderSelectedEvent)="onServiceProviderSelected($event)"
+              [currentSnapshot]="currentSnapshot"
             ></app-service-provider-list>
           </div>
         </mat-step>

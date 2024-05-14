@@ -1,9 +1,7 @@
-import {Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ServiceProviderService} from "../../service/service-provider.service";
 import {Router} from "@angular/router";
 import {openConformationDialog} from "../conformation-dialog/conformation-dialog.component";
-import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
-import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {UtilsService} from "../../service/utils.service";
 import {MatDialog} from "@angular/material/dialog";
 
@@ -14,13 +12,13 @@ const CURRENT_STEP = 1;
   templateUrl: './service-provider-list.component.html',
   styleUrls: ['./service-provider-list.component.scss']
 })
-export class ServiceProviderListComponent implements OnInit, OnChanges {
+export class ServiceProviderListComponent implements OnInit {
 
   serviceProviders: any[] = null;
   selectedServiceProvider: any = null;
   isLoading: boolean = false
 
-  serviceRequest: any;
+  @Input() currentSnapshot: any; //TODO check why ServiceRequest Type doesn't work here and type any works
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() serviceProviderSelectedEvent = new EventEmitter();
   @Output() requestStep = new EventEmitter();
@@ -30,7 +28,6 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
     private serviceProviderService: ServiceProviderService,
     private router: Router,
     private dialog: MatDialog,
-    private serviceRequestHandlerService: ServiceRequestHandlerService,
     private utilsService: UtilsService
   ) { }
 
@@ -45,11 +42,11 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
           //We need to set the selected service provider if we are updating existing service request.
           if (
             //this.serviceRequest?.id && this.serviceRequest?.performer?.[0]?.reference?.replace('PractitionerRole/', '')
-            this.serviceRequest?.performer?.[0]?.reference?.value.replace(this.serviceProviders,'PractitionerRole/', '')
+            this.currentSnapshot?.performer?.[0]?.reference?.replace(this.serviceProviders,'PractitionerRole/', '')
           ){
             const selectedServiceProvider = this.getSelectedServiceRequestProvider(
               this.serviceProviders,
-              this.serviceRequest?.performer?.[0]?.reference.value?.replace('PractitionerRole/', '')
+              this.currentSnapshot?.performer?.[0]?.reference?.replace('PractitionerRole/', '')
             );
             this.onSelectedServiceProvider(selectedServiceProvider);
           }
@@ -64,16 +61,13 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.getServiceProviders();
-    this.serviceRequestHandlerService.currentSnapshot$.subscribe({
-      next: (value: ServiceRequest) => this.serviceRequest = value
-    })
   }
 
   onCancel() {
     if (
       !this.selectedServiceProvider
       ||
-      this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
+      this.currentSnapshot.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
     ){
       this.router.navigate(['/']);
     }
@@ -128,22 +122,6 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
     this.serviceProviderSelectedEvent.emit(serviceProvider);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // We need to set the selected service provider if we are updating existing service request.
-    if(
-      changes['serviceRequest'].currentValue?.id
-      &&
-      changes['serviceRequest'].currentValue?.performer?.[0]?.reference?.replace('PractitionerRole/', '')?.length > 0
-      && this.serviceProviders?.length > 0
-    ){
-      const serviceProvider = this.getSelectedServiceRequestProvider (
-        this.serviceProviders,
-        changes['serviceRequest'].currentValue?.performer?.[0]?.reference?.replace('PractitionerRole/', '')
-      )
-      this.onSelectedServiceProvider(serviceProvider);
-    }
-  }
-
   private getSelectedServiceRequestProvider(serviceProviders: any[], serviceProviderId: string): any {
     if(!serviceProviders || serviceProviders.length == 0 || !serviceProviderId){
       return null;
@@ -160,7 +138,7 @@ export class ServiceProviderListComponent implements OnInit, OnChanges {
 
   onProceed() {
     if(
-      !this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
+      !this.currentSnapshot.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
     ) {
       this.onSave(CURRENT_STEP + 1);
     }

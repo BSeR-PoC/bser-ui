@@ -45,7 +45,7 @@ export class ReferralManagerComponent implements OnInit {
     this.route.params.subscribe({
       next: params => {
         if(params && params['id']){
-          this.getServiceRequestById(params['id']);
+          this.getServiceRequestAndParamsById(params['id']);
         }
         else {
           this.createNewServiceRequest();
@@ -229,23 +229,28 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   // TODO refactored nested subscription, but the serviceRequestHandler needs total refactoring with nested subscriptions removed
-  private getServiceRequestById(serviceRequestId: any) {
+  private getServiceRequestAndParamsById(serviceRequestId: any) {
     this.isLoading = true;
     this.serviceRequestHandler.getServiceRequestById(serviceRequestId).pipe(
+      // mergeMap( (value: any) => {
+      //   return this.serviceRequestHandler.currentSnapshot$
+      // }),
       mergeMap( (value: any) => {
-        return this.serviceRequestHandler.currentSnapshot$
-      }),
-      mergeMap( (value: any) => {
-        const params = value.supportingInfo.find(element => element.type?.value === "Parameters");
+        this.currentSnapshot = value;
+        const params = this.currentSnapshot.supportingInfo.find(element => {
+          console.log(element);
+          return element.type.toString() == "Parameters";
+        });
         if (params) {
-          const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
+          const paramsId = params.reference.substring(params.reference.indexOf('/') + 1);
           return this.serviceRequestHandler.getParametersById(paramsId); // Return observable for parameters
         }
         return of(null);
       }),
-      take(1), // we don't want to generate multiple subscriptions every time we call getServiceRequestById
+     // take(1), // we don't want to generate multiple subscriptions every time we call getServiceRequestById
     ).subscribe({
       next: value => {
+        this.currentParameters = value;
         this.isLoading = false;
       },
       error: err => {
@@ -257,15 +262,20 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   private createNewServiceRequest() {
-    this.serviceRequestHandler.createNewServiceRequest();
-    this.serviceRequestHandler.currentSnapshot$.subscribe(
-      {
-        next: (data: ServiceRequest) => {
-          this.currentSnapshot = data;
-        },
-        error: err => this.utilsService.showErrorNotification(err?.message?.toString())
+    this.serviceRequestHandler.createNewServiceRequest().subscribe({
+      next: value => {
+        this.currentSnapshot = value.currentSnapshot;
+        this.currentParameters = value.currentParameters;
       }
-    );
+    });
+    // this.serviceRequestHandler.currentSnapshot$.subscribe(
+    //   {
+    //     next: (data: ServiceRequest) => {
+    //       this.currentSnapshot = data;
+    //     },
+    //     error: err => this.utilsService.showErrorNotification(err?.message?.toString())
+    //   }
+    // );
   }
 
   saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, requestedStep: number) {
