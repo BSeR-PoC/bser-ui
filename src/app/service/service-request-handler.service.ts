@@ -158,15 +158,6 @@ export class ServiceRequestHandlerService {
     currentSnapshot.performer.push(Reference.fromResource(recipientTest));
   }
 
-  // Second Screen User Input
-  setServiceType(currentParameters: Parameters, serviceType: string) {
-    // TODO: Check if Parameter exists -- get from Raven 1 code.
-    // TODO: See how best to do an update using the Microsoft library.
-    let parameter = new ParametersParameter({name: "test", valueCode: serviceType});
-    currentParameters.parameter.push(parameter);
-    this.currentParameters.next(currentParameters);
-  }
-
   setServiceTypePlamen(currentSnapshot: ServiceRequest, serviceType: CodeableConcept) {
     // TODO: Check if Parameter exists -- get from Raven 1 code.
     // TODO: See how best to do an update using the Microsoft library.
