@@ -245,17 +245,15 @@ export class ServiceRequestHandlerService {
 
     serviceRequestResources.forEach(serviceRequestBundleEntry => {
 
-      //const performerBundleEntry = this.findResourceById(results, serviceRequestBundleEntry.resource?.performer?.[0].reference.replace('PractitionerRole/', ''));
       const practitionerRoleResourceId =  serviceRequestBundleEntry.resource?.performer?.[0].reference.replace('PractitionerRole/', '');
       let practitionerRoleResource = null;
       if(practitionerRoleResourceId){
-        practitionerRoleResource = practitionerRoleResources.find(entry => entry.id == practitionerRoleResourceId)?.resource;
+        practitionerRoleResource = practitionerRoleResources.find(entry => entry.resource.id == practitionerRoleResourceId)?.resource;
       }
-
-      const performerOrgIdId =  practitionerRoleResource?.resource?.organization?.reference.replace('Organization/', '');
+      const performerOrgIdId =  practitionerRoleResource?.organization?.reference?.replace('Organization/', '')
       let performerResource = null;
-      if(practitionerRoleResourceId){
-        performerResource = organizationResources.find(entry => entry.id == performerOrgIdId)?.resource;
+      if(performerOrgIdId){
+        performerResource = organizationResources.find(entry => entry.resource.id == performerOrgIdId)?.resource;
       }
 
       const taskResource = taskResources.find(task => {
