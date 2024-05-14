@@ -269,7 +269,6 @@ export class ServiceRequestHandlerService {
   }
 
   getServiceRequestById(serviceRequestId: string) : Observable<ServiceRequest> {
-    console.log('getServiceRequestById');
     const httpOptions = {
       headers: new HttpHeaders({
         'Cache-Control': 'no-cache',
@@ -277,7 +276,7 @@ export class ServiceRequestHandlerService {
     }
     const requestUrl = environment.bserProviderServer + "ServiceRequest/" + serviceRequestId;
 
-    return this.http.get(requestUrl).pipe(map(result => {
+    return this.http.get(requestUrl, httpOptions).pipe(map(result => {
         this.lastSnapshot = new ServiceRequest(this.deepCopy(result));
         this.currentSnapshot.next(new ServiceRequest(result));
         return  result as ServiceRequest;
