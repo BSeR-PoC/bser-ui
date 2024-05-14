@@ -11,7 +11,7 @@ import {openConformationDialog} from "../conformation-dialog/conformation-dialog
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {MatDialog} from "@angular/material/dialog";
-import {mergeMap, of, take} from "rxjs";
+import {mergeMap, of, take, tap} from "rxjs";
 
 @Component({
   selector: 'app-referral-manager',
@@ -272,6 +272,10 @@ export class ReferralManagerComponent implements OnInit {
     this.isLoading = true;
     this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe({
       next: value => {
+        const serviceRequestEntry =  value?.entry?.find(entry => entry.response.location.indexOf("ServiceRequest") != -1);
+        const regex = /ServiceRequest\/(\d+)\//;
+        const serviceRequestId = regex.exec(serviceRequestEntry?.response?.location)?.[1];
+        this.getServiceRequestById(serviceRequestId);
         this.isLoading = false;
         if(requestedStep){
           this.onRequestStep(requestedStep);

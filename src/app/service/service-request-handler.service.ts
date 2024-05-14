@@ -1,4 +1,4 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ServiceRequest} from '@fhir-typescript/r4-core/dist/fhir/ServiceRequest';
 import {BehaviorSubject, combineLatest, forkJoin, map, Observable, switchMap, tap} from 'rxjs';
@@ -158,15 +158,6 @@ export class ServiceRequestHandlerService {
     currentSnapshot.performer.push(Reference.fromResource(recipientTest));
   }
 
-  // Second Screen User Input
-  setServiceType(currentParameters: Parameters, serviceType: string) {
-    // TODO: Check if Parameter exists -- get from Raven 1 code.
-    // TODO: See how best to do an update using the Microsoft library.
-    let parameter = new ParametersParameter({name: "test", valueCode: serviceType});
-    currentParameters.parameter.push(parameter);
-    this.currentParameters.next(currentParameters);
-  }
-
   setServiceTypePlamen(currentSnapshot: ServiceRequest, serviceType: CodeableConcept) {
     // TODO: Check if Parameter exists -- get from Raven 1 code.
     // TODO: See how best to do an update using the Microsoft library.
@@ -245,17 +236,15 @@ export class ServiceRequestHandlerService {
 
     serviceRequestResources.forEach(serviceRequestBundleEntry => {
 
-      //const performerBundleEntry = this.findResourceById(results, serviceRequestBundleEntry.resource?.performer?.[0].reference.replace('PractitionerRole/', ''));
       const practitionerRoleResourceId =  serviceRequestBundleEntry.resource?.performer?.[0].reference.replace('PractitionerRole/', '');
       let practitionerRoleResource = null;
       if(practitionerRoleResourceId){
-        practitionerRoleResource = practitionerRoleResources.find(entry => entry.id == practitionerRoleResourceId)?.resource;
+        practitionerRoleResource = practitionerRoleResources.find(entry => entry.resource.id == practitionerRoleResourceId)?.resource;
       }
-
-      const performerOrgIdId =  practitionerRoleResource?.resource?.organization?.reference.replace('Organization/', '');
+      const performerOrgIdId =  practitionerRoleResource?.organization?.reference?.replace('Organization/', '')
       let performerResource = null;
-      if(practitionerRoleResourceId){
-        performerResource = organizationResources.find(entry => entry.id == performerOrgIdId)?.resource;
+      if(performerOrgIdId){
+        performerResource = organizationResources.find(entry => entry.resource.id == performerOrgIdId)?.resource;
       }
 
       const taskResource = taskResources.find(task => {
@@ -269,9 +258,14 @@ export class ServiceRequestHandlerService {
   }
 
   getServiceRequestById(serviceRequestId: string) : Observable<ServiceRequest> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Cache-Control': 'no-cache',
+      })
+    }
     const requestUrl = environment.bserProviderServer + "ServiceRequest/" + serviceRequestId;
 
-    return this.http.get(requestUrl).pipe(map(result => {
+    return this.http.get(requestUrl, httpOptions).pipe(map(result => {
         this.lastSnapshot = new ServiceRequest(this.deepCopy(result));
         this.currentSnapshot.next(new ServiceRequest(result));
         return  result as ServiceRequest;
@@ -291,9 +285,14 @@ export class ServiceRequestHandlerService {
   }
 
   getParametersById(paramsId: string) {
-    const requestUrl = environment.bserProviderServer + "Parameters/" + paramsId;
-
-    return this.http.get(requestUrl).pipe(map(result => {
+    const requestUrl = `${environment.bserProviderServer}Parameters/${paramsId}`;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Cache-Control': 'no-cache',
+      })
+    }
+    return this.http.get(requestUrl, httpOptions).pipe(
+      map(result => {
         this.lastParameters = new Parameters(this.deepCopy(result));
         this.currentParameters.next(new Parameters(result));
         return  result as Parameters;

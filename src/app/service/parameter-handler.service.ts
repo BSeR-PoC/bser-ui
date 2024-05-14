@@ -28,14 +28,6 @@ export class ParameterHandlerService {
     return parametersResource;
   }
 
-  mapFormDataToParameters() {
-    // TODO: Implement handling a discrete FormGroup (e.g. general, diabetes-prevention, etc) to a set of Params
-    // HA1c, Weight, Height, BMI
-    // {
-    //   "name":
-    // }
-  }
-
   setStringParameter(parametersResource: Parameters, name: string, value: string): Parameters {
     parametersResource.parameter.push(new ParametersParameter({
       name: name,
