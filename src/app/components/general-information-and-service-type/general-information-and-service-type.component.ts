@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Router} from "@angular/router";
@@ -20,20 +20,22 @@ const CURRENT_STEP = 2;
   styleUrls: ['./general-information-and-service-type.component.scss']
 })
 
-export class GeneralInformationAndServiceTypeComponent implements OnInit {
+export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChanges {
 
   // Multiple checkbox reactive form solution inspired by:
   // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
 
   @Input() selectedServiceProvider: any;
+  @Input() serviceRequest: ServiceRequest;
+  @Input() parameters: Parameters;
 
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() requestStepEvent = new EventEmitter();
 
+
   generalInfoServiceTypeForm: UntypedFormGroup;
   usCorePatient: USCorePatient;
-  serviceRequest: ServiceRequest;
-  parameters: Parameters;
+
   initialFormValue: any;
 
   constructor(
@@ -44,6 +46,24 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
     private serviceRequestHandlerService: ServiceRequestHandlerService,
     private utilsService: UtilsService
   ) {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+
+    if(changes['serviceRequest'].currentValue){
+      const serviceCode = this.fhirConstants.SERVICE_TYPES
+        .find(serviceType => serviceType.code === this.serviceRequest?.orderDetail?.[0]?.coding?.[0]?.code.toString());
+      if (serviceCode) {
+        this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceCode);
+      }
+    }
+
+    if(changes['parameters'].currentValue) {
+      if (this.parameters?.parameter?.length > 0) {
+        this.updateFormControlsWithParamsValues(this.parameters);
+        this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
+      }
+    }
   }
 
   ngOnInit(): void {
@@ -65,28 +85,28 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
       }
     });
 
-    this.serviceRequestHandlerService.currentSnapshot$.subscribe({
-        next: (value: ServiceRequest) => {
-          this.serviceRequest = value;
-          const serviceCode = this.fhirConstants.SERVICE_TYPES
-            .find(serviceType => serviceType.code === this.serviceRequest?.orderDetail?.[0]?.coding?.[0]?.code.toString());
-          if (serviceCode) {
-            this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceCode);
-          }
-        }
-      }
-    )
+    // this.serviceRequestHandlerService.currentSnapshot$.subscribe({
+    //     next: (value: ServiceRequest) => {
+    //       this.serviceRequest = value;
+    //       const serviceCode = this.fhirConstants.SERVICE_TYPES
+    //         .find(serviceType => serviceType.code === this.serviceRequest?.orderDetail?.[0]?.coding?.[0]?.code.toString());
+    //       if (serviceCode) {
+    //         this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceCode);
+    //       }
+    //     }
+    //   }
+    //)
 
-    this.serviceRequestHandlerService.currentParameters$.subscribe({
-        next: (value: Parameters)=> {
-          this.parameters = value;
-          if(this.parameters?.parameter?.length > 0){
-            this.updateFormControlsWithParamsValues(this.parameters);
-            this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
-          }
-        }
-      }
-    )
+    // this.serviceRequestHandlerService.currentParameters$.subscribe({
+    //     next: (value: Parameters)=> {
+    //       this.parameters = value;
+    //       if(this.parameters?.parameter?.length > 0){
+    //         this.updateFormControlsWithParamsValues(this.parameters);
+    //         this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
+    //       }
+    //     }
+    //   }
+    // )
   }
 
   /**

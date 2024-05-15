@@ -45,7 +45,7 @@ export class ReferralManagerComponent implements OnInit {
     this.route.params.subscribe({
       next: params => {
         if(params && params['id']){
-          this.getServiceRequestAndParamsById(params['id']);
+          this.getServiceRequestById(params['id']);
         }
         else {
           this.createNewServiceRequest();
@@ -229,7 +229,7 @@ export class ReferralManagerComponent implements OnInit {
   }
 
   // TODO refactored nested subscription, but the serviceRequestHandler needs total refactoring with nested subscriptions removed
-  private getServiceRequestAndParamsById(serviceRequestId: any) {
+  private getServiceRequestById(serviceRequestId: any) {
     this.isLoading = true;
     this.serviceRequestHandler.getServiceRequestById(serviceRequestId).pipe(
       // mergeMap( (value: any) => {
@@ -268,14 +268,6 @@ export class ReferralManagerComponent implements OnInit {
         this.currentParameters = value.currentParameters;
       }
     });
-    // this.serviceRequestHandler.currentSnapshot$.subscribe(
-    //   {
-    //     next: (data: ServiceRequest) => {
-    //       this.currentSnapshot = data;
-    //     },
-    //     error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-    //   }
-    // );
   }
 
   saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, requestedStep: number) {

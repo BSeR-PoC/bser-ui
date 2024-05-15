@@ -18,11 +18,10 @@ export class ServiceProviderListComponent implements OnInit {
   selectedServiceProvider: any = null;
   isLoading: boolean = false
 
-  @Input() currentSnapshot: any; //TODO check why ServiceRequest Type doesn't work here and type any works
+  @Input() serviceRequest: any; //TODO check why ServiceRequest Type doesn't work here and type any works
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() serviceProviderSelectedEvent = new EventEmitter();
   @Output() requestStep = new EventEmitter();
-
 
   constructor(
     private serviceProviderService: ServiceProviderService,
@@ -40,13 +39,10 @@ export class ServiceProviderListComponent implements OnInit {
           this.serviceProviders = data;
           this.isLoading = false;
           //We need to set the selected service provider if we are updating existing service request.
-          if (
-            //this.serviceRequest?.id && this.serviceRequest?.performer?.[0]?.reference?.replace('PractitionerRole/', '')
-            this.currentSnapshot?.performer?.[0]?.reference?.replace(this.serviceProviders,'PractitionerRole/', '')
-          ){
+          if (this.serviceRequest?.performer?.[0]?.reference?.replace(this.serviceProviders, 'PractitionerRole/', '')){
             const selectedServiceProvider = this.getSelectedServiceRequestProvider(
               this.serviceProviders,
-              this.currentSnapshot?.performer?.[0]?.reference?.replace('PractitionerRole/', '')
+              this.serviceRequest?.performer?.[0]?.reference?.replace('PractitionerRole/', '')
             );
             this.onSelectedServiceProvider(selectedServiceProvider);
           }
@@ -67,7 +63,7 @@ export class ServiceProviderListComponent implements OnInit {
     if (
       !this.selectedServiceProvider
       ||
-      this.currentSnapshot.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
+      this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
     ){
       this.router.navigate(['/']);
     }
@@ -128,7 +124,6 @@ export class ServiceProviderListComponent implements OnInit {
     }
     const serviceProvider = this.serviceProviders.find( serviceProvider => serviceProvider.serviceProviderId === serviceProviderId);
     if(!serviceProvider){
-      // TODO fix this error for create new service request.
       console.error("Service provider with id: " + serviceProviderId + "is not a valid service provider.");
       return null;
     }
@@ -137,12 +132,11 @@ export class ServiceProviderListComponent implements OnInit {
   }
 
   onProceed() {
-    if(
-      !this.currentSnapshot.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
+    if (
+      !this.serviceRequest.performer[0]?.reference?.value?.toString()?.includes(this.selectedServiceProvider.serviceProviderId)
     ) {
       this.onSave(CURRENT_STEP + 1);
-    }
-    else {
+    } else {
       this.requestStep.emit(CURRENT_STEP + 1)
     }
   }
