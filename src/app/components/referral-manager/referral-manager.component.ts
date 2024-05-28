@@ -54,23 +54,23 @@ export class ReferralManagerComponent implements OnInit {
       error: err => this.utilsService.showErrorNotification(err?.message?.toString())
     });
 
-    this.serviceRequestHandler.currentParameters$.subscribe(
-      {
-        next: (data: Parameters) => {
-          this.currentParameters = data || new Parameters();
-        },
-        error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-      }
-    );
-
-    this.serviceRequestHandler.currentSnapshot$.subscribe(
-      {
-        next: (data: ServiceRequest) => {
-          this.currentSnapshot = data
-        },
-        error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-      }
-    );
+    // this.serviceRequestHandler.currentParameters$.subscribe(
+    //   {
+    //     next: (data: Parameters) => {
+    //       this.currentParameters = data || new Parameters();
+    //     },
+    //     error: err => this.utilsService.showErrorNotification(err?.message?.toString())
+    //   }
+    // );
+    //
+    // this.serviceRequestHandler.currentSnapshot$.subscribe(
+    //   {
+    //     next: (data: ServiceRequest) => {
+    //       this.currentSnapshot = data
+    //     },
+    //     error: err => this.utilsService.showErrorNotification(err?.message?.toString())
+    //   }
+    // );
   }
 
   isStepCompleted(stepNumber: number): boolean {
@@ -236,7 +236,7 @@ export class ReferralManagerComponent implements OnInit {
       //   return this.serviceRequestHandler.currentSnapshot$
       // }),
       mergeMap( (value: any) => {
-        this.currentSnapshot = value;
+        this.currentSnapshot = value as ServiceRequest;
         const params = this.currentSnapshot.supportingInfo.find(element => {
           console.log(element);
           return element.type.toString() == "Parameters";
@@ -250,7 +250,7 @@ export class ReferralManagerComponent implements OnInit {
      // take(1), // we don't want to generate multiple subscriptions every time we call getServiceRequestById
     ).subscribe({
       next: value => {
-        this.currentParameters = value;
+        this.currentParameters = new Parameters(value);
         this.isLoading = false;
       },
       error: err => {

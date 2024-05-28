@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
@@ -13,57 +13,87 @@ import {Router} from "@angular/router";
   templateUrl: './review-and-send.component.html',
   styleUrls: ['./review-and-send.component.scss']
 })
-export class ReviewAndSendComponent implements OnInit {
+export class ReviewAndSendComponent implements OnInit, OnChanges {
 
   @Input() selectedServiceProvider: any;
 
   @Output() returnToEditEvent = new EventEmitter();
+  educationLevel: string;
+  serviceType: string;
+  employmentStatus: string;
+  ethnicity: string;
+  bodyHeight: string;
+  bodyWeight: string;
+  bmi: string;
+  bloodPressure: string;
+  ha1c: string;
+  race: string;
 
-  currentSnapshot: ServiceRequest;
-
-  currentParameters: Parameters;
+  // currentSnapshot: ServiceRequest;
+  //
+  // currentParameters: Parameters;
+  @Input() serviceRequest: ServiceRequest;
+  @Input() parameters: Parameters;
 
   constructor(
-    private serviceRequestHandlerService: ServiceRequestHandlerService,
-    private parameterHandlerService: ParameterHandlerService,
+    // private serviceRequestHandlerService: ServiceRequestHandlerService,
+    // private parameterHandlerService: ParameterHandlerService,
     private fhirConstants: FhirTerminologyConstants,
     public utilsService: UtilsService,
     private router: Router,
     public enginePostHandler: EnginePostHandlerService
-  ) { }
-
-  ngOnInit(): void {
-    this.serviceRequestHandlerService.currentParameters$.subscribe(
-      {
-        next: (data: Parameters) => {
-          this.currentParameters = data || new Parameters();
-          //console.log("DATA:", data)
-        },
-        error: console.error
-      }
-    );
-
-    this.serviceRequestHandlerService.currentSnapshot$.subscribe(
-      {
-        next: (data: ServiceRequest) => {
-          this.currentSnapshot = data
-        },
-        error: console.error
-      }
-    );
+  ) {
   }
 
-  getValueCodeParam(parameters: Parameters, name: string): any {
-    const param = parameters.parameter?.find(param => param.name.value == name);
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['parameters']?.currentValue) {
+      this.educationLevel = this.getValueCodeParam(this.parameters, 'educationLevel');
+      console.log(this.parameters);
+      console.log(this.educationLevel);
+      this.serviceType = this.getValueCodeParam(this.parameters, 'serviceType');
+      this.employmentStatus = this.getValueCodeParam(this.parameters, 'employmentStatus');
+      this.ethnicity = this.getValueCodeParam(this.parameters, 'ethnicity');
+      this.race = this.getValueCodeParam(this.parameters, 'race');
+      this.bodyHeight = this.getValueCodeParam(this.parameters, 'bodyHeight');
+      this.bodyWeight = this.getValueCodeParam(this.parameters, 'bodyWeight');
+      this.bmi = this.getValueCodeParam(this.parameters, 'bmi');
+      this.bloodPressure = this.getValueCodeParam(this.parameters, 'bloodPressure');
+      this.ha1c = this.getValueCodeParam(this.parameters, 'ha1c');
+    }
+  }
+
+  ngOnInit(): void {
+    // this.serviceRequestHandlerService.currentParameters$.subscribe(
+    //   {
+    //     next: (data: Parameters) => {
+    //       this.currentParameters = data || new Parameters();
+    //       //console.log("DATA:", data)
+    //     },
+    //     error: console.error
+    //   }
+    // );
+    //
+    // this.serviceRequestHandlerService.currentSnapshot$.subscribe(
+    //   {
+    //     next: (data: ServiceRequest) => {
+    //       this.currentSnapshot = data
+    //     },
+    //     error: console.error
+    //   }
+    // );
+  }
+
+  getValueCodeParam(parameters: Parameters, name: string): string {
+    const param = parameters?.parameter?.find(param => param.name.value == name);
     if (param) {
       if (name === 'educationLevel') {
-        return this.fhirConstants.EDUCATION_LEVEL.find(element => element.code === param?.value?.toJSON().value);
+        return this.fhirConstants.EDUCATION_LEVEL.find(element => element.code === param?.value?.toJSON().value)?.display;
       } else if (name === 'serviceType') {
-        return this.fhirConstants.SERVICE_TYPES.find(element => element.code === param?.value?.toJSON().value);
+        return this.fhirConstants.SERVICE_TYPES.find(element => element.code === param?.value?.toJSON().value)?.display;
       } else if (name === 'employmentStatus') {
-        return this.fhirConstants.EMPLOYMENT_STATUS.find(element => element.code === param?.value?.toJSON().value);
+        return this.fhirConstants.EMPLOYMENT_STATUS.find(element => element.code === param?.value?.toJSON().value)?.display;
       } else if (name === 'ethnicity') {
-        return this.fhirConstants.ETHNICITY.find(element => element.code === param?.value?.toJSON().value);
+        return this.fhirConstants.ETHNICITY.find(element => element.code === param?.value?.toJSON().value)?.display;
       } else if (name === 'race') {
         const raceCodes = param?.value?.toJSON().value?.split(',');
         if (raceCodes) {
@@ -108,7 +138,7 @@ export class ReviewAndSendComponent implements OnInit {
   }
 
   onSendReferral() {
-    this.enginePostHandler.postToEngine(this.currentSnapshot, this.currentParameters).subscribe({
+    this.enginePostHandler.postToEngine(this.serviceRequest, this.parameters).subscribe({
       next: result => {
         this.utilsService.showSuccessNotification("Referral Send Successfully.")
         console.log(result)

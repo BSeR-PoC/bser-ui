@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
@@ -17,9 +17,11 @@ const CURRENT_STEP = 3;
   templateUrl: './supporting-information.component.html',
   styleUrls: ['./supporting-information.component.scss']
 })
-export class SupportingInformationComponent implements OnInit {
+export class SupportingInformationComponent implements OnInit, OnChanges {
 
   @Input() selectedServiceProvider: any;
+  @Input() serviceRequest: ServiceRequest;
+  @Input() parameters: Parameters;
 
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() requestStepEvent = new EventEmitter();
@@ -27,9 +29,7 @@ export class SupportingInformationComponent implements OnInit {
   readonly DIABETES_PREVENTION = "diabetes-prevention";
 
   supportingInformationForm: UntypedFormGroup;
-  parameters: Parameters;
 
-  private serviceRequest: ServiceRequest;
   private initialFormValue: any;
 
   serviceType: string;
@@ -40,38 +40,59 @@ export class SupportingInformationComponent implements OnInit {
     private serviceRequestHandlerService: ServiceRequestHandlerService,
     private dialog: MatDialog,
     private utilsService: UtilsService
-  ) { }
+  ) {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['parameters']?.currentValue) {
+      if (this.parameters?.parameter?.length > 0) {
+        this.serviceType = this.parameters?.parameter?.find(param=> param?.name?.value == 'serviceType')?.value?.['value'];
+        if(!this.supportingInformationForm?.controls){
+          this.initForm();
+        }
+        if(this.serviceType == this.DIABETES_PREVENTION){
+          const ha1c =  new  UntypedFormControl(null, [Validators.required]);
+          this.supportingInformationForm.addControl('ha1c', ha1c);
+        }
+        else if(this.supportingInformationForm.controls['ha1c']){
+          this.supportingInformationForm.removeControl('ha1c');
+        }
+        this.updateFormControlsWithParamsValues(this.parameters);
+        this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.supportingInformationForm.value);
+      }
+    }
+  }
 
   ngOnInit(): void {
 
-    this.serviceRequestHandlerService.currentSnapshot$.pipe(
-      mergeMap(value=> {
-        this.serviceRequest = value;
-        this.initForm(this.serviceRequest);
-        return this.serviceRequestHandlerService.currentParameters$
-      })
-    ).subscribe({
-      next: value => {
-        this.parameters = value;
-        if (this.parameters) {
-          this.serviceType = this.parameters?.parameter?.find(param=> param?.name?.value == 'serviceType')?.value?.['value'];
-
-          if(this.serviceType == this.DIABETES_PREVENTION){
-            const ha1c =  new  UntypedFormControl(null, [Validators.required]);
-            this.supportingInformationForm.addControl('ha1c', ha1c);
-          }
-          else if(this.supportingInformationForm.controls['ha1c']){
-            this.supportingInformationForm.removeControl('ha1c');
-          }
-
-          this.updateFormControlsWithParamsValues(this.parameters);
-        }
-        this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.supportingInformationForm.value);
-      }
-    });
+    // this.serviceRequestHandlerService.currentSnapshot$.pipe(
+    //   mergeMap(value=> {
+    //     this.serviceRequest = value;
+    //     this.initForm(this.serviceRequest);
+    //     return this.serviceRequestHandlerService.currentParameters$
+    //   })
+    // ).subscribe({
+    //   next: value => {
+    //     this.parameters = value;
+    //     if (this.parameters) {
+    //       this.serviceType = this.parameters?.parameter?.find(param=> param?.name?.value == 'serviceType')?.value?.['value'];
+    //
+    //       if(this.serviceType == this.DIABETES_PREVENTION){
+    //         const ha1c =  new  UntypedFormControl(null, [Validators.required]);
+    //         this.supportingInformationForm.addControl('ha1c', ha1c);
+    //       }
+    //       else if(this.supportingInformationForm.controls['ha1c']){
+    //         this.supportingInformationForm.removeControl('ha1c');
+    //       }
+    //
+    //       this.updateFormControlsWithParamsValues(this.parameters);
+    //     }
+    //     this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.supportingInformationForm.value);
+    //   }
+    // });
   }
 
-  private initForm(serviceRequest: ServiceRequest) {
+  private initForm() {
     // TODO the content of this form will change based on the service request. We need to be able to track the changes somehow.
     const heightValue = new UntypedFormControl(null, [Validators.required]);
     const heightUnit = new UntypedFormControl(this.fhirConstants.HEIGHT_UNITS[1], [Validators.required]);

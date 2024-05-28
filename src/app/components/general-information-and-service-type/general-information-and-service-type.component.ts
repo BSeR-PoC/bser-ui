@@ -50,7 +50,11 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
 
   ngOnChanges(changes: SimpleChanges): void {
 
-    if(changes['serviceRequest'].currentValue){
+    if(!this.generalInfoServiceTypeForm?.controls){
+      this.initForm();
+    }
+
+    if(changes['serviceRequest']?.currentValue){
       const serviceCode = this.fhirConstants.SERVICE_TYPES
         .find(serviceType => serviceType.code === this.serviceRequest?.orderDetail?.[0]?.coding?.[0]?.code.toString());
       if (serviceCode) {
@@ -58,15 +62,13 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
       }
     }
 
-    if(changes['parameters'].currentValue) {
-      if (this.parameters?.parameter?.length > 0) {
-        this.updateFormControlsWithParamsValues(this.parameters);
-        this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
-      }
+    if(changes['parameters']?.currentValue?.parameter?.length > 0) {
+      this.updateFormControlsWithParamsValues(this.parameters);
+      this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
     }
   }
 
-  ngOnInit(): void {
+  initForm(){
     this.generalInfoServiceTypeForm = new UntypedFormGroup({
       serviceType: new UntypedFormControl(null, [Validators.required]),
       raceCategoriesListCheckboxes: this.createRaceCategoryControls(this.fhirConstants.RACE_CATEGORIES.slice(0, 5)),
@@ -75,6 +77,17 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
       employmentStatus: new UntypedFormControl(null, [Validators.required]),
       ethnicity: new UntypedFormControl(null, [Validators.required])
     });
+  }
+
+  ngOnInit(): void {
+    // this.generalInfoServiceTypeForm = new UntypedFormGroup({
+    //   serviceType: new UntypedFormControl(null, [Validators.required]),
+    //   raceCategoriesListCheckboxes: this.createRaceCategoryControls(this.fhirConstants.RACE_CATEGORIES.slice(0, 5)),
+    //   raceCategoriesListRadioBtns: new UntypedFormControl(),
+    //   educationLevel: new UntypedFormControl(null, [Validators.required]),
+    //   employmentStatus: new UntypedFormControl(null, [Validators.required]),
+    //   ethnicity: new UntypedFormControl(null, [Validators.required])
+    // });
 
     this.fhirClient.getPatient().subscribe({
       next: (result) => {
