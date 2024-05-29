@@ -40,12 +40,16 @@
 
   <ng-container>
     <tr class="mat-row" *matNoDataRow>
-      <td *ngIf="isLoading" class="mat-cell loading" [attr.colspan]="displayedColumns.length">
-        Loading Referrals
-      </td>
-      <td *ngIf="!isLoading" class="mat-cell" [attr.colspan]="displayedColumns.length">
-        This patient does not have {{ serviceRequestType | lowercase }} referrals.
-      </td>
+      @if (isLoading) {
+        <td class="mat-cell loading" [attr.colspan]="displayedColumns.length">
+          Loading Referrals
+        </td>
+      }
+      @if (!isLoading) {
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          This patient does not have {{ serviceRequestType | lowercase }} referrals.
+        </td>
+      }
     </tr>
   </ng-container>
 

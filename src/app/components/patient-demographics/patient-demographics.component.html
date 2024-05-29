@@ -13,25 +13,27 @@ TODO:
       <span class="horizontal-divider"></span>
 
       <span class="patient-header-label">Gender:</span>
-        <span class="patient-header-value">{{ (patient?.gender || '').toString() | titlecase }}</span>
-        <span class="horizontal-divider"></span>
-        <span class="patient-header-label">Marital Status:</span>
-        <span class="patient-header-value">
-          {{ ( patient?.maritalStatus?.text || patient?.maritalStatus?.coding?.[0]?.display || patient?.maritalStatus?.coding?.[0]?.code || '').toString() | titlecase}}
-        </span>
-        <span class="horizontal-divider"></span>
-        <span class="patient-header-label">Date of Birth:</span>
-        <span class="patient-header-value">
-          {{ (stringToDate(patient?.birthDate?.toString()) | date ) || ''}}
-          ({{calculateAgeFromDob(patient?.birthDate?.toString()) || '?'}})
-        </span>
+      <span class="patient-header-value">{{ (patient?.gender || '').toString() | titlecase }}</span>
+      <span class="horizontal-divider"></span>
+      <span class="patient-header-label">Marital Status:</span>
+      <span class="patient-header-value">
+        {{ ( patient?.maritalStatus?.text || patient?.maritalStatus?.coding?.[0]?.display || patient?.maritalStatus?.coding?.[0]?.code || '').toString() | titlecase}}
+      </span>
+      <span class="horizontal-divider"></span>
+      <span class="patient-header-label">Date of Birth:</span>
+      <span class="patient-header-value">
+        {{ (stringToDate(patient?.birthDate?.toString()) | date ) || ''}}
+        ({{calculateAgeFromDob(patient?.birthDate?.toString()) || '?'}})
+      </span>
     </div>
   </div>
   <div class="row container" style="padding-top: 1em; padding-bottom: 1em">
     <div class="col">
       <span class="patient-header-label-no-padding">Address</span>
       <mat-divider class="patient-header-break"></mat-divider>
-      <span *ngIf="patient?.address[0]?.use">{{ patient?.address[0]?.use }}<br/></span>
+      @if (patient?.address[0]?.use) {
+        <span>{{ patient?.address[0]?.use }}<br/></span>
+      }
       {{ patient?.address[0]?.line[0] }}<br/>
       {{ patient?.address[0]?.city }}, {{ patient?.address[0]?.state }},  {{ patient?.address[0]?.postalCode }}
     </div>
@@ -40,15 +42,16 @@ TODO:
       <mat-divider class="patient-header-break"></mat-divider>
       <app-telecom [telecom]="patient?.telecom"></app-telecom>
     </div>
-    <div class="col" *ngFor="let language of getLanguageList(patient)">
-      <span class="patient-header-label-no-padding">Language(s)</span>
-      <mat-divider class="patient-header-break"></mat-divider>
-      {{ language }}<br/>
-    </div>
+    @for (language of getLanguageList(patient); track language) {
+      <div class="col">
+        <span class="patient-header-label-no-padding">Language(s)</span>
+        <mat-divider class="patient-header-break"></mat-divider>
+        {{ language }}<br/>
+      </div>
+    }
     <div class="col" style="border-style: solid; border-width: thin; padding: 0.5em">
       <div class="col">Insurance Coverage:</div>
-      <div *ngIf="insuranceProvider; then insuranceFound else noInsuranceFound"></div>
-      <ng-template #insuranceFound>
+      @if (insuranceProvider) {
         <div class="col">{{ insuranceProvider?.name }}</div>
         <div class="col">{{ insuranceProvider?.address?.[0]?.line?.[0] }}</div>
         <div class="col">
@@ -56,10 +59,9 @@ TODO:
           {{ insuranceProvider?.address?.[0]?.state ? insuranceProvider?.address?.[0]?.state + ',' : '' }}
           {{ insuranceProvider?.address?.[0]?.postalCode || ''}}
         </div>
-      </ng-template>
-      <ng-template #noInsuranceFound>
+      } @else {
         <span><em>No Insurance Coverage Found</em></span>
-      </ng-template>
+      }
     </div>
   </div>
 </div>

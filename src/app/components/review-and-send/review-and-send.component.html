@@ -15,16 +15,14 @@
               Service Provider:
             </div>
             <div class="col value big-value">
-              <ng-container *ngIf="selectedServiceProvider">
-                <span *ngIf="selectedServiceProvider.practitioner?.familyName; then practitionerFound else noPractitionerFound"></span>
-                <ng-template #practitionerFound>
+              @if (selectedServiceProvider) {
+                @if (selectedServiceProvider.practitioner?.familyName) {
                   {{selectedServiceProvider.practitioner?.familyName}}, {{selectedServiceProvider.practitioner?.givenName}}<br/>
                   {{selectedServiceProvider.organization?.name}}
-                </ng-template>
-                <ng-template #noPractitionerFound>
+                } @else {
                   {{selectedServiceProvider.organization?.name}}
-                </ng-template>
-              </ng-container>
+                }
+              }
             </div>
           </div>
           <div class="row">

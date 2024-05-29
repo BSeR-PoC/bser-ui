@@ -19,7 +19,7 @@
 
         <!-- Select supporting information -->
         <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)'
-                  [editable]="stepsEnabled">
+          [editable]="stepsEnabled">
           @if (stepper.selectedIndex == 1) {
             <app-general-information-and-service-type
               (savedSuccessEvent)="onSaveGeneralInfoAndServiceType($event)"
@@ -40,7 +40,7 @@
               [selectedServiceProvider]="selectedServiceProvider"
               [serviceRequest]="serviceRequest"
               [parameters]="parameters"
-            >
+              >
             </app-supporting-information>
           }
         </mat-step>
@@ -53,7 +53,7 @@
               (returnToEditEvent)="onRequestStep($event)"
               [serviceRequest]="serviceRequest"
               [parameters]="parameters"
-            >
+              >
             </app-review-and-send>
           }
         </mat-step>
@@ -66,9 +66,11 @@
 
 </div>
 
-<div class="overlay" *ngIf="isLoading">
-  <div class="spinner-container">
-    <mat-spinner [diameter]="70"></mat-spinner>
+@if (isLoading) {
+  <div class="overlay">
+    <div class="spinner-container">
+      <mat-spinner [diameter]="70"></mat-spinner>
+    </div>
   </div>
-</div>
+}
 
