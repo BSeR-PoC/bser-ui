@@ -17,7 +17,7 @@ const CURRENT_STEP = 3;
   templateUrl: './supporting-information.component.html',
   styleUrls: ['./supporting-information.component.scss']
 })
-export class SupportingInformationComponent implements OnInit, OnChanges {
+export class SupportingInformationComponent implements OnChanges {
 
   @Input() selectedServiceProvider: any;
   @Input() serviceRequest: ServiceRequest;
@@ -63,34 +63,7 @@ export class SupportingInformationComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnInit(): void {
 
-    // this.serviceRequestHandlerService.currentSnapshot$.pipe(
-    //   mergeMap(value=> {
-    //     this.serviceRequest = value;
-    //     this.initForm(this.serviceRequest);
-    //     return this.serviceRequestHandlerService.currentParameters$
-    //   })
-    // ).subscribe({
-    //   next: value => {
-    //     this.parameters = value;
-    //     if (this.parameters) {
-    //       this.serviceType = this.parameters?.parameter?.find(param=> param?.name?.value == 'serviceType')?.value?.['value'];
-    //
-    //       if(this.serviceType == this.DIABETES_PREVENTION){
-    //         const ha1c =  new  UntypedFormControl(null, [Validators.required]);
-    //         this.supportingInformationForm.addControl('ha1c', ha1c);
-    //       }
-    //       else if(this.supportingInformationForm.controls['ha1c']){
-    //         this.supportingInformationForm.removeControl('ha1c');
-    //       }
-    //
-    //       this.updateFormControlsWithParamsValues(this.parameters);
-    //     }
-    //     this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.supportingInformationForm.value);
-    //   }
-    // });
-  }
 
   private initForm() {
     // TODO the content of this form will change based on the service request. We need to be able to track the changes somehow.
@@ -101,10 +74,6 @@ export class SupportingInformationComponent implements OnInit, OnChanges {
     const bmi =  new  UntypedFormControl(null, [Validators.required]);
     const bpDiastolic =  new  UntypedFormControl(null, [Validators.required]);
     const bpSystolic =  new  UntypedFormControl(null, [Validators.required]);
-
-    // const smokingStatus =  new  FormControl(null, [Validators.required]);
-    // const allergies =  new  FormControl(null);
-    // const medicalHistory =  new  FormControl(null);
 
     //TODO init a form based on the service request, additionally as the service3 request is modified, we need to change the form fields dynamically.
     this.supportingInformationForm = new UntypedFormGroup({
@@ -158,7 +127,6 @@ export class SupportingInformationComponent implements OnInit, OnChanges {
   }
 
   private getFormData(form: UntypedFormGroup) {
-    //TODO the data we gather will depend on the selected service.
     const heightValue = form.controls['heightValue'].value;
     const heightUnit = form.controls['heightUnit'].value;
     const weightValue = form.controls['weightValue'].value;
@@ -167,18 +135,11 @@ export class SupportingInformationComponent implements OnInit, OnChanges {
     const bpDiastolic = form.controls['bpDiastolic'].value;
     const bpSystolic = form.controls['bpSystolic'].value;
 
-    // const smokingStatus = form.controls['smokingStatus'].value;
-    // const allergies = form.controls['allergies'].value;
-    // const medicalHistory = form.controls['medicalHistory'].value;
-
     let emitterData = {
       height: {value: heightValue, unit: heightUnit},
       weight: {value: weightValue, unit: weightUnit},
       bmi: {value: bmi, unit: "kg/m2"},
       bp: { bpDiastolic: { name: 'diastolic', value: bpDiastolic }, bpSystolic : { name: 'systolic', value: bpSystolic }},
-      // smokingStatus: smokingStatus,
-      // allergies: allergies,
-      // medicalHistory: medicalHistory,
     }
 
     if(this.serviceType == this.DIABETES_PREVENTION){

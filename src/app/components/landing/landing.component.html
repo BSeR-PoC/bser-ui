@@ -14,7 +14,7 @@
 
     <mat-tab label="Draft {{ isLoading? '' : '(' + (draftServiceRequests?.length || 0) + ')' }}">
       <app-service-request-list
-        [serviceRequest]="draftServiceRequests"
+        [serviceRequestList]="draftServiceRequests"
         [isLoading]="isLoading"
         [serviceRequestType]="selectedServiceRequestType"
         (serviceRequestDeletedEvent)="getServiceRequests()"
@@ -23,7 +23,7 @@
 
     <mat-tab label="Active {{ isLoading? '' : '(' + (activeServiceRequests?.length || 0) + ')' }}">
       <app-service-request-list
-        [serviceRequest]="activeServiceRequests"
+        [serviceRequestList]="activeServiceRequests"
         [isLoading]="isLoading"
         [serviceRequestType]="selectedServiceRequestType"
         (serviceRequestDeletedEvent)="getServiceRequests()"
@@ -32,7 +32,7 @@
 
     <mat-tab label="Complete {{ isLoading? '' : '(' + (completeServiceRequests?.length || 0) + ')' }}">
       <app-service-request-list
-        [serviceRequest]="completeServiceRequests"
+        [serviceRequestList]="completeServiceRequests"
         [isLoading]="isLoading"
         [serviceRequestType]="selectedServiceRequestType"
         (serviceRequestDeletedEvent)="getServiceRequests()"

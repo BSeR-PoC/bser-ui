@@ -18,6 +18,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {ServiceRequestStatusType} from "../../models/service-request-status-type";
 import {MatSort} from "@angular/material/sort";
 import {MatPaginator} from "@angular/material/paginator";
+import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 
 @Component({
   selector: 'app-service-request-list',
@@ -26,7 +27,7 @@ import {MatPaginator} from "@angular/material/paginator";
 })
 export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
 
-  @Input() serviceRequest: any[];
+  @Input() serviceRequestList: ServiceRequest[];
   @Input() isLoading: boolean;
   @Input() serviceRequestType: ServiceRequestStatusType;
   @Output() serviceRequestDeletedEvent = new EventEmitter();
@@ -76,7 +77,7 @@ export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
       this.displayedColumns = this.displayedColumns.filter(column => column != 'actions')
     }
 
-    this.dataSource.data = this.serviceRequest;
+    this.dataSource.data = this.serviceRequestList;
   }
 
 

@@ -1,8 +1,6 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 import {Parameters} from "@fhir-typescript/r4-core/dist/fhir/Parameters";
-import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
-import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {UtilsService} from "../../service/utils.service";
 import {EnginePostHandlerService} from "../../service/engine-post-handler.service";
@@ -13,7 +11,7 @@ import {Router} from "@angular/router";
   templateUrl: './review-and-send.component.html',
   styleUrls: ['./review-and-send.component.scss']
 })
-export class ReviewAndSendComponent implements OnInit, OnChanges {
+export class ReviewAndSendComponent implements OnChanges {
 
   @Input() selectedServiceProvider: any;
 
@@ -29,15 +27,10 @@ export class ReviewAndSendComponent implements OnInit, OnChanges {
   ha1c: string;
   race: string;
 
-  // currentSnapshot: ServiceRequest;
-  //
-  // currentParameters: Parameters;
   @Input() serviceRequest: ServiceRequest;
   @Input() parameters: Parameters;
 
   constructor(
-    // private serviceRequestHandlerService: ServiceRequestHandlerService,
-    // private parameterHandlerService: ParameterHandlerService,
     private fhirConstants: FhirTerminologyConstants,
     public utilsService: UtilsService,
     private router: Router,
@@ -48,8 +41,6 @@ export class ReviewAndSendComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['parameters']?.currentValue) {
       this.educationLevel = this.getValueCodeParam(this.parameters, 'educationLevel');
-      console.log(this.parameters);
-      console.log(this.educationLevel);
       this.serviceType = this.getValueCodeParam(this.parameters, 'serviceType');
       this.employmentStatus = this.getValueCodeParam(this.parameters, 'employmentStatus');
       this.ethnicity = this.getValueCodeParam(this.parameters, 'ethnicity');
@@ -60,27 +51,6 @@ export class ReviewAndSendComponent implements OnInit, OnChanges {
       this.bloodPressure = this.getValueCodeParam(this.parameters, 'bloodPressure');
       this.ha1c = this.getValueCodeParam(this.parameters, 'ha1c');
     }
-  }
-
-  ngOnInit(): void {
-    // this.serviceRequestHandlerService.currentParameters$.subscribe(
-    //   {
-    //     next: (data: Parameters) => {
-    //       this.currentParameters = data || new Parameters();
-    //       //console.log("DATA:", data)
-    //     },
-    //     error: console.error
-    //   }
-    // );
-    //
-    // this.serviceRequestHandlerService.currentSnapshot$.subscribe(
-    //   {
-    //     next: (data: ServiceRequest) => {
-    //       this.currentSnapshot = data
-    //     },
-    //     error: console.error
-    //   }
-    // );
   }
 
   getValueCodeParam(parameters: Parameters, name: string): string {
@@ -141,7 +111,6 @@ export class ReviewAndSendComponent implements OnInit, OnChanges {
     this.enginePostHandler.postToEngine(this.serviceRequest, this.parameters).subscribe({
       next: result => {
         this.utilsService.showSuccessNotification("Referral Send Successfully.")
-        console.log(result)
         this.router.navigate(['/']);
       },
       error: err => {

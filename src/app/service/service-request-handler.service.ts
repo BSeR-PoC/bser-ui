@@ -19,19 +19,9 @@ import {MappedServiceRequest} from "../models/mapped-service-request";
 })
 export class ServiceRequestHandlerService {
 
-  // TODO: Why is only working as a BehaviorSubject and not just Subject?
-  private currentSnapshot = new BehaviorSubject<ServiceRequest>(null);
-  public currentSnapshot$ = this.currentSnapshot.asObservable();
-  private currentParameters = new BehaviorSubject<Parameters>(null);
-  public currentParameters$ = this.currentParameters.asObservable();
-  private lastSnapshot: ServiceRequest = null;
-  private lastParameters: Parameters = null;
   private practitioner: any;
   private patient: any;
   private serverUrl: string;
-
-  // private isClientInitialized = new BehaviorSubject<boolean>(false);
-  // public isClientInitialized$ = this.isClientInitialized.asObservable();
 
   private _mappedServiceRequests = new BehaviorSubject<MappedServiceRequest[]>([]);
   public mappedServiceRequests = this._mappedServiceRequests.asObservable();
@@ -76,10 +66,10 @@ export class ServiceRequestHandlerService {
       //      orderDetail: [new CodeableConcept(codeableConcept)]
       //subject: Reference.fromResource(patient),
     });
-    this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
-    this.lastParameters = new Parameters(this.deepCopy(parameters));
-    this.currentSnapshot.next(serviceRequest);
-    this.currentParameters.next(parameters);
+    // this.lastSnapshot = new ServiceRequest(this.deepCopy(serviceRequest));
+    // this.lastParameters = new Parameters(this.deepCopy(parameters));
+    // this.currentSnapshot.next(serviceRequest);
+    // this.currentParameters.next(parameters);
     return of({ currentSnapshot: serviceRequest, currentParameters: parameters })
   }
 
@@ -87,21 +77,6 @@ export class ServiceRequestHandlerService {
     let coding = new Coding({system: "http://snomed.info/sct", code: "3457005", display: "Patient referral (procedure)"})
     let codeableConcept = new CodeableConcept({coding: [coding], text: "Draft BSeR Referral"})
     return codeableConcept
-  }
-
-  // STEP 1 - Get Service Providers
-  // In the Service-Provider Service
-
-  checkIfSnapshotStateChanged(currentSnapshot: ServiceRequest, currentParameters: Parameters): boolean {
-    // Compare currentSnapshot to lastSnapshot.
-    if (this.deepCompare(currentSnapshot, this.lastSnapshot) && this.deepCompare(currentParameters, this.lastParameters)) {
-      console.log("Service Request Not Changed");
-      return false;
-    }
-    else {
-      console.log("Service Request Changed");
-      return true;
-    }
   }
 
   saveServiceRequest(currentSnapshot: ServiceRequest, currentParameters: Parameters) : Observable<any> {
@@ -124,23 +99,6 @@ export class ServiceRequestHandlerService {
     }
   }
 
-  // private getServiceRequestAndParamsHelper(data) : Observable<any> {
-  //
-  //   const serviceRequestLocation = data.entry.find(element => element?.response?.location.indexOf('ServiceRequest') !== -1).response.location;
-  //   const serviceRequestId = serviceRequestLocation.substring(serviceRequestLocation.indexOf('/') + 1, serviceRequestLocation.lastIndexOf('/_'));
-  //
-  //   const parametersLocation = data.entry.find(element => element?.response?.location.indexOf('Parameters') !== -1).response.location;
-  //   const paramsId = parametersLocation.substring(parametersLocation.indexOf('/') + 1, parametersLocation.lastIndexOf('/_'));
-  //
-  //   return forkJoin([this.getServiceRequestById(serviceRequestId), this.getParametersById(paramsId)]).pipe(map(value=> {
-  //     this.lastSnapshot = new ServiceRequest(value[0]);
-  //     this.lastParameters = new Parameters (value[1]);
-  //     this.currentSnapshot.next(new ServiceRequest (value[0]));
-  //     this.currentParameters.next(new Parameters(value[1]));
-  //
-  //     return value;
-  //   }))
-  // }
 
   // First Screen User Input
   setRecipient(currentSnapshot: ServiceRequest, recipient: any) {
@@ -157,21 +115,10 @@ export class ServiceRequestHandlerService {
     currentSnapshot.performer.push(Reference.fromResource(recipientTest));
   }
 
-  setServiceTypePlamen(currentSnapshot: ServiceRequest, serviceType: CodeableConcept) {
-    // TODO: Check if Parameter exists -- get from Raven 1 code.
-    // TODO: See how best to do an update using the Microsoft library.
-    // let parameter = new ParametersParameter({name: "test", valueCode: serviceType});
-    // currentParameters.parameter.push(parameter);
-    // this.currentParameters.next(currentParameters);
+  setServiceType(currentSnapshot: ServiceRequest, serviceType: CodeableConcept) {
     currentSnapshot.orderDetail= [];
     currentSnapshot.orderDetail.push(serviceType);
   }
-
-
-  // TODO: Race, Ethnicity, Employment, Education
-
-  // Third Screen User Input (Supporting Info)
-
 
   // Helper Functions
   public deepCopy(object: any): any {
@@ -182,17 +129,6 @@ export class ServiceRequestHandlerService {
   public deepCompare(object1: any, object2): boolean {
     // Returns true if contents same.
     return JSON.stringify(object1) === JSON.stringify(object2);
-  }
-
-  // TODO: Delete later, testing only.
-  deleteTestData() {
-    let connectionUrl = environment.bserProviderServer + "ServiceRequest";
-    this.http.get(connectionUrl).toPromise().then((data: any) => {
-      data.entry.forEach(resource => {
-        let id = resource.resource.id;
-        this.http.delete(connectionUrl + "/" + id).toPromise().then(result => console.log(result));
-      });
-    });
   }
 
   getServiceRequestData() : Observable<MappedServiceRequest[]> {
@@ -266,8 +202,6 @@ export class ServiceRequestHandlerService {
 
     return this.http.get(requestUrl, httpOptions)
       .pipe(map(result => {
-        // this.lastSnapshot = new ServiceRequest(this.deepCopy(result));
-        // this.currentSnapshot.next(new ServiceRequest(result));
         return  result as ServiceRequest;
       }
     ))
@@ -293,8 +227,6 @@ export class ServiceRequestHandlerService {
     }
     return this.http.get(requestUrl, httpOptions).pipe(
       map(result => {
-        this.lastParameters = new Parameters(this.deepCopy(result));
-        this.currentParameters.next(new Parameters(result));
         return  result as Parameters;
       }
     ))

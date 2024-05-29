@@ -80,15 +80,6 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
   }
 
   ngOnInit(): void {
-    // this.generalInfoServiceTypeForm = new UntypedFormGroup({
-    //   serviceType: new UntypedFormControl(null, [Validators.required]),
-    //   raceCategoriesListCheckboxes: this.createRaceCategoryControls(this.fhirConstants.RACE_CATEGORIES.slice(0, 5)),
-    //   raceCategoriesListRadioBtns: new UntypedFormControl(),
-    //   educationLevel: new UntypedFormControl(null, [Validators.required]),
-    //   employmentStatus: new UntypedFormControl(null, [Validators.required]),
-    //   ethnicity: new UntypedFormControl(null, [Validators.required])
-    // });
-
     this.fhirClient.getPatient().subscribe({
       next: (result) => {
         const patient = Object.assign(new Patient(), result);
@@ -97,29 +88,6 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChan
         this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
       }
     });
-
-    // this.serviceRequestHandlerService.currentSnapshot$.subscribe({
-    //     next: (value: ServiceRequest) => {
-    //       this.serviceRequest = value;
-    //       const serviceCode = this.fhirConstants.SERVICE_TYPES
-    //         .find(serviceType => serviceType.code === this.serviceRequest?.orderDetail?.[0]?.coding?.[0]?.code.toString());
-    //       if (serviceCode) {
-    //         this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceCode);
-    //       }
-    //     }
-    //   }
-    //)
-
-    // this.serviceRequestHandlerService.currentParameters$.subscribe({
-    //     next: (value: Parameters)=> {
-    //       this.parameters = value;
-    //       if(this.parameters?.parameter?.length > 0){
-    //         this.updateFormControlsWithParamsValues(this.parameters);
-    //         this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
-    //       }
-    //     }
-    //   }
-    // )
   }
 
   /**
