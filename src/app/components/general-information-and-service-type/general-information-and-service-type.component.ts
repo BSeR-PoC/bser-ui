@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {FhirTerminologyConstants} from "../../providers/fhir-terminology-constants";
 import {Router} from "@angular/router";
@@ -20,20 +20,22 @@ const CURRENT_STEP = 2;
   styleUrls: ['./general-information-and-service-type.component.scss']
 })
 
-export class GeneralInformationAndServiceTypeComponent implements OnInit {
+export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChanges {
 
   // Multiple checkbox reactive form solution inspired by:
   // https://stackblitz.com/edit/multi-checkbox-form-control-angular7
 
   @Input() selectedServiceProvider: any;
+  @Input() serviceRequest: ServiceRequest;
+  @Input() parameters: Parameters;
 
   @Output() savedSuccessEvent = new EventEmitter();
   @Output() requestStepEvent = new EventEmitter();
 
+
   generalInfoServiceTypeForm: UntypedFormGroup;
   usCorePatient: USCorePatient;
-  serviceRequest: ServiceRequest;
-  parameters: Parameters;
+
   initialFormValue: any;
 
   constructor(
@@ -46,7 +48,27 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
   ) {
   }
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+
+    if(!this.generalInfoServiceTypeForm?.controls){
+      this.initForm();
+    }
+
+    if(changes['serviceRequest']?.currentValue){
+      const serviceCode = this.fhirConstants.SERVICE_TYPES
+        .find(serviceType => serviceType.code === this.serviceRequest?.orderDetail?.[0]?.coding?.[0]?.code.toString());
+      if (serviceCode) {
+        this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceCode);
+      }
+    }
+
+    if(changes['parameters']?.currentValue?.parameter?.length > 0) {
+      this.updateFormControlsWithParamsValues(this.parameters);
+      this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
+    }
+  }
+
+  initForm(){
     this.generalInfoServiceTypeForm = new UntypedFormGroup({
       serviceType: new UntypedFormControl(null, [Validators.required]),
       raceCategoriesListCheckboxes: this.createRaceCategoryControls(this.fhirConstants.RACE_CATEGORIES.slice(0, 5)),
@@ -55,7 +77,9 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
       employmentStatus: new UntypedFormControl(null, [Validators.required]),
       ethnicity: new UntypedFormControl(null, [Validators.required])
     });
+  }
 
+  ngOnInit(): void {
     this.fhirClient.getPatient().subscribe({
       next: (result) => {
         const patient = Object.assign(new Patient(), result);
@@ -64,29 +88,6 @@ export class GeneralInformationAndServiceTypeComponent implements OnInit {
         this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
       }
     });
-
-    this.serviceRequestHandlerService.currentSnapshot$.subscribe({
-        next: (value: ServiceRequest) => {
-          this.serviceRequest = value;
-          const serviceCode = this.fhirConstants.SERVICE_TYPES
-            .find(serviceType => serviceType.code === this.serviceRequest?.orderDetail?.[0]?.coding?.[0]?.code.toString());
-          if (serviceCode) {
-            this.generalInfoServiceTypeForm.controls['serviceType'].patchValue(serviceCode);
-          }
-        }
-      }
-    )
-
-    this.serviceRequestHandlerService.currentParameters$.subscribe({
-        next: (value: Parameters)=> {
-          this.parameters = value;
-          if(this.parameters?.parameter?.length > 0){
-            this.updateFormControlsWithParamsValues(this.parameters);
-            this.initialFormValue = this.serviceRequestHandlerService.deepCopy(this.generalInfoServiceTypeForm.value);
-          }
-        }
-      }
-    )
   }
 
   /**

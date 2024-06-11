@@ -40,7 +40,7 @@ export class TransactionBundleHandlerService {
       console.log(resource)
       let bundleEntry = new BundleEntry({
         fullUrl: resource.resourceType + "/" + resource.id,
-        resource: resource.toJSON(),
+        resource: resource,
         request: new BundleEntryRequest({
           method: "POST",
           url: resource.resourceType
@@ -56,7 +56,7 @@ export class TransactionBundleHandlerService {
     resources.forEach(resource => {
       let bundleEntry = new BundleEntry({
         fullUrl: resource.resourceType + "/" + resource.id,
-        resource: resource.toJSON(),
+        resource: resource,
         request: new BundleEntryRequest({
           method: "PUT",
           url: resource.resourceType + "/" + resource.id

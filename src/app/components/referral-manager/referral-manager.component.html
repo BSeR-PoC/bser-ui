@@ -6,45 +6,56 @@
       <mat-stepper linear #stepper>
 
         <!-- Select a Provider (for example YMCA) -->
-        <mat-step label="Select Recipient" [completed]='isStepCompleted(1)'  [editable]="stepsEnabled">
-          <div>
+        <mat-step label="Select Recipient" [completed]='isStepCompleted(1)' [editable]="stepsEnabled">
+          @if (stepper.selectedIndex == 0) {
             <app-service-provider-list
               (requestStep)="onRequestStep($event)"
               (savedSuccessEvent)="onSaveProvider($event)"
               (serviceProviderSelectedEvent)="onServiceProviderSelected($event)"
+              [serviceRequest]="serviceRequest"
             ></app-service-provider-list>
-          </div>
+          }
         </mat-step>
 
         <!-- Select supporting information -->
-        <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)' [editable]="stepsEnabled">
-          <app-general-information-and-service-type
-            (savedSuccessEvent)="onSaveGeneralInfoAndServiceType($event)"
-            (requestStepEvent)="onRequestStep($event)"
-            [selectedServiceProvider]="selectedServiceProvider"
-          ></app-general-information-and-service-type>
+        <mat-step label="General Information and Service Type" [completed]='isStepCompleted(2)'
+          [editable]="stepsEnabled">
+          @if (stepper.selectedIndex == 1) {
+            <app-general-information-and-service-type
+              (savedSuccessEvent)="onSaveGeneralInfoAndServiceType($event)"
+              (requestStepEvent)="onRequestStep($event)"
+              [selectedServiceProvider]="selectedServiceProvider"
+              [serviceRequest]="serviceRequest"
+              [parameters]="parameters"
+            ></app-general-information-and-service-type>
+          }
         </mat-step>
 
         <!-- Add Patient general information -->
         <mat-step label="Supporting Information" [completed]='isStepCompleted(3)' [editable]="stepsEnabled">
-          <div>
+          @if (stepper.selectedIndex == 2) {
             <app-supporting-information
               (savedSuccessEvent)="onSaveSupportingInfo($event)"
               (requestStepEvent)="onRequestStep($event)"
               [selectedServiceProvider]="selectedServiceProvider"
-            >
+              [serviceRequest]="serviceRequest"
+              [parameters]="parameters"
+              >
             </app-supporting-information>
-          </div>
+          }
         </mat-step>
 
+        <!-- Review information before sending to the BSeR engine -->
         <mat-step label="Review and Send" [completed]='isStepCompleted(4)'>
-          <div>
+          @if (stepper.selectedIndex == 3) {
             <app-review-and-send
               [selectedServiceProvider]="selectedServiceProvider"
               (returnToEditEvent)="onRequestStep($event)"
-            >
+              [serviceRequest]="serviceRequest"
+              [parameters]="parameters"
+              >
             </app-review-and-send>
-          </div>
+          }
         </mat-step>
 
       </mat-stepper>
@@ -55,7 +66,11 @@
 
 </div>
 
-<div class="overlay" *ngIf="isLoading">
-  <div class="spinner-container"><mat-spinner [diameter]="70"></mat-spinner></div>
-</div>
+@if (isLoading) {
+  <div class="overlay">
+    <div class="spinner-container">
+      <mat-spinner [diameter]="70"></mat-spinner>
+    </div>
+  </div>
+}
 
