@@ -15,9 +15,10 @@ import {USCorePatient} from "../../models/us-core-patient";
 const CURRENT_STEP = 2;
 
 @Component({
-  selector: 'app-general-information-and-service-type',
-  templateUrl: './general-information-and-service-type.component.html',
-  styleUrls: ['./general-information-and-service-type.component.scss']
+    selector: 'app-general-information-and-service-type',
+    templateUrl: './general-information-and-service-type.component.html',
+    styleUrls: ['./general-information-and-service-type.component.scss'],
+    standalone: false
 })
 
 export class GeneralInformationAndServiceTypeComponent implements OnInit, OnChanges {

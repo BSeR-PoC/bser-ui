@@ -2,9 +2,10 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
-  selector: 'app-conformation-dialog',
-  templateUrl: './conformation-dialog.component.html',
-  styleUrls: ['./conformation-dialog.component.scss']
+    selector: 'app-conformation-dialog',
+    templateUrl: './conformation-dialog.component.html',
+    styleUrls: ['./conformation-dialog.component.scss'],
+    standalone: false
 })
 export class ConformationDialogComponent implements OnInit {
 

@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import {FhirTerminologyConstants} from "../providers/fhir-terminology-constants";
 @Pipe({
-  name: 'serviceType'
+    name: 'serviceType',
+    standalone: false
 })
 export class ServiceTypePipe implements PipeTransform {
 

@@ -8,9 +8,10 @@ import {MatDialog} from "@angular/material/dialog";
 const CURRENT_STEP = 1;
 
 @Component({
-  selector: 'app-service-provider-list',
-  templateUrl: './service-provider-list.component.html',
-  styleUrls: ['./service-provider-list.component.scss']
+    selector: 'app-service-provider-list',
+    templateUrl: './service-provider-list.component.html',
+    styleUrls: ['./service-provider-list.component.scss'],
+    standalone: false
 })
 export class ServiceProviderListComponent implements OnInit {
 

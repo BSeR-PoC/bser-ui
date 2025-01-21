@@ -21,9 +21,10 @@ import {MatPaginator} from "@angular/material/paginator";
 import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 
 @Component({
-  selector: 'app-service-request-list',
-  templateUrl: './service-request-list.component.html',
-  styleUrls: ['./service-request-list.component.scss']
+    selector: 'app-service-request-list',
+    templateUrl: './service-request-list.component.html',
+    styleUrls: ['./service-request-list.component.scss'],
+    standalone: false
 })
 export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
 

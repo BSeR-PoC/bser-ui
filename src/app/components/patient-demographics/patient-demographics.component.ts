@@ -4,9 +4,10 @@ import {FhirClientService} from "../../service/fhir-client.service";
 import {Organization} from "@fhir-typescript/r4-core/dist/fhir/Organization";
 
 @Component({
-  selector: 'app-patient-demographics',
-  templateUrl: './patient-demographics.component.html',
-  styleUrls: ['./patient-demographics.component.scss']
+    selector: 'app-patient-demographics',
+    templateUrl: './patient-demographics.component.html',
+    styleUrls: ['./patient-demographics.component.scss'],
+    standalone: false
 })
 export class PatientDemographicsComponent implements OnInit {
   patient: Patient;

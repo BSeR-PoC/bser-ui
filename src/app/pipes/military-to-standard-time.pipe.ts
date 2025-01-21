@@ -7,7 +7,8 @@ https://stackoverflow.com/questions/50362854/how-to-change-time-from-24-to-12-ho
 */
 
 @Pipe({
-  name: 'militaryToStandardTime'
+    name: 'militaryToStandardTime',
+    standalone: false
 })
 export class MilitaryToStandardTimePipe implements PipeTransform {
   transform(time: any): any {

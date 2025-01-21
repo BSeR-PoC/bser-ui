@@ -3,9 +3,10 @@ import {ServiceProviderService} from "../../service/service-provider.service";
 import {UtilsService} from "../../service/utils.service";
 
 @Component({
-  selector: 'app-service-provider',
-  templateUrl: './service-provider.component.html',
-  styleUrls: ['./service-provider.component.scss']
+    selector: 'app-service-provider',
+    templateUrl: './service-provider.component.html',
+    styleUrls: ['./service-provider.component.scss'],
+    standalone: false
 })
 export class ServiceProviderComponent {
 

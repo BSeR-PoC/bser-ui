@@ -6,9 +6,10 @@ import {UtilsService} from "../../service/utils.service";
 import {distinctUntilChanged, Subject, takeUntil, tap} from "rxjs";
 
 @Component({
-  selector: 'app-landing',
-  templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.scss']
+    selector: 'app-landing',
+    templateUrl: './landing.component.html',
+    styleUrls: ['./landing.component.scss'],
+    standalone: false
 })
 export class LandingComponent implements OnInit, OnDestroy {
 
