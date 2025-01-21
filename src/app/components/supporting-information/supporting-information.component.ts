@@ -13,9 +13,10 @@ import {mergeMap} from "rxjs";
 const CURRENT_STEP = 3;
 
 @Component({
-  selector: 'app-supporting-information',
-  templateUrl: './supporting-information.component.html',
-  styleUrls: ['./supporting-information.component.scss']
+    selector: 'app-supporting-information',
+    templateUrl: './supporting-information.component.html',
+    styleUrls: ['./supporting-information.component.scss'],
+    standalone: false
 })
 export class SupportingInformationComponent implements OnChanges {
 

@@ -25,9 +25,10 @@ export class MappedCompositeObservation {
 }
 
 @Component({
-  selector: 'app-referral-details',
-  templateUrl: './referral-details.component.html',
-  styleUrl: './referral-details.component.scss'
+    selector: 'app-referral-details',
+    templateUrl: './referral-details.component.html',
+    styleUrl: './referral-details.component.scss',
+    standalone: false
 })
 export class ReferralDetailsComponent implements OnInit, OnDestroy{
 

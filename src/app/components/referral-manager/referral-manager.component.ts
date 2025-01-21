@@ -14,9 +14,10 @@ import {MatDialog} from "@angular/material/dialog";
 import {mergeMap, of, take, tap} from "rxjs";
 
 @Component({
-  selector: 'app-referral-manager',
-  templateUrl: './referral-manager.component.html',
-  styleUrls: ['./referral-manager.component.scss']
+    selector: 'app-referral-manager',
+    templateUrl: './referral-manager.component.html',
+    styleUrls: ['./referral-manager.component.scss'],
+    standalone: false
 })
 export class ReferralManagerComponent implements OnInit {
   @ViewChild(MatStepper) stepper: MatStepper;

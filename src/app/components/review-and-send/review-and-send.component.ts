@@ -7,9 +7,10 @@ import {EnginePostHandlerService} from "../../service/engine-post-handler.servic
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-review-and-send',
-  templateUrl: './review-and-send.component.html',
-  styleUrls: ['./review-and-send.component.scss']
+    selector: 'app-review-and-send',
+    templateUrl: './review-and-send.component.html',
+    styleUrls: ['./review-and-send.component.scss'],
+    standalone: false
 })
 export class ReviewAndSendComponent implements OnChanges {
 
