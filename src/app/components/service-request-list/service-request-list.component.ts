@@ -1,4 +1,13 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
 import {Router} from "@angular/router";
@@ -6,20 +15,28 @@ import {openConformationDialog} from "../conformation-dialog/conformation-dialog
 import {UtilsService} from "../../service/utils.service";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatDialog} from "@angular/material/dialog";
+import {ServiceRequestStatusType} from "../../models/service-request-status-type";
+import {MatSort} from "@angular/material/sort";
+import {MatPaginator} from "@angular/material/paginator";
+import {ServiceRequest} from "@fhir-typescript/r4-core/dist/fhir/ServiceRequest";
 
 @Component({
-  selector: 'app-service-request-list',
-  templateUrl: './service-request-list.component.html',
-  styleUrls: ['./service-request-list.component.scss']
+    selector: 'app-service-request-list',
+    templateUrl: './service-request-list.component.html',
+    styleUrls: ['./service-request-list.component.scss'],
+    standalone: false
 })
-export class ServiceRequestListComponent implements OnInit, OnChanges {
+export class ServiceRequestListComponent implements OnChanges, AfterViewInit {
 
-  @Input() serviceRequest: any[];
+  @Input() serviceRequestList: ServiceRequest[];
   @Input() isLoading: boolean;
-  @Input() serviceRequestType: string;
+  @Input() serviceRequestType: ServiceRequestStatusType;
   @Output() serviceRequestDeletedEvent = new EventEmitter();
 
-  displayedColumns: string[] = ['service', 'serviceProvider', 'status', 'dateCreated', 'lastUpdated', 'actions'];
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  displayedColumns: string[] = ['service', 'serviceProvider', 'dateCreated', 'lastUpdated'];
   public dataSource = new MatTableDataSource<any>([]);
 
   constructor(
@@ -29,7 +46,15 @@ export class ServiceRequestListComponent implements OnInit, OnChanges {
     private dialog: MatDialog,
     private utilsService: UtilsService) { }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'serviceProvider': return  item.serviceProvider.name;
+        default: return item[property];
+      }
+    }
   }
 
   onEdit(serviceRequest) {
@@ -39,12 +64,32 @@ export class ServiceRequestListComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // Data is loaded asynchronously and we set the table data source every time the data changes.
     // TODO this may be a performance issue, and we may need to load the data asynchronously and only once
-    this.dataSource.data = this.serviceRequest;
+
+    if(this.serviceRequestType == ServiceRequestStatusType.draft){
+      if(this.displayedColumns.indexOf('actions') == -1){
+        this.displayedColumns.push('actions')
+      }
+      this.displayedColumns = this.displayedColumns.filter(column => column != 'businessStatus')
+    }
+    else {
+      if(this.displayedColumns.indexOf('businessStatus') == -1){
+        this.displayedColumns.splice(2,0,'businessStatus');
+      }
+      this.displayedColumns = this.displayedColumns.filter(column => column != 'actions')
+    }
+
+    this.dataSource.data = this.serviceRequestList;
   }
 
 
   onRowClick(serviceRequest) {
-    this.router.navigate(['referral-manager', serviceRequest.serviceRequestId]);
+    if(serviceRequest.status == ServiceRequestStatusType.draft.toLowerCase()){
+      this.router.navigate(['referral-manager', serviceRequest.serviceRequestId]);
+    }
+    else {
+      this.router.navigate(['referral-viewer', serviceRequest.serviceRequestId]);
+    }
+
   }
 
   deleteServiceRequest(serviceRequest){

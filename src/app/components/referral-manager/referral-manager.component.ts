@@ -11,18 +11,20 @@ import {openConformationDialog} from "../conformation-dialog/conformation-dialog
 import {ParameterHandlerService} from "../../service/parameter-handler.service";
 import {Practitioner} from "@fhir-typescript/r4-core/dist/fhir/Practitioner";
 import {MatDialog} from "@angular/material/dialog";
+import {mergeMap, of, take, tap} from "rxjs";
 
 @Component({
-  selector: 'app-referral-manager',
-  templateUrl: './referral-manager.component.html',
-  styleUrls: ['./referral-manager.component.scss']
+    selector: 'app-referral-manager',
+    templateUrl: './referral-manager.component.html',
+    styleUrls: ['./referral-manager.component.scss'],
+    standalone: false
 })
 export class ReferralManagerComponent implements OnInit {
   @ViewChild(MatStepper) stepper: MatStepper;
 
-  currentSnapshot: ServiceRequest;
+  serviceRequest: ServiceRequest;
 
-  currentParameters: Parameters;
+  parameters: Parameters;
 
   selectedServiceProvider: Practitioner;
 
@@ -52,24 +54,6 @@ export class ReferralManagerComponent implements OnInit {
       },
       error: err => this.utilsService.showErrorNotification(err?.message?.toString())
     });
-
-    this.serviceRequestHandler.currentParameters$.subscribe(
-      {
-        next: (data: Parameters) => {
-          this.currentParameters = data || new Parameters();
-        },
-        error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-      }
-    );
-
-    this.serviceRequestHandler.currentSnapshot$.subscribe(
-      {
-        next: (data: ServiceRequest) => {
-          this.currentSnapshot = data
-        },
-        error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-      }
-    );
   }
 
   isStepCompleted(stepNumber: number): boolean {
@@ -82,15 +66,15 @@ export class ReferralManagerComponent implements OnInit {
     const selectedServiceProvider = event.data;
 
     if(selectedServiceProvider.selected && selectedServiceProvider.serviceProviderId){
-      const serviceRequestService = this.currentSnapshot?.orderDetail?.[0]?.coding?.[0]?.code?.value;
+      const serviceRequestService = this.serviceRequest?.orderDetail?.[0]?.coding?.[0]?.code?.value;
       const selectedServiceProviderServices = selectedServiceProvider?.services?.serviceType;
 
       if(!serviceRequestService
           ||
         selectedServiceProviderServices.indexOf(serviceRequestService) != -1
       ){
-        this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-        this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
+        this.serviceRequestHandler.setRecipient(this.serviceRequest, selectedServiceProvider);
+        this.saveServiceRequest(this.serviceRequest, this.parameters, requestedStep);
       }
       else {
         // the selected service provider does not offer the service in the existing service request.
@@ -109,10 +93,10 @@ export class ReferralManagerComponent implements OnInit {
           .subscribe(
             action => {
               if (action == 'secondaryAction') {
-                this.currentSnapshot.orderDetail = null;
-                this.serviceRequestHandler.setRecipient(this.currentSnapshot, selectedServiceProvider);
-                this.currentParameters.parameter.length = 0;
-                this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
+                this.serviceRequest.orderDetail = null;
+                this.serviceRequestHandler.setRecipient(this.serviceRequest, selectedServiceProvider);
+                this.parameters.parameter.length = 0;
+                this.saveServiceRequest(this.serviceRequest, this.parameters, requestedStep);
               }
             }
           )
@@ -138,36 +122,36 @@ export class ReferralManagerComponent implements OnInit {
       let coding = new Coding({code: event.data?.serviceType?.code, display : event.data?.serviceType?.display});
       let codeableConcept = new CodeableConcept({coding: [coding], text: event.data?.serviceType?.display});
 
-      this.serviceRequestHandler.setServiceTypePlamen(this.currentSnapshot, codeableConcept);
+      this.serviceRequestHandler.setServiceType(this.serviceRequest, codeableConcept);
      // this.saveServiceRequest(this.currentSnapshot, advanceRequested);
 
       if (event.data?.serviceType){
-        this.currentParameters = this.parameterHandlerService
-          .setCodeParameter(this.currentParameters, 'serviceType', event.data?.serviceType?.code);
+        this.parameters = this.parameterHandlerService
+          .setCodeParameter(this.parameters, 'serviceType', event.data?.serviceType?.code);
       }
     }
 
     if(event.data?.educationLevel?.code) {
-      this.currentParameters = this.parameterHandlerService
-        .setCodeParameter(this.currentParameters, 'educationLevel', event.data?.educationLevel?.code);
+      this.parameters = this.parameterHandlerService
+        .setCodeParameter(this.parameters, 'educationLevel', event.data?.educationLevel?.code);
     }
 
     if(event.data?.employmentStatus?.code) {
-      this.currentParameters = this.parameterHandlerService
-        .setCodeParameter(this.currentParameters, 'employmentStatus', event.data?.employmentStatus?.code);
+      this.parameters = this.parameterHandlerService
+        .setCodeParameter(this.parameters, 'employmentStatus', event.data?.employmentStatus?.code);
     }
 
     if(event.data?.ethnicity) {
-      this.currentParameters = this.parameterHandlerService
-        .setCodeParameter(this.currentParameters, 'ethnicity', event.data?.ethnicity?.code);
+      this.parameters = this.parameterHandlerService
+        .setCodeParameter(this.parameters, 'ethnicity', event.data?.ethnicity?.code);
     }
 
     if(event.data?.race){
       const raceStr = event.data?.race?.map(element => element.code).toString();
-      this.currentParameters = this.parameterHandlerService
-        .setCodeParameter(this.currentParameters, 'race', raceStr);
+      this.parameters = this.parameterHandlerService
+        .setCodeParameter(this.parameters, 'race', raceStr);
     }
-    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
+    this.saveServiceRequest(this.serviceRequest, this.parameters, requestedStep);
   }
 
   // Saving the data from Step #3: Supporting Information
@@ -175,18 +159,18 @@ export class ReferralManagerComponent implements OnInit {
     const requestedStep = event.requestedStep;
 
     if(event.data?.height) {
-      this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
-        this.currentParameters, 'bodyHeight', event.data?.height?.value,
+      this.parameters = this.parameterHandlerService.setValueQuantityParameter(
+        this.parameters, 'bodyHeight', event.data?.height?.value,
         event.data?.height?.unit?.display, "http://unitsofmeasure.org", event.data?.height?.unit?.code);
     }
     if(event.data?.weight) {
-      this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
-        this.currentParameters, 'bodyWeight', event.data?.weight?.value,
+      this.parameters = this.parameterHandlerService.setValueQuantityParameter(
+        this.parameters, 'bodyWeight', event.data?.weight?.value,
         event.data?.weight?.unit?.display, "http://unitsofmeasure.org", event.data?.weight?.unit?.code);
     }
     if(event.data?.bmi) {
-      this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
-        this.currentParameters, 'bmi', event.data?.bmi?.value,
+      this.parameters = this.parameterHandlerService.setValueQuantityParameter(
+        this.parameters, 'bmi', event.data?.bmi?.value,
         event.data?.bmi?.unit, "http://unitsofmeasure.org", event.data?.bmi?.unit);
     }
     if(event.data?.bp){
@@ -215,58 +199,65 @@ export class ReferralManagerComponent implements OnInit {
         }
       ];
 
-      this.currentParameters = this.parameterHandlerService.setPartParameter(this.currentParameters,'bloodPressure', partArray);
+      this.parameters = this.parameterHandlerService.setPartParameter(this.parameters,'bloodPressure', partArray);
     }
 
     if(event.data?.ha1c) {
-      this.currentParameters = this.parameterHandlerService.setValueQuantityParameter(
-        this.currentParameters, 'ha1c', event.data?.ha1c?.value,
+      this.parameters = this.parameterHandlerService.setValueQuantityParameter(
+        this.parameters, 'ha1c', event.data?.ha1c?.value,
         event.data?.ha1c?.unit, "http://unitsofmeasure.org", event.data?.ha1c?.unit);
     }
 
-    this.saveServiceRequest(this.currentSnapshot, this.currentParameters, requestedStep);
+    this.saveServiceRequest(this.serviceRequest, this.parameters, requestedStep);
   }
 
-  // TODO refactor nested subscriptions
+  // TODO refactored nested subscription, but the serviceRequestHandler needs total refactoring with nested subscriptions removed
   private getServiceRequestById(serviceRequestId: any) {
     this.isLoading = true;
-    this.serviceRequestHandler.getServiceRequestById(serviceRequestId).subscribe({
+    this.serviceRequestHandler.getServiceRequestById(serviceRequestId).pipe(
+      mergeMap( (value: any) => {
+        this.serviceRequest = value as ServiceRequest;
+        const params = this.serviceRequest.supportingInfo.find(element => {
+          console.log(element);
+          return element.type.toString() == "Parameters";
+        });
+        if (params) {
+          const paramsId = params.reference.substring(params.reference.indexOf('/') + 1);
+          return this.serviceRequestHandler.getParametersById(paramsId); // Return observable for parameters
+        }
+        return of(null);
+      }),
+     // take(1), // we don't want to generate multiple subscriptions every time we call getServiceRequestById
+    ).subscribe({
       next: value => {
-        this.serviceRequestHandler.currentSnapshot$.subscribe(
-          {
-            next: (data: ServiceRequest) => {
-              this.isLoading = false;
-              const params = data.supportingInfo.find(element => element.type?.value === "Parameters");
-              if(params){
-                const paramsId = params.reference.value.substring(params.reference.value.indexOf('/') + 1);
-                if (paramsId){
-                  this.serviceRequestHandler.getParametersById(paramsId).subscribe()
-                }
-              }
-            },
-            error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-          }
-        );
+        this.parameters = new Parameters(value);
+        this.isLoading = false;
+      },
+      error: err => {
+        this.isLoading = false;
+        this.utilsService.showErrorNotification("Server error retrieving results from API!")
+        this.utilsService.showErrorNotification(err?.message?.toString())
+      }
+    })
+  }
+
+  private createNewServiceRequest() {
+    this.serviceRequestHandler.createNewServiceRequest().subscribe({
+      next: value => {
+        this.serviceRequest = value.currentSnapshot;
+        this.parameters = value.currentParameters;
       }
     });
   }
 
-  private createNewServiceRequest() {
-    this.serviceRequestHandler.createNewServiceRequest();
-    this.serviceRequestHandler.currentSnapshot$.subscribe(
-      {
-        next: (data: ServiceRequest) => {
-          this.currentSnapshot = data;
-        },
-        error: err => this.utilsService.showErrorNotification(err?.message?.toString())
-      }
-    );
-  }
-
   saveServiceRequest(serviceRequest: ServiceRequest, currentParameters: Parameters, requestedStep: number) {
     this.isLoading = true;
-    this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.currentParameters).subscribe({
+    this.serviceRequestHandler.saveServiceRequest(serviceRequest, this.parameters).subscribe({
       next: value => {
+        const serviceRequestEntry =  value?.entry?.find(entry => entry.response.location.indexOf("ServiceRequest") != -1);
+        const regex = /ServiceRequest\/(\d+)\//;
+        const serviceRequestId = regex.exec(serviceRequestEntry?.response?.location)?.[1];
+        this.getServiceRequestById(serviceRequestId);
         this.isLoading = false;
         if(requestedStep){
           this.onRequestStep(requestedStep);

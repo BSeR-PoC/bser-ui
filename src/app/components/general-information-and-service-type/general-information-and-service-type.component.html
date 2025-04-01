@@ -3,18 +3,22 @@
   <form [formGroup]="generalInfoServiceTypeForm">
 
     <mat-card>
-      <mat-card-title>Service Type Info</mat-card-title>
+      <mat-card-header>
+        <mat-card-title>Service Type Info</mat-card-title>
+      </mat-card-header>
       <mat-card-content>
         <div class="row" style="margin-top: 2em">
           <mat-form-field appearance="outline" style="width: 40%">
-            <mat-label for="serviceType">
+            <mat-label>
               Service Type
             </mat-label>
             <mat-select id="serviceType" formControlName="serviceType">
-              <mat-option *ngFor="let service of getServices(selectedServiceProvider)"
-                          [value]="service">
-                {{service.display}}
-              </mat-option>
+              @for (service of getServices(selectedServiceProvider); track service) {
+                <mat-option
+                  [value]="service">
+                  {{service.display}}
+                </mat-option>
+              }
             </mat-select>
             <mat-error>
               Please select service type
@@ -30,7 +34,9 @@
     </mat-card>
 
     <mat-card style="margin-top: 2em">
-      <mat-card-title>Additional Patient Demographics</mat-card-title>
+      <mat-card-header>
+        <mat-card-title>Additional Patient Demographics</mat-card-title>
+      </mat-card-header>
       <mat-card-content>
         <div class="row"></div>
         <div class="row" style="margin-top: 1em">
@@ -52,30 +58,32 @@
             <div>
               <!-- checkboxes -->
               <mat-selection-list>
-                <mat-list-item
-                  *ngFor="let category of generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes']['controls'];
-                let i=index;">
-                  <mat-checkbox [formControl]="category" (change)="onRaceCategoryCheckboxChange($event)">
-                    <span style="font-size:14px">{{fhirConstants.RACE_CATEGORIES.slice(0, 5)[i].display}}</span>
-                  </mat-checkbox>
-                </mat-list-item>
+                @for (category of generalInfoServiceTypeForm.controls['raceCategoriesListCheckboxes']['controls']; track category; let i = $index) {
+                  <mat-list-item
+                    >
+                    <mat-checkbox [formControl]="category" (change)="onRaceCategoryCheckboxChange($event)">
+                      <span style="font-size:14px">{{fhirConstants.RACE_CATEGORIES.slice(0, 5)[i].display}}</span>
+                    </mat-checkbox>
+                  </mat-list-item>
+                }
               </mat-selection-list>
 
               <!-- radio buttons -->
               <mat-radio-group formControlName="raceCategoriesListRadioBtns" class="radio-group">
-                <mat-list-item *ngFor="let raceCategory of fhirConstants.RACE_CATEGORIES.slice(-2)">
+                @for (raceCategory of fhirConstants.RACE_CATEGORIES.slice(-2); track raceCategory) {
                   <mat-radio-button
-                    [value]=raceCategory style="margin-top: 1em; margin-left: 1em"
-                    (change)="onRaceCategoryRadioBtnChange($event)">
-                    {{raceCategory.display}}
-                  </mat-radio-button>
-                </mat-list-item>
+                    style="margin-top: 1em; margin-left: 1em"
+                    (change)="onRaceCategoryRadioBtnChange($event)"
+                    [value]="raceCategory">
+                  {{raceCategory.display}}</mat-radio-button>
+                }
               </mat-radio-group>
 
-              <mat-error *ngIf="!isRaceSelected()
-                  && generalInfoServiceTypeForm.touched" style="font-size: 75%;">
-                Please select race
-              </mat-error>
+              @if (!isRaceSelected() && generalInfoServiceTypeForm.touched) {
+                <mat-error style="font-size: 75%;">
+                  Please select race
+                </mat-error>
+              }
             </div>
           </div>
 
@@ -88,16 +96,16 @@
             </div>
             <div>
               <mat-radio-group formControlName="ethnicity" class="radio-group">
-                <mat-list-item *ngFor="let ethnicGroup of fhirConstants.ETHNICITY">
-                  <mat-radio-button [value]=ethnicGroup style="margin-top: 1em; margin-left: 1em">
-                    {{ethnicGroup.display}}
-                  </mat-radio-button>
-                </mat-list-item>
+                @for (ethnicGroup of fhirConstants.ETHNICITY; track ethnicGroup) {
+                  <mat-radio-button class="example-radio-button" [value]="ethnicGroup">{{ethnicGroup.display}}</mat-radio-button>
+                }
               </mat-radio-group>
             </div>
-            <mat-error *ngIf="isControlValid('ethnicity', 'required')" style="font-size: 75%;">
-              Please select ethnicity
-            </mat-error>
+            @if (isControlValid('ethnicity', 'required')) {
+              <mat-error style="font-size: 75%;">
+                Please select ethnicity
+              </mat-error>
+            }
           </div>
 
         </div>
@@ -107,11 +115,12 @@
             <mat-form-field appearance="outline" style="width: 85%">
               <mat-label>Education Level</mat-label>
               <mat-select formControlName="educationLevel">
-                <mat-option
-                  *ngFor="let educationLevel of fhirConstants.EDUCATION_LEVEL"
-                            [value]="educationLevel">
-                  {{educationLevel.display}}
-                </mat-option>
+                @for (educationLevel of fhirConstants.EDUCATION_LEVEL; track educationLevel) {
+                  <mat-option
+                    [value]="educationLevel">
+                    {{educationLevel.display}}
+                  </mat-option>
+                }
               </mat-select>
               <mat-error>
                 Please select education level
@@ -123,10 +132,12 @@
             <mat-form-field appearance="outline" style="width: 85%">
               <mat-label>Employment Status</mat-label>
               <mat-select formControlName="employmentStatus">
-                <mat-option *ngFor="let employmentStatus of fhirConstants.EMPLOYMENT_STATUS"
-                            [value]="employmentStatus">
-                  {{employmentStatus.display}}
-                </mat-option>
+                @for (employmentStatus of fhirConstants.EMPLOYMENT_STATUS; track employmentStatus) {
+                  <mat-option
+                    [value]="employmentStatus">
+                    {{employmentStatus.display}}
+                  </mat-option>
+                }
               </mat-select>
               <mat-error>
                 Please select employment status
@@ -148,7 +159,7 @@
   <span class="spacer"></span>
   <button mat-raised-button (click)="onSave()">Save</button>
   <button mat-raised-button color="primary" (click)="onProceed()"
-          style="margin-left: 1em">
+    style="margin-left: 1em">
     Proceed
   </button>
 </div>

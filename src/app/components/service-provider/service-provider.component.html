@@ -1,94 +1,115 @@
 <mat-card [ngClass]="{'selected-mat-card': serviceProvider.selected}" class="mat-elevation-z3">
-  <mat-card-title [ngStyle]="{'color':serviceProvider.selected ? '#0d47a1' : '' }">
-    <div *ngIf="serviceProvider.practitioner?.familyName; then practitionerFound else noPractitionerFound"></div>
-    <ng-template #practitionerFound>
-      {{serviceProvider.practitioner?.familyName}}, {{serviceProvider.practitioner?.givenName}} ({{serviceProvider.organization?.name}})
-    </ng-template>
-    <ng-template #noPractitionerFound>
-      {{serviceProvider.organization?.name}}
-    </ng-template>
-  </mat-card-title>
+  <mat-card-header>
+    <mat-card-title [ngStyle]="{'color':serviceProvider.selected ? '#0d47a1' : '' }">
+      @if (serviceProvider.practitioner?.familyName) {
+        {{ serviceProvider.practitioner?.familyName }}, {{ serviceProvider.practitioner?.givenName }}
+        ({{ serviceProvider.organization?.name }})
+      } @else {
+        {{ serviceProvider.organization?.name }}
+      }
+    </mat-card-title>
+    <mat-card-subtitle>{{ serviceProvider?.description }}</mat-card-subtitle>
+  </mat-card-header>
 
 
-  <mat-card-subtitle>{{ serviceProvider?.description }}</mat-card-subtitle>
   <mat-card-content>
 
     <div class="row">
       <div class="col">
         <div style="font-weight: bold">Services Provided:</div>
-        <div class=row *ngFor="let serviceType of serviceProvider.services?.serviceType">
-          * {{ serviceType | serviceType}}
-        </div>
+        @for (serviceType of serviceProvider.services?.serviceType; track serviceType) {
+          <div class=row>
+            * {{ serviceType | serviceType}}
+          </div>
+        }
       </div>
       <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em">Available Times:</div>
-        <div class=row *ngFor="let day of serviceProvider.services?.daysOfWeek">
-          <div class="col">
-            {{ day | daysOfWeek }}
+        @for (day of serviceProvider.services?.daysOfWeek; track day) {
+          <div class=row>
+            <div class="col">
+              {{ day | daysOfWeek }}
+            </div>
+            <div class="col">
+              {{ serviceProvider.services.startTime | militaryToStandardTime }} -
+              {{ serviceProvider.services.endTime | militaryToStandardTime }}
+            </div>
           </div>
-          <div class="col">
-            {{ serviceProvider.services.startTime | militaryToStandardTime }} -
-            {{ serviceProvider.services.endTime | militaryToStandardTime }}
-          </div>
-        </div>
+        }
       </div>
       <div class="col" style="padding-left: 2em">
         <div style="font-weight: bold; margin-bottom: 0.2em">Languages:</div>
-        <div class="row" *ngFor="let language of serviceProvider.services?.languages">
-          {{language}}
-        </div>
+        @for (language of serviceProvider.services?.languages; track language) {
+          <div class="row">
+            {{language}}
+          </div>
+        }
       </div>
     </div>
     <div class="row" style="margin-top: 1em">
       <div class="col">
         <div style="font-weight: bold; margin-bottom: 0.2em;">Service Delivery Location:</div>
-        <div *ngIf="!utilsService.isEmpty(serviceProvider?.location)">
-          {{ serviceProvider?.location?.line }}<br/>
-          {{ serviceProvider?.location?.city }}, {{ serviceProvider?.location?.postalCode }}, {{ serviceProvider?.location?.state }}
-        </div>
-        <div *ngIf="!serviceProvider?.location || utilsService.isEmpty(serviceProvider?.location)">
-          To be determined by the service provider.
-        </div>
+        @if (!utilsService.isEmpty(serviceProvider?.location)) {
+          <div>
+            {{ serviceProvider?.location?.line }}<br/>
+            {{ serviceProvider?.location?.city }}, {{ serviceProvider?.location?.postalCode }}, {{ serviceProvider?.location?.state }}
+          </div>
+        }
+        @if (!serviceProvider?.location || utilsService.isEmpty(serviceProvider?.location)) {
+          <div>
+            To be determined by the service provider.
+          </div>
+        }
       </div>
     </div>
 
     <div class="row" style="margin-top: 1em;">
-      <button *ngIf="!contactInfoExpanded" style="width: 100%" mat-button color="primary"
-              (click)="contactInfoExpanded=true">
-        <mat-icon>expand_more</mat-icon>Show Contact Info
-      </button>
-      <button *ngIf="contactInfoExpanded" style="width: 100%" mat-button color="primary"
-              (click)="contactInfoExpanded=false">
-        <mat-icon>expand_less</mat-icon>Hide Contact Info
-      </button>
+      @if (!contactInfoExpanded) {
+        <button style="width: 100%" mat-button color="primary"
+          (click)="contactInfoExpanded=true">
+          <mat-icon>expand_more</mat-icon>Show Contact Info
+        </button>
+      }
+      @if (contactInfoExpanded) {
+        <button style="width: 100%" mat-button color="primary"
+          (click)="contactInfoExpanded=false">
+          <mat-icon>expand_less</mat-icon>Hide Contact Info
+        </button>
+      }
     </div>
 
-    <div class="row" style="margin-top: 1em" *ngIf="contactInfoExpanded">
-      <div class="col">
-        <div style="font-weight: bold; margin-bottom: 0.2em">Provider Contact Info:</div>
-        <div>{{ serviceProvider?.practitioner?.name }}</div>
-        <div>phone: {{ serviceProvider?.practitioner?.phone }}</div>
-      </div>
-      <div class="col">
-        <div style="font-weight: bold; margin-bottom: 0.2em">Organization Contact Info:</div>
-         <div>{{ serviceProvider?.organization?.name }}</div>
+    @if (contactInfoExpanded) {
+      <div class="row" style="margin-top: 1em">
+        <div class="col">
+          <div style="font-weight: bold; margin-bottom: 0.2em">Provider Contact Info:</div>
+          <div>{{ serviceProvider?.practitioner?.name }}</div>
+          <div>phone: {{ serviceProvider?.practitioner?.phone }}</div>
+        </div>
+        <div class="col">
+          <div style="font-weight: bold; margin-bottom: 0.2em">Organization Contact Info:</div>
+          <div>{{ serviceProvider?.organization?.name }}</div>
           <div>phone: {{ serviceProvider?.organization?.phone }}</div>
+        </div>
       </div>
-    </div>
+    }
 
   </mat-card-content>
 
   <mat-card-actions  align="end">
-    <button *ngIf="!serviceProvider?.selected" mat-raised-button color="primary"
-            (click)="onToggleSelectValue(serviceProvider)">
-      <mat-icon>check</mat-icon>
-      Select
-    </button>
-    <button *ngIf="serviceProvider?.selected" mat-raised-button color="primary"
-            (click)="onToggleSelectValue(serviceProvider)">
-      <mat-icon>close</mat-icon>
-      Deselect
-    </button>
+    @if (!serviceProvider?.selected) {
+      <button mat-raised-button color="primary"
+        (click)="onToggleSelectValue(serviceProvider)">
+        <mat-icon>check</mat-icon>
+        Select
+      </button>
+    }
+    @if (serviceProvider?.selected) {
+      <button mat-raised-button color="primary"
+        (click)="onToggleSelectValue(serviceProvider)">
+        <mat-icon>close</mat-icon>
+        Deselect
+      </button>
+    }
   </mat-card-actions>
 
 </mat-card>

@@ -17,7 +17,7 @@ import {ServiceProviderListComponent} from './components/service-provider-list/s
 import {
   GeneralInformationAndServiceTypeComponent
 } from './components/general-information-and-service-type/general-information-and-service-type.component';
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {
   SupportingInformationComponent
 } from './components/supporting-information/supporting-information.component';
@@ -48,6 +48,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatTabsModule} from "@angular/material/tabs";
+import {ReferralDetailsComponent} from "./components/referral-details/referral-details.component";
 
 @NgModule({
   declarations: [
@@ -68,36 +69,38 @@ import {MatTabsModule} from "@angular/material/tabs";
     ServiceRequestListComponent,
     TelecomComponent,
     ReviewAndSendComponent,
+    ReferralDetailsComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatProgressSpinnerModule,
-    MatSortModule,
-    HttpClientModule,
-    MatRadioModule,
-    MatCardModule,
-    MatButtonToggleModule,
-    MatTooltipModule,
-    MatListModule,
-    MatSidenavModule,
-    MatStepperModule,
-    ReactiveFormsModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatTabsModule,
-    MatSnackBarModule,
-    MatMenuModule,
-    MatDividerModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatProgressSpinnerModule,
+        MatSortModule,
+        HttpClientModule,
+        MatRadioModule,
+        MatCardModule,
+        MatButtonToggleModule,
+        MatTooltipModule,
+        MatListModule,
+        MatSidenavModule,
+        MatStepperModule,
+        ReactiveFormsModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatDialogModule,
+        MatTabsModule,
+        MatSnackBarModule,
+        MatMenuModule,
+        MatDividerModule,
+        FormsModule
+    ],
   providers: [FhirTerminologyConstants],
   bootstrap: [AppComponent]
 })

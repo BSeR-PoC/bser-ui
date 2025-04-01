@@ -1,4 +1,6 @@
-<div class="telecom" *ngFor="let entry of telecom">
-  <div class="value">{{entry.system.toString() | titlecase}} {{ (entry.use ? '(' + toTitleCase(entry.use.toString()) + ')' : '')}}</div>
-  <div class="value">{{entry.value}}</div>
-</div>
+@for (entry of telecom; track entry) {
+  <div class="telecom">
+    <div class="value">{{entry.system.toString() | titlecase}} {{ (entry.use ? '(' + toTitleCase(entry.use.toString()) + ')' : '')}}</div>
+    <div class="value">{{entry.value}}</div>
+  </div>
+}

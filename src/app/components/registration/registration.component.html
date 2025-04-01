@@ -28,50 +28,50 @@
         <h2 style="font-size: large">Register New Service Provider</h2>
         <form [formGroup]="serviceProviderRegistrationForm" class="flex-col">
 
-        <mat-stepper orientation="vertical" #stepper>
-          <mat-step formGroupName="practitioner">
-            <ng-template matStepLabel>Practitioner</ng-template>
-            <p>
-              For organizations which will handle assignment of practitioners after the referral request is made,
-              the practitioner fields should be left empty. If a specific practitioner is registered, the service
-              delivery location should align with that practitioner.
-            </p>
-            <div class="flex-col">
-              <div class="flex-row">
-                <mat-form-field appearance="fill" class="flex-cell-1">
-                  <mat-label>Practitioner Given Name</mat-label>
-                  <input matInput formControlName="givenName">
-                </mat-form-field>
-                <mat-form-field appearance="fill" class="flex-cell-1">
-                  <mat-label>Practitioner Family Name</mat-label>
-                  <input matInput formControlName="familyName">
-                </mat-form-field>
+          <mat-stepper orientation="vertical" #stepper>
+            <mat-step formGroupName="practitioner">
+              <ng-template matStepLabel>Practitioner</ng-template>
+              <p>
+                For organizations which will handle assignment of practitioners after the referral request is made,
+                the practitioner fields should be left empty. If a specific practitioner is registered, the service
+                delivery location should align with that practitioner.
+              </p>
+              <div class="flex-col">
+                <div class="flex-row">
+                  <mat-form-field appearance="fill" class="flex-cell-1">
+                    <mat-label>Practitioner Given Name</mat-label>
+                    <input matInput formControlName="givenName">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="flex-cell-1">
+                    <mat-label>Practitioner Family Name</mat-label>
+                    <input matInput formControlName="familyName">
+                  </mat-form-field>
+                </div>
+                <div class="flex-row">
+                  <mat-form-field appearance="fill" class="flex-cell-1">
+                    <mat-label>Practitioner Phone #</mat-label>
+                    <input matInput formControlName="phone" type="tel">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="flex-cell-1">
+                    <mat-label>Practitioner NPI</mat-label>
+                    <input matInput formControlName="npi" type="text">
+                  </mat-form-field>
+                </div>
               </div>
-              <div class="flex-row">
-                <mat-form-field appearance="fill" class="flex-cell-1">
-                  <mat-label>Practitioner Phone #</mat-label>
-                  <input matInput formControlName="phone" type="tel">
-                </mat-form-field>
-                <mat-form-field appearance="fill" class="flex-cell-1">
-                  <mat-label>Practitioner NPI</mat-label>
-                  <input matInput formControlName="npi" type="text">
-                </mat-form-field>
+              <p>Note: Additional Fields Omitted for Testing</p>
+              <div>
+                <button mat-button matStepperNext>Next</button>
               </div>
-            </div>
-            <p>Note: Additional Fields Omitted for Testing</p>
-            <div>
-              <button mat-button matStepperNext>Next</button>
-            </div>
-          </mat-step>
-          <mat-step formGroupName="organization">
-            <ng-template matStepLabel>Organization (REQUIRED)</ng-template>
-            <p>
-              For organizations with multiple service delivery locations that will be assigned by the provider, this
-              should represent the information pertaining to the primary managing organization (e.g. a headquarters).
-              Additional information pertaining to a child organization or a particular service delivery location
-              should be handled by the recipient provider.
-            </p>
-            <div class="flex-row">
+            </mat-step>
+            <mat-step formGroupName="organization">
+              <ng-template matStepLabel>Organization (REQUIRED)</ng-template>
+              <p>
+                For organizations with multiple service delivery locations that will be assigned by the provider, this
+                should represent the information pertaining to the primary managing organization (e.g. a headquarters).
+                Additional information pertaining to a child organization or a particular service delivery location
+                should be handled by the recipient provider.
+              </p>
+              <div class="flex-row">
                 <mat-form-field appearance="fill" class="flex-cell-3">
                   <mat-label>Organization Name</mat-label>
                   <input matInput formControlName="name">
@@ -80,133 +80,136 @@
                   <mat-label>Organization Phone #</mat-label>
                   <input matInput formControlName="phone" type="tel">
                 </mat-form-field>
-            </div>
-            <p>Note: Additional Fields Omitted for Testing</p>
-            <div>
-              <button mat-button matStepperPrevious>Back</button>
-              <button mat-button matStepperNext>Next</button>
-            </div>
-          </mat-step>
-          <mat-step formGroupName="location">
-            <ng-template matStepLabel>Service Delivery Location</ng-template>
-            <p>
-              For organizations which will handle assignment of location after the referral request is made,
-              the service delivery location fields should be left empty. This should be used only when registration
-              is being performed at the individual location level (e.g. the office of a specific practitioner).
-            </p>
-            <div class="flex-col">
-              <div class="flex-row">
-                <mat-form-field appearance="fill" class="flex-cell-3">
-                  <mat-label>Location Name</mat-label>
-                  <input matInput formControlName="name">
-                </mat-form-field>
-                <mat-form-field appearance="fill" class="flex-cell-1">
-                  <mat-label>Location Phone #</mat-label>
-                  <input matInput formControlName="phone" type="tel">
-                </mat-form-field>
-              </div>
-              <div class="flex-col">
-                <mat-form-field appearance="fill">
-                  <mat-label>Street Address Line 1</mat-label>
-                  <input matInput formControlName="street1">
-                </mat-form-field>
-                <mat-form-field appearance="fill">
-                  <mat-label>Street Address Line 2</mat-label>
-                  <input matInput formControlName="street2">
-                </mat-form-field>
-
-                <div class="flex-row">
-                  <mat-form-field appearance="fill" class="flex-cell-3">
-                    <mat-label>City</mat-label>
-                    <input matInput formControlName="city">
-                  </mat-form-field>
-                  <mat-form-field appearance="fill" class="flex-cell-1">
-                    <mat-label>State</mat-label>
-                    <input matInput formControlName="state" maxlength="2">
-                  </mat-form-field>
-                  <mat-form-field appearance="fill" class="flex-cell-1">
-                    <mat-label>Zip</mat-label>
-                    <input matInput formControlName="zip" maxlength="5">
-                  </mat-form-field>
-                </div>
               </div>
               <p>Note: Additional Fields Omitted for Testing</p>
               <div>
                 <button mat-button matStepperPrevious>Back</button>
                 <button mat-button matStepperNext>Next</button>
               </div>
-            </div>
-          </mat-step>
-          <mat-step formGroupName="services">
-            <ng-template matStepLabel>Services  (REQUIRED)</ng-template>
-            <div class="flex-row">
-              <div>
-                <h3>Service Types</h3>
-                <mat-selection-list>
-                  <mat-list-item *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['serviceType']['controls'];
-                    let i=index;">
-                    <mat-checkbox [formControl]="control" [value]="fhirConstants.SERVICE_TYPES[i].code">
-                      <span style="font-size:14px">{{fhirConstants.SERVICE_TYPES[i].display}}</span>
-                    </mat-checkbox>
-                  </mat-list-item>
-                </mat-selection-list>
-              </div>
-              <div class="serviceDivider"></div>
-              <div>
-                <h3>Days Available</h3>
-                <mat-selection-list>
-                  <mat-list-item *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['days']['controls'];
-                    let i=index;">
-                    <mat-checkbox [formControl]="control" [value]="fhirConstants.DAYS_OF_WEEK[i].code">
-                      <span style="font-size:14px">{{fhirConstants.DAYS_OF_WEEK[i].display}}</span>
-                    </mat-checkbox>
-                  </mat-list-item>
-                </mat-selection-list>
-              </div>
-              <div class="serviceDivider"></div>
-              <div>
-                <div class="flex-col">
-                  <h3>Times Available</h3>
-                  <mat-form-field appearance="fill">
-                    <mat-label>Start Time</mat-label>
-                    <input matInput formControlName="startTime" type="time">
+            </mat-step>
+            <mat-step formGroupName="location">
+              <ng-template matStepLabel>Service Delivery Location</ng-template>
+              <p>
+                For organizations which will handle assignment of location after the referral request is made,
+                the service delivery location fields should be left empty. This should be used only when registration
+                is being performed at the individual location level (e.g. the office of a specific practitioner).
+              </p>
+              <div class="flex-col">
+                <div class="flex-row">
+                  <mat-form-field appearance="fill" class="flex-cell-3">
+                    <mat-label>Location Name</mat-label>
+                    <input matInput formControlName="name">
                   </mat-form-field>
-                  <mat-form-field appearance="fill">
-                    <mat-label>End Time</mat-label>
-                    <input matInput formControlName="endTime" type="time">
+                  <mat-form-field appearance="fill" class="flex-cell-1">
+                    <mat-label>Location Phone #</mat-label>
+                    <input matInput formControlName="phone" type="tel">
                   </mat-form-field>
                 </div>
+                <div class="flex-col">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Street Address Line 1</mat-label>
+                    <input matInput formControlName="street1">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Street Address Line 2</mat-label>
+                    <input matInput formControlName="street2">
+                  </mat-form-field>
+
+                  <div class="flex-row">
+                    <mat-form-field appearance="fill" class="flex-cell-3">
+                      <mat-label>City</mat-label>
+                      <input matInput formControlName="city">
+                    </mat-form-field>
+                    <mat-form-field appearance="fill" class="flex-cell-1">
+                      <mat-label>State</mat-label>
+                      <input matInput formControlName="state" maxlength="2">
+                    </mat-form-field>
+                    <mat-form-field appearance="fill" class="flex-cell-1">
+                      <mat-label>Zip</mat-label>
+                      <input matInput formControlName="zip" maxlength="5">
+                    </mat-form-field>
+                  </div>
+                </div>
+                <p>Note: Additional Fields Omitted for Testing</p>
+                <div>
+                  <button mat-button matStepperPrevious>Back</button>
+                  <button mat-button matStepperNext>Next</button>
+                </div>
               </div>
-              <div class="serviceDivider"></div>
+            </mat-step>
+            <mat-step formGroupName="services">
+              <ng-template matStepLabel>Services  (REQUIRED)</ng-template>
+              <div class="flex-row">
+                <div>
+                  <h3>Service Types</h3>
+                  <mat-selection-list>
+                    @for (control of serviceProviderRegistrationForm.controls['services']['controls']['serviceType']['controls']; track control; let i = $index) {
+                      <mat-list-item>
+                        <mat-checkbox [formControl]="control" [value]="fhirConstants.SERVICE_TYPES[i].code">
+                          <span style="font-size:14px">{{fhirConstants.SERVICE_TYPES[i].display}}</span>
+                        </mat-checkbox>
+                      </mat-list-item>
+                    }
+                  </mat-selection-list>
+                </div>
+                <div class="serviceDivider"></div>
+                <div>
+                  <h3>Days Available</h3>
+                  <mat-selection-list>
+                    @for (control of serviceProviderRegistrationForm.controls['services']['controls']['days']['controls']; track control; let i = $index) {
+                      <mat-list-item>
+                        <mat-checkbox [formControl]="control" [value]="fhirConstants.DAYS_OF_WEEK[i].code">
+                          <span style="font-size:14px">{{fhirConstants.DAYS_OF_WEEK[i].display}}</span>
+                        </mat-checkbox>
+                      </mat-list-item>
+                    }
+                  </mat-selection-list>
+                </div>
+                <div class="serviceDivider"></div>
+                <div>
+                  <div class="flex-col">
+                    <h3>Times Available</h3>
+                    <mat-form-field appearance="fill">
+                      <mat-label>Start Time</mat-label>
+                      <input matInput formControlName="startTime" type="time">
+                    </mat-form-field>
+                    <mat-form-field appearance="fill">
+                      <mat-label>End Time</mat-label>
+                      <input matInput formControlName="endTime" type="time">
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="serviceDivider"></div>
+                <div>
+                  <h3>Languages</h3>
+                  <mat-selection-list>
+                    @for (control of serviceProviderRegistrationForm.controls['services']['controls']['languages']['controls']; track control; let i = $index) {
+                      <mat-list-item>
+                        <mat-checkbox [formControl]="control" [value]="fhirConstants.LANGUAGE[i].code">
+                          <span style="font-size:14px">{{fhirConstants.LANGUAGE[i].display}}</span>
+                        </mat-checkbox>
+                      </mat-list-item>
+                    }
+                  </mat-selection-list>
+                </div>
+              </div>
               <div>
-                <h3>Languages</h3>
-                <mat-selection-list>
-                  <mat-list-item *ngFor="let control of serviceProviderRegistrationForm.controls['services']['controls']['languages']['controls'];
-                    let i=index;">
-                    <mat-checkbox [formControl]="control" [value]="fhirConstants.LANGUAGE[i].code">
-                      <span style="font-size:14px">{{fhirConstants.LANGUAGE[i].display}}</span>
-                    </mat-checkbox>
-                  </mat-list-item>
-                </mat-selection-list>
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-button matStepperNext>Next</button>
               </div>
-            </div>
-            <div>
-              <button mat-button matStepperPrevious>Back</button>
-              <button mat-button matStepperNext>Next</button>
-            </div>
-          </mat-step>
-          <mat-step formGroupName="endpoint">
-            <ng-template matStepLabel>Endpoint (REQUIRED)</ng-template>
-            <mat-form-field appearance="fill">
-              <mat-label>Endpoint</mat-label>
-              <input matInput formControlName="address" type="url">
-            </mat-form-field>
-            <div>
-              <button mat-button matStepperPrevious>Back</button>
-              <button mat-button (click)="stepper.reset()">Return to Top</button>
-            </div>
-          </mat-step>
-        </mat-stepper>
+            </mat-step>
+            <mat-step formGroupName="endpoint">
+              <ng-template matStepLabel>Endpoint (REQUIRED)</ng-template>
+              <mat-form-field appearance="fill">
+                <mat-label>Endpoint</mat-label>
+                <input matInput formControlName="address" type="url">
+              </mat-form-field>
+              <div>
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-button (click)="stepper.reset()">Return to Top</button>
+              </div>
+            </mat-step>
+          </mat-stepper>
 
           <div>
             <button mat-raised-button color=primary (click)="clear()">

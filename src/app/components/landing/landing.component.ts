@@ -1,87 +1,70 @@
-import {Component, OnInit, SimpleChanges} from '@angular/core';
-import {MockDataRetrievalService} from "../../service/mock-data-retrieval.service";
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ServiceRequestHandlerService} from "../../service/service-request-handler.service";
-import {Router} from "@angular/router";
 import {FhirClientService} from "../../service/fhir-client.service";
+import {ServiceRequestStatusType} from "../../models/service-request-status-type"
+import {UtilsService} from "../../service/utils.service";
+import {distinctUntilChanged, Subject, takeUntil, tap} from "rxjs";
 
 @Component({
-  selector: 'app-landing',
-  templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.scss']
+    selector: 'app-landing',
+    templateUrl: './landing.component.html',
+    styleUrls: ['./landing.component.scss'],
+    standalone: false
 })
-export class LandingComponent implements OnInit {
+export class LandingComponent implements OnInit, OnDestroy {
 
   isLoading: boolean = false;
-  serviceRequestList: any[];
+  selectedServiceRequestType: ServiceRequestStatusType = ServiceRequestStatusType.draft;
 
   activeServiceRequests: any[] = [];
   draftServiceRequests: any[] = [];
   completeServiceRequests: any[] = [];
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(
-    private mockDataRetrievalService: MockDataRetrievalService,
     private serviceRequestHandlerService: ServiceRequestHandlerService,
-    private router: Router,
+    private utilsService: UtilsService,
     private fhirClient: FhirClientService) {
-
     this.fhirClient.readyClient();
   }
 
-  findResourceById(bundle, resourceId){
-    if(!bundle.entry || bundle.entry.length === 0 || !resourceId){
-      return null;
-    }
-    return bundle.entry.find(entry => entry?.resource?.id === resourceId);
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
-
   getServiceRequests(){
-    this.isLoading = true;
-    this.serviceRequestHandlerService.getServiceRequestList().subscribe({
-      next: results => {
-
+    this.serviceRequestHandlerService.getServiceRequestData().pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe({
+      next: mappedServiceRequests=> {
         this.isLoading = false;
-
-        if (results.entry && results.entry.length) {
-
-          this.serviceRequestList = results.entry.filter(entry => entry.resource.resourceType === "ServiceRequest");
-
-          let mappedServiceRequests = this.serviceRequestList
-            .map(element => ({
-              serviceRequest: element,
-              performer: this.findResourceById(results, element.resource?.performer?.[0].reference.replace('PractitionerRole/', ''))
-            }))
-            .map(element => ({
-              serviceRequest: element.serviceRequest,
-              performerOrganization: this.findResourceById(results, element.performer?.resource?.organization?.reference.replace('Organization/', ''))
-            }))
-            .map(element => ({
-              serviceRequestId: element.serviceRequest?.resource?.id,
-              serviceProvider: element.performerOrganization?.resource.name,
-              dateCreated: element.serviceRequest?.resource?.authoredOn,
-              lastUpdated: element.serviceRequest?.resource?.meta?.lastUpdated,
-              service: element.serviceRequest?.resource?.orderDetail?.[0]?.text,
-              status: element.serviceRequest?.resource?.status,
-            }));
-
-          this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
-          this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
-          this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'complete');
-        }
+        this.serviceRequestHandlerService.setMappedServiceRequests(mappedServiceRequests);
+        this.draftServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'draft');
+        this.activeServiceRequests = mappedServiceRequests.filter(serviceRequest => serviceRequest.status === 'active');
+        this.completeServiceRequests = mappedServiceRequests.filter(serviceRequest =>
+          serviceRequest.status === 'completed' || serviceRequest.status === 'revoked'
+        );
+      },
+      error: err => {
+        this.isLoading = false;
+        console.error(err);
       }
     })
-
   }
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.serviceRequestHandlerService.initClient().subscribe({
-      next: result =>
-        this.getServiceRequests()
-    })
+    this.serviceRequestHandlerService.initClient().pipe(
+      distinctUntilChanged(),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(()=> this.getServiceRequests());
   }
 
-  onEdit(element) {
-    this.router.navigate(['referral-manager', element.serviceRequestId])
+  onSelectServiceRequestType(tabNumber: number) {
+    switch (tabNumber){
+      case (0): {this.selectedServiceRequestType = ServiceRequestStatusType.draft; break }
+      case (1): {this.selectedServiceRequestType = ServiceRequestStatusType.active; break }
+      case (2): {this.selectedServiceRequestType = ServiceRequestStatusType.completed; break }
+    }
   }
-
 }

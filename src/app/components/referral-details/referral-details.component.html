@@ -1,0 +1,57 @@
+<div class="container top-spacer">
+  <mat-card class="padding-left-md padding-right-md">
+
+    <mat-card-header>
+      <mat-card-title>
+        <div>Service Type: {{ serviceRequest?.service }}</div>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div>
+        <div class="margin-top-sm">
+          <span class="bold-text">Status:</span> {{ serviceRequest?.businessStatus }}
+        </div>
+
+        <div class="margin-top-sm">
+          <span class="bold-text">Created:</span> {{ serviceRequest?.dateCreated | date }}
+        </div>
+
+        <div class="margin-top-sm">
+          <span class="bold-text">Last Updated:</span> {{ serviceRequest?.dateCreated | date }}
+        </div>
+      </div>
+
+      <!--Observations Section-->
+      <div class="margin-top-md large-text">
+        Supporting Information:
+      </div>
+      @if(!(mappedObservations?.mappedSimpleObservations?.length > 1)
+          &&
+          !(mappedObservations?.mappedComponentObservations?.length > 1)){
+        <!-- If the patient has no observations -->
+        <div class="margin-top-sm bold-text" style="font-style: italic">
+          **No feedback observations available.
+        </div>
+      }
+      @else {
+        <!-- Render the available observations -->
+        @for (observation of mappedObservations?.mappedSimpleObservations; track observation) {
+        <div class="margin-top-sm">
+          <span class="bold-text">{{ observation.name }}</span>: {{ observation.value }} {{ observation.unit }}
+        </div>
+        }
+
+        @for (observation of mappedObservations?.mappedComponentObservations; track observation) {
+          <div class="margin-top-md" style="font-size: medium">{{ observation.name }}:</div>
+          @for (component of observation.components; track component) {
+            <div class="margin-top-sm">
+              <span class="bold-text">{{ component.name }}</span>: {{ component.value }} {{ component.unit }}
+            </div>
+          }
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+
