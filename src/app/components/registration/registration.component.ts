@@ -83,7 +83,6 @@ export class RegistrationComponent implements OnInit {
 
   // TODO: Review this, need a better way to handle refreshing from server since the return of a transaction bundle is just success/error.
   onSubmit(): void {
-    console.log(this.serviceProviderRegistrationForm.value);
     this.providerRegistrationService.createNewServiceProvider(this.serviceProviderRegistrationForm.value).subscribe(
       {
         next: (data: any) => {
