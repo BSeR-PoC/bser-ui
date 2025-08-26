@@ -1,6 +1,6 @@
 Here's a version formatted for easy copy-and-paste into a Markdown file.
 
-# BSerUi Local Installation and Deployment
+# BSerUI Local Installation and Deployment
 
 -----
 
